@@ -1,64 +1,31 @@
 from fastapi import FastAPI, Request, status, Header
-from dateutil import parser
-from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse
+import logging
+import urllib.parse
+from models import *
+from tokens import Hs256TokensManager
 
-from flask import Flask, jsonify, request
-import json
-from enum import Enum
-from typing import Union
-from fastapi import FastAPI
-from pydantic import BaseModel, Field
-from pydantic.datetime_parse import parse_datetime
-from datetime import datetime
-import jwt
-import pytz
-
-# TODO: get this from an env variable !!!
-secret_key="toto"
+logging.basicConfig(level=logging.DEBUG)
 
 
-class StringDateTime(datetime):
-    @classmethod
-    def __get_validators__(cls):
-        yield parse_datetime
-        yield cls.validate
+# try to read a secret first from a secret file or from an env var.
+# stop execution if not
+def get_secret_or_die(name: str):
+    secret_file_path = f"/run/secrets/{name}"
+    if os.path.exists(secret_file_path) and os.path.isfile(secret_file_path):
+        with open(secret_file_path, "rt") as secret_file:
+            return secret_file.read().strip()
 
-    @classmethod
-    def validate(cls, v: datetime):
-        return v.isoformat()
+    if os.environ.get(name) is not None:
+        return os.environ.get(name)
 
-
-class ShareType(str, Enum):
-    osimis_viewer_link = 'osimis-viewer-publication'
-
-
-class ShareRequest(BaseModel):
-    id: str
-    dicom_uid: Union[str, None] = Field(alias="dicom-uid", default=None)
-    orthanc_id: Union[str, None] = Field(alias="orthanc-id", defulat=None)
-    type: ShareType
-    expiration_date: Union[StringDateTime, None] = None
-
-    class Config:    # allow creating object from dict (used when deserializing the JWT)
-        allow_population_by_field_name = True
-
-class Share(BaseModel):
-    request: ShareRequest
-    token: str
+    logging.error(f"Secret '{name}' is not defined, can not start without it")
+    exit(-1)
 
 
-class AuthValidationRequest(BaseModel):
-    dicom_uid: Union[str, None] = Field(alias="dicom-uid", default=None)
-    orthanc_id: Union[str, None] = Field(alias="orthanc-id", defulat=None)
-    level: str
-    method: str
+secret_key = get_secret_or_die("SECRET_KEY")
+public_orthanc_root = get_secret_or_die("PUBLIC_ORTHANC_ROOT")
 
-
-class AuthValidationResponse(BaseModel):
-    granted: bool
-    validity: int
-
+tokens = Hs256TokensManager(secret_key=secret_key)
 
 app = FastAPI()
 
@@ -70,30 +37,42 @@ app = FastAPI()
 #     content = {'status_code': 422, 'message': exc_str, 'data': None}
 #     return JSONResponse(content=content, status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)
 
+def generate_url(share_request: ShareRequest, token: str):
+    global public_orthanc_root
+
+    if share_request.type == ShareType.osimis_viewer_link:
+        if share_request.orthanc_id is None:
+            logging.error("No orthanc_id provided while generating a link to the Osimis WebViewer")
+            return None
+
+        return urllib.parse.urljoin(public_orthanc_root, f"osimis-viewer/app/index.html?study={share_request.orthanc_id}&token={token}")
+
 
 # route to create shares
 @app.put("/shares")
 def create_share(share_request: ShareRequest):
 
-    encoded = jwt.encode(share_request.dict(), secret_key, algorithm="HS256")
-
-    share = Share(request=share_request, token=encoded)
-
+    token = tokens.generate_token(share_request=share_request)
+    share = Share(
+        request=share_request,
+        token=token,
+        url=generate_url(
+            share_request=share_request,
+            token=token
+        )
+    )
     return share
 
-@app.post("/auth/validate")
-def validate_authorization(validation_request: AuthValidationRequest, token = Header(default=None)):
+# route called by the Orthanc Authorization plugin to validate a token has access to a resource
+@app.post("/shares/validate")
+def validate_authorization(validation_request: ShareValidationRequest, token = Header(default=None)):
 
-    r = jwt.decode(token, secret_key, algorithms="HS256")
-    share_request = ShareRequest(**r)
-
-    granted = (share_request.dicom_uid == validation_request.dicom_uid) or (share_request.orthanc_id == validation_request.orthanc_id)
-
-    expiration_date = parser.parse(share_request.expiration_date)
-    now_utc = pytz.UTC.localize(datetime.now())
-
-    # check expiration date
-    granted = granted and (now_utc < expiration_date)
-
-    response = AuthValidationResponse(granted=granted, validity=60)
+    response = ShareValidationResponse(
+        granted=tokens.is_valid(
+            token=token,
+            orthanc_id=validation_request.orthanc_id,
+            dicom_uid=validation_request.dicom_uid
+        ),
+        validity=60
+    )
     return response
