@@ -40,6 +40,7 @@ app = FastAPI()
 def generate_url(share_request: ShareRequest, token: str):
     global public_orthanc_root
 
+
     if share_request.type == ShareType.osimis_viewer_link:
         if share_request.orthanc_id is None:
             logging.error("No orthanc_id provided while generating a link to the Osimis WebViewer")
@@ -48,9 +49,18 @@ def generate_url(share_request: ShareRequest, token: str):
         return urllib.parse.urljoin(public_orthanc_root, f"osimis-viewer/app/index.html?study={share_request.orthanc_id}&token={token}")
 
 
+# @app.middleware("http")
+# async def add_process_time_header(request: Request, call_next):
+#
+#     response = await call_next(request)
+#     logging.error(response)
+#     return response
+
+
 # route to create shares
 @app.put("/shares")
 def create_share(share_request: ShareRequest):
+    logging.info("creating share: " + share_request.json())
 
     token = tokens.generate_token(share_request=share_request)
     share = Share(
@@ -61,11 +71,13 @@ def create_share(share_request: ShareRequest):
             token=token
         )
     )
+    logging.info("created share: " + share.json())
     return share
 
 # route called by the Orthanc Authorization plugin to validate a token has access to a resource
 @app.post("/shares/validate")
 def validate_authorization(validation_request: ShareValidationRequest, token = Header(default=None)):
+    logging.info("validating share: " + validation_request.json())
 
     response = ShareValidationResponse(
         granted=tokens.is_valid(
@@ -75,4 +87,5 @@ def validate_authorization(validation_request: ShareValidationRequest, token = H
         ),
         validity=60
     )
+    logging.info("validate share: " + response.json())
     return response

@@ -1,0 +1,81 @@
+version: "3"
+services:
+
+  nginx:
+    image: nginx:1.23-alpine
+    volumes: ["./demo-setup/nginx.conf:/etc/nginx/conf.d/default.conf"]
+    depends_on: [orthanc-for-admin, orthanc-for-shares]
+    restart: unless-stopped
+    ports: ["80:80"]
+
+
+  # first setup through configuration file and build step
+  orthanc-for-admin:
+    image: osimis/orthanc:22.6.4
+    volumes:
+      - orthanc-storage:/var/lib/orthanc/db
+      - ./demo-setup/orthanc-admin.jsonc:/etc/orthanc/orthanc-admin.json
+      - ./demo-setup/orthanc-db.jsonc:/etc/orthanc/orthanc-db.json
+    depends_on: [orthanc-db]
+    restart: unless-stopped
+    environment:
+#      ORTHANC__NAME: "Orthanc for admin"
+#      ORTHANC__ORTHANC_EXPLORER_2__IS_DEFAULT_ORTHANC_UI: "true"
+      OSIMIS_WEB_VIEWER1_PLUGIN_ENABLED: "true"
+#      ORTHANC__REGISTERED_USERS: |
+#        {"admin": "admin"}
+
+
+  orthanc-for-shares:
+    image: osimis/orthanc:22.6.4
+    volumes:
+      - orthanc-storage:/var/lib/orthanc/db
+      - ./demo-setup/orthanc-db.jsonc:/etc/orthanc/orthanc-db.json
+    depends_on: [orthanc-db]
+    restart: unless-stopped
+    environment:
+      ORTHANC__NAME: "Orthanc for shares"
+      VERBOSE_ENABLED: "true"
+      OSIMIS_WEB_VIEWER1_PLUGIN_ENABLED: "true"
+
+      # disable auth since we use the authorization plugin
+      ORTHANC__AUTHENTICATION_ENABLED: "false"
+      ORTHANC__AUTHORIZATION__WEB_SERVICE: "http://orthanc-share:8000/shares/validate"
+      ORTHANC__AUTHORIZATION__TOKEN_HTTP_HEADERS: |
+        ["token"]
+      ORTHANC__AUTHORIZATION__UNCHECKED_RESOURCES: |
+        [
+          "/osimis-viewer/config.js",
+          "/system"
+        ]
+      # a list of folders that are accessible to everyone
+      ORTHANC__AUTHORIZATION__UNCHECKED_FOLDERS: |
+        [
+          "/osimis-viewer/app/",
+          "/osimis-viewer/languages/"
+        ]
+      ORTHANC__AUTHORIZATION__UNCHECKED_LEVELS: |
+        ["patients", "series", "instances"]
+
+  orthanc-share:
+    image: orthanc-team/orthanc-share
+    # disable ports in prod !
+    ports: ["8000:8000"]
+    restart: unless-stopped
+    environment:
+      SECRET_KEY: "my-secret-key"
+      PUBLIC_ORTHANC_ROOT: "http://localhost/shares/"
+
+
+  orthanc-db:
+    image: postgres:14
+    restart: unless-stopped
+    volumes: ["orthanc-db:/var/lib/postgresql/data"]
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: "trust"
+#      POSTGRES_PASSWORD: "postgres"
+
+
+volumes:
+  orthanc-storage:
+  orthanc-db:

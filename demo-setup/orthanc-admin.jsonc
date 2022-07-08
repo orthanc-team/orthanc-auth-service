@@ -1,0 +1,15 @@
+{
+  "Name": "Orthanc for Admin",
+
+  "OrthancExplorer2": {
+    "IsDefaultUI": true,
+    "UiOptions": {
+      "EnableApiViewMenu": true
+    }
+  },
+
+  "RegisteredUsers": {
+    "admin": "admin"
+  }
+
+}
