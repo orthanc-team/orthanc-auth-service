@@ -21,22 +21,4 @@
             "instances"
         ]
     }
-//       ORTHANC__AUTHENTICATION_ENABLED: "false"
-//       ORTHANC__AUTHORIZATION__WEB_SERVICE: "http://orthanc-share:8000/shares/validate"
-//       ORTHANC__AUTHORIZATION__TOKEN_HTTP_HEADERS: |
-//         ["token"]
-//       ORTHANC__AUTHORIZATION__UNCHECKED_RESOURCES: |
-//         [
-//           "/osimis-viewer/config.js",
-//           "/system"
-//         ]
-//       # a list of folders that are accessible to everyone
-//       ORTHANC__AUTHORIZATION__UNCHECKED_FOLDERS: |
-//         [
-//           "/osimis-viewer/app/",
-//           "/osimis-viewer/languages/"
-//         ]
-//       ORTHANC__AUTHORIZATION__UNCHECKED_LEVELS: |
-//         ["patients", "series", "instances"]
-
 }
