@@ -3,6 +3,7 @@
 Web service to run next to orthanc to handle sharing of studies by issuing [JWT](https://jwt.io/) that can then be passed
 in authorization headers that will be checked by the [Authorization plugin](https://book.orthanc-server.com/plugins/authorization.html).
 
+This repo also includes a reverse proxy that can perform on-the-fly anonymization of some Orthanc REST API routes.
 
 ## how it works ?
 
