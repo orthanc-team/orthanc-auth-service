@@ -55,7 +55,7 @@ services:
       ORTHANC__AUTHORIZATION__WEB_SERVICE: "http://orthanc-anon-share:8000/shares/validate"
 
   orthanc-share:
-    image: orthanc-team/orthanc-share
+    image: orthancteam/orthanc-share
     # disable ports in prod or at least don't make this webservice public !
     ports: ["8000:8000"]
     restart: unless-stopped
@@ -64,7 +64,7 @@ services:
       PUBLIC_ORTHANC_ROOT: "http://localhost/shares/"
 
   orthanc-anon-share:
-    image: orthanc-team/orthanc-share
+    image: orthancteam/orthanc-share
     # disable ports in prod or at least don't make this webservice public !
     ports: ["8001:8000"]
     restart: unless-stopped
@@ -73,7 +73,7 @@ services:
       PUBLIC_ORTHANC_ROOT: "http://localhost/anon-shares/"
 
   orthanc-anonymizer:
-    image: orthanc-team/orthanc-anonymizer
+    image: orthancteam/orthanc-anonymizer
     restart: unless-stopped
     environment:
       ORTHANC_ROOT: "http://orthanc-for-anon-shares:8042/"
