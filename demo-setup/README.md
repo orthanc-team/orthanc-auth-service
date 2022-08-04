@@ -16,8 +16,8 @@ This demo contains:
 
 - 3 Orthanc containers, one configured for `admin`, one configured for `shares` and one for anonymized `shares`
 - a Postgresql container to store the Orthanc database
-- an `orthanc-share` web service that generates publication link
-- an `orthanc-share` web service that generates publication link for anonymized shares
+- an `orthanc-share` web service that generates publication link (listens on port 8000)
+- an `orthanc-share` web service that generates publication link for anonymized shares (listens on port 8001)
 - an `orthanc-anonymizer` web service that performs on-the-fly anonymization of Orthanc Rest API.
 
 # Starting the setup

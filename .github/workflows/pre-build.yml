@@ -1,0 +1,31 @@
+on:
+  workflow_call:
+    outputs:
+      is_tag:
+        value: ${{ jobs.pre_build.outputs.is_tag }}
+      current_branch_tag:
+        value: ${{ jobs.pre_build.outputs.current_branch_tag }}
+
+jobs:
+
+  pre_build:
+    name: pre_build
+    runs-on: "ubuntu-latest"
+    outputs:
+      current_branch_tag: ${{steps.branch_name.outputs.current_branch}}
+      is_tag: ${{steps.branch_name.outputs.is_tag}}
+      ref_branch: ${{steps.branch_name.outputs.ref_branch}}
+      default_branch: ${{steps.branch_name.outputs.default_branch}}
+      is_default: ${{steps.branch_name.outputs.is_default}}
+
+    steps:
+    - name: Get branch/tag name
+      id: branch_name
+      uses: tj-actions/branch-names@v5.1
+      # output: steps.branch_name.outputs.current_branch contains the branch or the tag
+
+    - name: Echo pre_build
+      run: |
+        echo ${{ steps.branch_name.outputs.is_tag }} ${{ steps.branch_name.outputs.current_branch }}
+        echo ${{ github.ref}}
+
