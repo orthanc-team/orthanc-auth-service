@@ -31,18 +31,20 @@ jobs:
         with:
           images: orthancteam/orthanc-share
 
-      - name: Build and push Docker image
+      - name: Build and push orthanc-share Docker image
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
         with:
-          context: .
+          context: sources/
+          file: sources/Dockerfile.orthanc-share
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-#    uses: ./.github/workflows/build-stone-wasm.yml
-#    with:
-#      is_tag: ${{ needs.pre-build.outputs.is_tag }}
-#      stable_unstable: stable
-#      current_branch_tag: ${{ needs.pre-build.outputs.current_branch_tag }}
-#    secrets:
-#      aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-#      aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Build and push orthanc-anonymizer Docker image
+        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        with:
+          context: sources/
+          file: sources/Dockerfile.orthanc-anonymizer
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
