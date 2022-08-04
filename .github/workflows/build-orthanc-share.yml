@@ -8,12 +8,9 @@ on:
       - '*'
 
 jobs:
-#  pre-build:
-#    uses: ./.github/workflows/pre-build.yml
 
   build-orthanc-share:
     runs-on: ubuntu-latest
-    #    needs: [pre-build]
     steps:
 
       - name: checkout
