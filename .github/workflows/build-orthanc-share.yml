@@ -60,3 +60,21 @@ jobs:
           push: true
           tags: ${{ steps.meta-anonymizer.outputs.tags }}
           labels: ${{ steps.meta-anonymizer.outputs.labels }}
+
+      - name: Docker Hub Description (share)
+        uses: peter-evans/dockerhub-description@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+          repository: orthancteam/orthanc-share
+          short-description: Web service to run next to orthanc to handle sharing of studies
+          readme-filepath: sources/README-dockerhub-share.md
+
+      - name: Docker Hub Description (anonymizer)
+        uses: peter-evans/dockerhub-description@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+          repository: orthancteam/orthanc-anonymizer
+          short-description: Web service to run in front of Orthanc to anonymize API on-the-fly
+          readme-filepath: sources/README-dockerhub-anonymizer.md
