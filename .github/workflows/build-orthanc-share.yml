@@ -25,8 +25,14 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Extract metadata (tags, labels) for Docker
-        id: meta
+      - name: Extract metadata (tags, labels) for Docker (share)
+        id: meta-share
+        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+        with:
+          images: orthancteam/orthanc-share
+
+      - name: Extract metadata (tags, labels) for Docker (anonymizer)
+        id: meta-anonymizer
         uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
         with:
           images: orthancteam/orthanc-share
@@ -37,8 +43,8 @@ jobs:
           context: sources/
           file: sources/Dockerfile.orthanc-share
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: ${{ steps.meta-share.outputs.tags }}
+          labels: ${{ steps.meta-share.outputs.labels }}
 
       - name: Build and push orthanc-anonymizer Docker image
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
@@ -46,5 +52,5 @@ jobs:
           context: sources/
           file: sources/Dockerfile.orthanc-anonymizer
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: ${{ steps.meta-anonymizer.outputs.tags }}
+          labels: ${{ steps.meta-anonymizer.outputs.labels }}
