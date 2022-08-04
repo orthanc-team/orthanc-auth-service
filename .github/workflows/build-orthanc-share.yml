@@ -1,0 +1,77 @@
+name: build-orthanc-share
+
+on:
+  push:
+    branches:
+      - '*'
+    tags:
+      - '*'
+
+jobs:
+
+  build-orthanc-share:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: checkout
+        uses: actions/checkout@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@f054a8b539a109f9f41c372932f1ae047eff08c9
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Extract metadata (tags, labels) for Docker (share)
+        id: meta-share
+        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+        with:
+          images: orthancteam/orthanc-share
+          labels: |
+            org.opencontainers.image.title=orthanc-share
+            org.opencontainers.image.vendor=Orthanc Team SRL
+
+      - name: Extract metadata (tags, labels) for Docker (anonymizer)
+        id: meta-anonymizer
+        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+        with:
+          images: orthancteam/orthanc-anonymizer
+          labels: |
+            org.opencontainers.image.title=orthanc-anonymizer
+            org.opencontainers.image.vendor=Orthanc Team SRL
+
+      - name: Build and push orthanc-share Docker image
+        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        with:
+          context: sources/
+          file: sources/Dockerfile.orthanc-share
+          push: true
+          tags: ${{ steps.meta-share.outputs.tags }}
+          labels: ${{ steps.meta-share.outputs.labels }}
+
+      - name: Build and push orthanc-anonymizer Docker image
+        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        with:
+          context: sources/
+          file: sources/Dockerfile.orthanc-anonymizer
+          push: true
+          tags: ${{ steps.meta-anonymizer.outputs.tags }}
+          labels: ${{ steps.meta-anonymizer.outputs.labels }}
+
+      - name: Docker Hub Description (share)
+        uses: peter-evans/dockerhub-description@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          repository: orthancteam/orthanc-share
+          short-description: Web service to run next to orthanc to handle sharing of studies
+          readme-filepath: sources/README-dockerhub-share.md
+
+      - name: Docker Hub Description (anonymizer)
+        uses: peter-evans/dockerhub-description@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          repository: orthancteam/orthanc-anonymizer
+          short-description: Web service to run in front of Orthanc to anonymize API on-the-fly
+          readme-filepath: sources/README-dockerhub-anonymizer.md
