@@ -21,7 +21,7 @@ class TestTokensGenerator(unittest.TestCase):
             id="id",
             orthanc_id="orthanc_id",
             dicom_uid="dicom_uid",
-            type=ShareType.osimis_viewer_link
+            type=ShareType.osimis_viewer_publication
         )
         tokens = Hs256TokensManager(secret_key="toto")
         token = tokens.generate_token(share_request=share_request)
@@ -34,7 +34,7 @@ class TestTokensGenerator(unittest.TestCase):
             id="id",
             orthanc_id="orthanc_id",
             dicom_uid="dicom_uid",
-            type=ShareType.osimis_viewer_link,
+            type=ShareType.osimis_viewer_publication,
             expiration_date=pytz.UTC.localize(datetime.datetime(2100, 12, 31, 0, 0, 0))
         )
         tokens = Hs256TokensManager(secret_key="toto")
@@ -48,7 +48,7 @@ class TestTokensGenerator(unittest.TestCase):
             id="id",
             orthanc_id="orthanc_id",
             dicom_uid="dicom_uid",
-            type=ShareType.osimis_viewer_link,
+            type=ShareType.osimis_viewer_publication,
             expiration_date=pytz.UTC.localize(datetime.datetime(2000, 12, 31, 0, 0, 0))
         )
         tokens = Hs256TokensManager(secret_key="toto")

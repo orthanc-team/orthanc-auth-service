@@ -12,6 +12,10 @@ class TokensManager:
     def generate_token(self, share_request: ShareRequest) -> str:
         return self._encode_token(share_request)
 
+    def get_share_request_from_token(self, token: str) -> ShareRequest:
+        r = self._decode_token(token)
+        return ShareRequest(**r)
+
     def is_valid(self, token: str, orthanc_id: str = None, dicom_uid: str = None) -> bool:
 
         # no ids to check, we consider it's invalid

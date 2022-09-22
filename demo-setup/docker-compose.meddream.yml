@@ -1,0 +1,61 @@
+# This compose file is an addition to the main docker-compose.yml file.
+# It extends the first setup with MedDream publications
+
+
+version: "3"
+services:
+
+  nginx:
+    volumes:
+      - ./demo-setup/meddream/nginx.meddream.partial.conf:/etc/nginx/sites-extensions/meddream.conf
+    depends_on: [orthanc-for-admin, orthanc-for-shares, orthanc-anonymizer, meddream-viewer]
+
+  orthanc-share:
+    environment:
+      ENABLE_MEDDREAM_SHARES: "true"
+      MEDDREAM_TOKEN_SERVICE_URL: "http://meddream-token-service:8088/v3/generate"
+      PUBLIC_MEDDREAM_ROOT: "http://localhost/meddream/"
+      PUBLIC_MEDDREAM_REDIRECT_ROOT: "http://localhost/meddream-redirect/"
+
+  # An orthanc dedicated for the MedDream viewer.  It has no access control since it
+  # is accessible only from inside the Docker network
+  orthanc-for-meddream:
+    image: osimis/orthanc:22.9.0
+    volumes:
+      - orthanc-storage:/var/lib/orthanc/db
+      - ./demo-setup/orthanc-db.jsonc:/etc/orthanc/orthanc-db.json
+      - ./demo-setup/meddream/meddream-plugin.py:/scripts/meddream-plugin.py
+    depends_on: [orthanc-db]
+    restart: unless-stopped
+    environment:
+      ORTHANC__NAME: "Orthanc for MedDream"
+      VERBOSE_ENABLED: "true"
+      VERBOSE_STARTUP: "true"
+      ORTHANC__PYTHON_SCRIPT: "/scripts/meddream-plugin.py"
+      ORTHANC__AUTHENTICATION_ENABLED: "false"
+#      ORTHANC__REGISTERED_USERS: |
+#        {"orthanc-meddream-user": "orthanc-meddream-pwd"}
+
+  meddream-token-service:
+    image: orthancteam/meddream-token-service
+    restart: unless-stopped
+    # remove port mapping for production !
+    ports: ["8088:8088"]
+
+  meddream-viewer:
+    image: orthancteam/meddream-viewer
+    restart: unless-stopped
+    ports: ["8080:8080"]
+    depends_on:
+      - orthanc-for-meddream
+    environment:
+      integration: "study"
+      TOKEN_SERVICE_ADDRESS: "http://meddream-token-service:8088/v3/validate"
+      ORTHANC_BASE_URL: "http://orthanc-for-meddream:8042"
+      ORTHANC_USER: "orthanc-meddream-user"
+      ORTHANC_MEDDREAM_PYTHON_PLUGIN_ENABLED: "true"
+    volumes:
+      - meddream-license:/opt/meddream/license
+
+volumes:
+  meddream-license:

@@ -40,6 +40,24 @@ jobs:
             org.opencontainers.image.title=orthanc-anonymizer
             org.opencontainers.image.vendor=Orthanc Team SRL
 
+      - name: Extract metadata (tags, labels) for Docker (meddream-viewer)
+        id: meta-meddream-viewer
+        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+        with:
+          images: orthancteam/meddream-viewer
+          labels: |
+            org.opencontainers.image.title=meddream-viewer
+            org.opencontainers.image.vendor=Orthanc Team SRL
+
+      - name: Extract metadata (tags, labels) for Docker (meddream-token-service)
+        id: meta-meddream-token-service
+        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+        with:
+          images: orthancteam/meddream-token-service
+          labels: |
+            org.opencontainers.image.title=meddream-token-service
+            org.opencontainers.image.vendor=Orthanc Team SRL
+
       - name: Build and push orthanc-share Docker image
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
         with:
@@ -57,6 +75,24 @@ jobs:
           push: true
           tags: ${{ steps.meta-anonymizer.outputs.tags }}
           labels: ${{ steps.meta-anonymizer.outputs.labels }}
+
+      - name: Build and push meddream-viewer Docker image
+        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        with:
+          context: sources/meddream/viewer
+          file: sources/meddream/viewer/Dockerfile.meddream-viewer
+          push: true
+          tags: ${{ steps.meta-meddream-viewer.outputs.tags }}
+          labels: ${{ steps.meta-meddream-viewer.outputs.labels }}
+
+      - name: Build and push meddream-token-service Docker image
+        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        with:
+          context: sources/meddream/token-service
+          file: sources/meddream/viewer/Dockerfile.meddream-token-service
+          push: true
+          tags: ${{ steps.meta-meddream-token-service.outputs.tags }}
+          labels: ${{ steps.meta-meddream-token-service.outputs.labels }}
 
       - name: Docker Hub Description (share)
         uses: peter-evans/dockerhub-description@v3

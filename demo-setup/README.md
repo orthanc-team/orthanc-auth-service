@@ -48,3 +48,19 @@ curl -X PUT http://localhost:8001/shares -H 'Content-Type: application/json' \
        "expiration_date": null}'
 ```
 - then open the url from the response ([sample](http://localhost/anon-shares/osimis-viewer/app/index.html?study=ba19d592-4bb03a7b-65f06402-ae2b8ab1-6b33c7dc&token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6ImRlbW8tMSIsImRpY29tX3VpZCI6IjEuMi4yNzYuMC43MjMwMDEwLjMuMS4yLjIzNDQzMTM3NzUuMTQ5OTIuMTQ1ODA1ODM1OS42ODExIiwib3J0aGFuY19pZCI6ImJhMTlkNTkyLTRiYjAzYTdiLTY1ZjA2NDAyLWFlMmI4YWIxLTZiMzNjN2RjIiwidHlwZSI6Im9zaW1pcy12aWV3ZXItcHVibGljYXRpb24iLCJleHBpcmF0aW9uX2RhdGUiOm51bGx9.JyguRcZmjzU5cvuLXx44dlw3TDCKU1UNXaWPt9fzAIU)). 
+
+
+# MedDream integration
+
+[Meddream Viewer](https://www.softneta.com/products/meddream-dicom-viewer/) also provides a token service to allow publication links.
+However, these tokens are only valid for a short period of time (typically 3 minutes) that are suitable
+to open a viewer from a web interface.  
+But, this is not suitable for long shares. 
+
+
+- A script or application requests the `orthanc-share` web-service to generate such a token via the Rest API:
+```bash
+curl -X PUT http://localhost:8000/shares -H 'Content-Type: application/json' \
+  -d '{"dicom-uid": "1.2", 
+       "type": "meddream-instant-link"}'
+```

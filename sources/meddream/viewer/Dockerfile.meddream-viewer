@@ -1,0 +1,11 @@
+FROM meddream/orthanc-dicom-viewer:8.0.0
+
+# you must define these environment variables:
+# TOKEN_SERVICE_ADDRESS
+# ORTHANC_BASE_URL
+# ORTHANC_USER
+# ORTHANC_PWD
+# ORTHANC_MEDDREAM_PYTHON_PLUGIN_ENABLED
+
+COPY --chown=meddream viewer.application.properties /opt/meddream/application.properties
+COPY --chown=meddream system.json /opt/meddream/sys/settings/system.json
