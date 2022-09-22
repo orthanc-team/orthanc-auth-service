@@ -89,7 +89,7 @@ jobs:
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
         with:
           context: sources/meddream/token-service
-          file: sources/meddream/viewer/Dockerfile.meddream-token-service
+          file: sources/meddream/token-service/Dockerfile.meddream-token-service
           push: true
           tags: ${{ steps.meta-meddream-token-service.outputs.tags }}
           labels: ${{ steps.meta-meddream-token-service.outputs.labels }}
