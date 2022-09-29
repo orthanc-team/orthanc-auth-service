@@ -18,7 +18,7 @@ jobs:
 
       - name: Run python tests
         run: |
-          pip install sources/requirements.txt
+          pip install -r sources/requirements.txt
           ./sources/tests/run-tests.sh
 
       - name: Log in to Docker Hub
