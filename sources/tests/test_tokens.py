@@ -133,3 +133,44 @@ class TestTokensGenerator(unittest.TestCase):
             token=altered_token,
             dicom_uid="dicom_uid"
         ))
+
+
+    def test_hs_256_server_identifier(self):
+
+        tokens = Hs256TokensManager(
+            secret_key="toto",
+            nominal_server_identifier="nominal-id",
+            anonymized_server_identifier="anonymized-id"
+        )
+
+        # anonymized token with right id
+        token = tokens.generate_token(share_request=ShareRequest(
+            id="id",
+            orthanc_id="orthanc_id",
+            dicom_uid="dicom_uid",
+            anonymized=True,
+            type=ShareType.osimis_viewer_publication
+        ))
+
+        # valid on anonymized server
+        self.assertTrue(tokens.is_valid(token=token, orthanc_id="orthanc_id", server_identifier="anonymized-id"))
+        # invalid on nominal server
+        self.assertFalse(tokens.is_valid(token=token, orthanc_id="orthanc_id", server_identifier="nominal-id"))
+        # invalid if no server id
+        self.assertFalse(tokens.is_valid(token=token, orthanc_id="orthanc_id", server_identifier=None))
+
+        # nominal token with right id
+        token = tokens.generate_token(share_request=ShareRequest(
+            id="id",
+            orthanc_id="orthanc_id",
+            dicom_uid="dicom_uid",
+            anonymized=False,
+            type=ShareType.osimis_viewer_publication
+        ))
+
+        # invalid on anonymized server
+        self.assertFalse(tokens.is_valid(token=token, orthanc_id="orthanc_id", server_identifier="anonymized-id"))
+        # valid on nominal server
+        self.assertTrue(tokens.is_valid(token=token, orthanc_id="orthanc_id", server_identifier="nominal-id"))
+        # invalid if no server id
+        self.assertFalse(tokens.is_valid(token=token, orthanc_id="orthanc_id", server_identifier=None))

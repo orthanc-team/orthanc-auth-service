@@ -12,7 +12,7 @@ services:
 
   # first setup through configuration file and build step
   orthanc-for-admin:
-    image: osimis/orthanc:22.9.0
+    image: osimis/orthanc:22.9.2
     volumes:
       - orthanc-storage:/var/lib/orthanc/db
       - ./demo-setup/orthanc-admin.jsonc:/etc/orthanc/orthanc-admin.json
@@ -24,7 +24,7 @@ services:
 
 
   orthanc-for-shares:
-    image: osimis/orthanc:22.9.0
+    image: osimis/orthanc:22.9.2
     volumes:
       - orthanc-storage:/var/lib/orthanc/db
       - ./demo-setup/orthanc-db.jsonc:/etc/orthanc/orthanc-db.json
@@ -37,10 +37,11 @@ services:
       VERBOSE_STARTUP: "true"
       OSIMIS_WEB_VIEWER1_PLUGIN_ENABLED: "true"
 
-      ORTHANC__AUTHORIZATION__WEB_SERVICE: "http://orthanc-share:8000/shares/validate"
+      ORTHANC__AUTHORIZATION__WEB_SERVICE: "http://orthanc-token-service:8000/shares/validate"
+      ORTHANC__AUTHORIZATION__WEB_SERVICE_IDENTIFIER: "standard-server-id"
 
   orthanc-for-anon-shares:
-    image: osimis/orthanc:22.9.0
+    image: osimis/orthanc:22.9.2
     volumes:
       - orthanc-storage:/var/lib/orthanc/db
       - ./demo-setup/orthanc-db.jsonc:/etc/orthanc/orthanc-db.json
@@ -48,30 +49,37 @@ services:
     depends_on: [orthanc-db]
     restart: unless-stopped
     environment:
-      ORTHANC__NAME: "Orthanc for shares"
+      ORTHANC__NAME: "Orthanc for anon shares"
       VERBOSE_ENABLED: "true"
       VERBOSE_STARTUP: "true"
       OSIMIS_WEB_VIEWER1_PLUGIN_ENABLED: "true"
 
-      ORTHANC__AUTHORIZATION__WEB_SERVICE: "http://orthanc-anon-share:8000/shares/validate"
+      ORTHANC__AUTHORIZATION__WEB_SERVICE: "http://orthanc-token-service:8000/shares/validate"
+      ORTHANC__AUTHORIZATION__WEB_SERVICE_IDENTIFIER: "anonymized-server-id"
 
-  orthanc-share:
-    image: orthancteam/orthanc-share
+  orthanc-token-service:
+    image: orthancteam/orthanc-token-service
     # disable ports in prod or at least don't make this webservice public !
     ports: ["8000:8000"]
     restart: unless-stopped
     environment:
       SECRET_KEY: "my-secret-key"
       PUBLIC_ORTHANC_ROOT: "http://localhost/shares/"
+      PUBLIC_ANONYMIZED_ORTHANC_ROOT: "http://localhost/anon-shares/"
+      PUBLIC_LANDING_ROOT: "http://localhost/welcome/"
+      SERVER_IDENTIFIER: "standard-server-id"
+      ANONYMIZED_SERVER_IDENTIFIER: "anonymized-server-id"
 
-  orthanc-anon-share:
-    image: orthancteam/orthanc-share
-    # disable ports in prod or at least don't make this webservice public !
-    ports: ["8001:8000"]
+  orthanc-share-landing:
+    image: orthancteam/orthanc-share-landing
     restart: unless-stopped
     environment:
-      SECRET_KEY: "my-secret-key-for-anonymized-studies"
-      PUBLIC_ORTHANC_ROOT: "http://localhost/anon-shares/"
+      SECRET_KEY: "my-secret-key"
+      PUBLIC_ORTHANC_ROOT: "http://localhost/shares/"
+      PUBLIC_ANONYMIZED_ORTHANC_ROOT: "http://localhost/anon-shares/"
+      PUBLIC_LANDING_ROOT: "http://localhost/welcome/"
+      SERVER_IDENTIFIER: "standard-server-id"
+      ANONYMIZED_SERVER_IDENTIFIER: "anonymized-server-id"
 
   orthanc-anonymizer:
     image: orthancteam/orthanc-anonymizer

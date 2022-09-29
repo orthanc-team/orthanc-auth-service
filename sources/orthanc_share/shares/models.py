@@ -2,7 +2,7 @@ from fastapi import FastAPI, Request, status, Header
 from dateutil import parser
 
 from enum import Enum
-from typing import Union
+from typing import Union, Optional
 from fastapi import FastAPI
 from pydantic import BaseModel, Field
 from pydantic.datetime_parse import parse_datetime
@@ -32,13 +32,15 @@ class ShareType(str, Enum):
 
 class ShareRequest(BaseModel):
     id: str
-    dicom_uid: Union[str, None] = Field(alias="dicom-uid", default=None)
-    orthanc_id: Union[str, None] = Field(alias="orthanc-id", defulat=None)
+    dicom_uid: Optional[str] = Field(alias="dicom-uid", default=None)
+    orthanc_id: Optional[str] = Field(alias="orthanc-id", default=None)
+    anonymized: bool = False
     type: ShareType
     expiration_date: Union[StringDateTime, None] = None
 
     class Config:    # allow creating object from dict (used when deserializing the JWT)
         allow_population_by_field_name = True
+
 
 class Share(BaseModel):
     request: ShareRequest
@@ -47,8 +49,9 @@ class Share(BaseModel):
 
 
 class ShareValidationRequest(BaseModel):
-    dicom_uid: Union[str, None] = Field(alias="dicom-uid", default=None)
-    orthanc_id: Union[str, None] = Field(alias="orthanc-id", default=None)
+    dicom_uid: Optional[str] = Field(alias="dicom-uid", default=None)
+    orthanc_id: Optional[str] = Field(alias="orthanc-id", default=None)
+    identifier: Optional[str]
     level: str
     method: str
 

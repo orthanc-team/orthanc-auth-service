@@ -73,6 +73,7 @@ def remove_tag(tags: dict, key: str):
         del tags[key]
 
 def anonymize_tags(tags):
+    # note: only the MainDicomTags and ExtraMainDicomTags are used by the OsimisViewer
     anonymize_tag(tags, "PatientName")
     anonymize_tag(tags, "PatientID")
     anonymize_tag(tags, "PatientSex", "U")
@@ -85,7 +86,8 @@ def anonymize_tags(tags):
     remove_tag(tags, "AccessionNumber")
     remove_tag(tags, "InstitutionName")
     remove_tag(tags, "ReferringPhysicianName")
-    remove_tag(tags, "RequestingPhysicianName")
+    remove_tag(tags, "ConsultingPhysicianName")
+    remove_tag(tags, "RequestingPhysician")
 
     return tags
 

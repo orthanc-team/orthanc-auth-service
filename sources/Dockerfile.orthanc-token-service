@@ -9,5 +9,5 @@ RUN mkdir /orthanc_share
 COPY orthanc_share /orthanc_share
 
 WORKDIR /orthanc_share
-CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port" , "8000"]
+CMD ["uvicorn", "app_orthanc_token_service:app", "--host", "0.0.0.0", "--port" , "8000"]
 

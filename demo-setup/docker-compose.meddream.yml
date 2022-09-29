@@ -10,17 +10,20 @@ services:
       - ./demo-setup/meddream/nginx.meddream.partial.conf:/etc/nginx/sites-extensions/meddream.conf
     depends_on: [orthanc-for-admin, orthanc-for-shares, orthanc-anonymizer, meddream-viewer]
 
-  orthanc-share:
+  orthanc-token-service:
     environment:
-      ENABLE_MEDDREAM_SHARES: "true"
       MEDDREAM_TOKEN_SERVICE_URL: "http://meddream-token-service:8088/v3/generate"
       PUBLIC_MEDDREAM_ROOT: "http://localhost/meddream/"
-      PUBLIC_MEDDREAM_REDIRECT_ROOT: "http://localhost/meddream-redirect/"
+
+  orthanc-share-landing:
+    environment:
+      MEDDREAM_TOKEN_SERVICE_URL: "http://meddream-token-service:8088/v3/generate"
+      PUBLIC_MEDDREAM_ROOT: "http://localhost/meddream/"
 
   # An orthanc dedicated for the MedDream viewer.  It has no access control since it
   # is accessible only from inside the Docker network
   orthanc-for-meddream:
-    image: osimis/orthanc:22.9.0
+    image: osimis/orthanc:22.9.2
     volumes:
       - orthanc-storage:/var/lib/orthanc/db
       - ./demo-setup/orthanc-db.jsonc:/etc/orthanc/orthanc-db.json
@@ -39,13 +42,10 @@ services:
   meddream-token-service:
     image: orthancteam/meddream-token-service
     restart: unless-stopped
-    # remove port mapping for production !
-    ports: ["8088:8088"]
 
   meddream-viewer:
     image: orthancteam/meddream-viewer
     restart: unless-stopped
-    ports: ["8080:8080"]
     depends_on:
       - orthanc-for-meddream
     environment:

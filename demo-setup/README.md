@@ -17,50 +17,61 @@ This demo contains:
 - 3 Orthanc containers, one configured for `admin`, one configured for `shares` and one for anonymized `shares`
 - a Postgresql container to store the Orthanc database
 - an `orthanc-share` web service that generates publication link (listens on port 8000)
-- an `orthanc-share` web service that generates publication link for anonymized shares (listens on port 8001)
-- an `orthanc-anonymizer` web service that performs on-the-fly anonymization of Orthanc Rest API.
+- an `orthanc-anonymizer` web service that performs on-the-fly anonymization of the Orthanc Rest API that is used by the OsimisViewer.
 
 # Starting the setup
 
-To start the setup, type: `docker-compose up --build`
+To start the setup, type: `./start-demo.sh`
 
 # demo
 
-- Orthanc UI with full admin access is accessible at [http://localhost/orthanc-admin/ui/app/](http://localhost/orthanc-admin/ui/app/).  Login/pwd = `admin/admin`
+- Orthanc UI with full admin access is accessible at [http://localhost/orthanc-admin/ui/app/](http:admin//localhost/orthanc-admin/ui/app/).  Login/pwd = `admin/admin`
 - upload a study, get its orthanc-id (through the API button: `copy study orthanc id`.  e.g: `ba19d592-4bb03a7b-65f06402-ae2b8ab1-6b33c7dc`)
 - create a public share by issuing this command:
 ```bash
 curl -X PUT http://localhost:8000/shares -H 'Content-Type: application/json' \
-  -d '{"id": "demo-1", 
+  -d '{"id": "toto", 
        "dicom-uid": "1.2.276.0.7230010.3.1.2.2344313775.14992.1458058359.6811", 
-       "orthanc-id": "ba19d592-4bb03a7b-65f06402-ae2b8ab1-6b33c7dc", 
+       "orthanc-id": "ba19d592-4bb03a7b-65f06402-ae2b8ab1-6b33c7dc",
+       "anonymized": false, 
        "type": "osimis-viewer-publication", 
-       "expiration_date": null}'
+       "expiration_date": "2022-12-31T11:00:00Z"}'
 ```
-- then open the url from the response ([sample](http://localhost/shares/osimis-viewer/app/index.html?study=ba19d592-4bb03a7b-65f06402-ae2b8ab1-6b33c7dc&token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6ImRlbW8tMSIsImRpY29tX3VpZCI6IjEuMi4yNzYuMC43MjMwMDEwLjMuMS4yLjIzNDQzMTM3NzUuMTQ5OTIuMTQ1ODA1ODM1OS42ODExIiwib3J0aGFuY19pZCI6ImJhMTlkNTkyLTRiYjAzYTdiLTY1ZjA2NDAyLWFlMmI4YWIxLTZiMzNjN2RjIiwidHlwZSI6Im9zaW1pcy12aWV3ZXItcHVibGljYXRpb24iLCJleHBpcmF0aW9uX2RhdGUiOm51bGx9.JyguRcZmjzU5cvuLXx44dlw3TDCKU1UNXaWPt9fzAIU)). 
+- then open the url from the response ([sample](http://localhost/welcome/?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6InRvdG8iLCJkaWNvbV91aWQiOiIxLjIuMjc2LjAuNzIzMDAxMC4zLjEuMi4yMzQ0MzEzNzc1LjE0OTkyLjE0NTgwNTgzNTkuNjgxMSIsIm9ydGhhbmNfaWQiOiJiYTE5ZDU5Mi00YmIwM2E3Yi02NWYwNjQwMi1hZTJiOGFiMS02YjMzYzdkYyIsImFub255bWl6ZWQiOmZhbHNlLCJ0eXBlIjoib3NpbWlzLXZpZXdlci1wdWJsaWNhdGlvbiIsImV4cGlyYXRpb25fZGF0ZSI6IjIwMjItMTItMzFUMTE6MDA6MDArMDA6MDAifQ.0uO1pUXm9ih81yCDKpaLqoIiuLJqdF66PIggmLI3Hoo)).
+- the `orthanc-share-landing` service will then check that your token can be decoded and has not expired and then forward you to the viewer
 - create an anonymized public share by issuing this command:
 ```bash
-curl -X PUT http://localhost:8001/shares -H 'Content-Type: application/json' \
+curl -X PUT http://localhost:8000/shares -H 'Content-Type: application/json' \
   -d '{"id": "demo-1", 
        "dicom-uid": "1.2.276.0.7230010.3.1.2.2344313775.14992.1458058359.6811", 
        "orthanc-id": "ba19d592-4bb03a7b-65f06402-ae2b8ab1-6b33c7dc", 
+       "anonymized": true, 
        "type": "osimis-viewer-publication", 
        "expiration_date": null}'
 ```
-- then open the url from the response ([sample](http://localhost/anon-shares/osimis-viewer/app/index.html?study=ba19d592-4bb03a7b-65f06402-ae2b8ab1-6b33c7dc&token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6ImRlbW8tMSIsImRpY29tX3VpZCI6IjEuMi4yNzYuMC43MjMwMDEwLjMuMS4yLjIzNDQzMTM3NzUuMTQ5OTIuMTQ1ODA1ODM1OS42ODExIiwib3J0aGFuY19pZCI6ImJhMTlkNTkyLTRiYjAzYTdiLTY1ZjA2NDAyLWFlMmI4YWIxLTZiMzNjN2RjIiwidHlwZSI6Im9zaW1pcy12aWV3ZXItcHVibGljYXRpb24iLCJleHBpcmF0aW9uX2RhdGUiOm51bGx9.JyguRcZmjzU5cvuLXx44dlw3TDCKU1UNXaWPt9fzAIU)). 
+- then open the url from the response ([sample](http://localhost/welcome/?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6ImRlbW8tMSIsImRpY29tX3VpZCI6IjEuMi4yNzYuMC43MjMwMDEwLjMuMS4yLjIzNDQzMTM3NzUuMTQ5OTIuMTQ1ODA1ODM1OS42ODExIiwib3J0aGFuY19pZCI6ImJhMTlkNTkyLTRiYjAzYTdiLTY1ZjA2NDAyLWFlMmI4YWIxLTZiMzNjN2RjIiwiYW5vbnltaXplZCI6dHJ1ZSwidHlwZSI6Im9zaW1pcy12aWV3ZXItcHVibGljYXRpb24iLCJleHBpcmF0aW9uX2RhdGUiOm51bGx9.agqiD0EeD_DR4yboXIwsAN80ZjAZlgoey4-QxUkfAqU)). 
+- the `orthanc-share-landing` service will then check that your token can be decoded and has not expired and then forward you to the viewer
 
 
 # MedDream integration
 
-[Meddream Viewer](https://www.softneta.com/products/meddream-dicom-viewer/) also provides a token service to allow publication links.
-However, these tokens are only valid for a short period of time (typically 3 minutes) that are suitable
-to open a viewer from a web interface.  
-But, this is not suitable for long shares. 
+To start the setup, type: `./start-demo-with-meddream.sh`
 
-
-- A script or application requests the `orthanc-share` web-service to generate such a token via the Rest API:
+- A script or application requests the `orthanc-token-service` web-service to generate a `meddream-instant-link` token via the Rest API:
 ```bash
 curl -X PUT http://localhost:8000/shares -H 'Content-Type: application/json' \
-  -d '{"dicom-uid": "1.2", 
+  -d '{"id": "demo-1",
+       "dicom-uid": "1.2.276.0.7230010.3.1.2.2344313775.14992.1458058359.6811", 
        "type": "meddream-instant-link"}'
 ```
+- then open the url from the response ([sample](http://localhost/meddream/?token=B0VKYtVmPoa2Ye8IRLoc9GZ4SHf-02_DmHEFvlsvOm1TYmALSq9S56FiDG7_2t-XZJZXF_b-BVfDwlxWHLPfgaRxHULrkuuSaSHn1jx_c4Q7YLnQxbQ=)).
+
+- A script or application may also requests the `orthanc-token-service` web-service to generate a `meddream-viewer-publication` token via the Rest API:
+```bash
+curl -X PUT http://localhost:8000/shares -H 'Content-Type: application/json' \
+  -d '{"id": "demo-1",
+       "dicom-uid": "1.2.276.0.7230010.3.1.2.2344313775.14992.1458058359.6811", 
+       "type": "meddream-viewer-publication"}'
+```
+- then open the url from the response ([sample](http://localhost/welcome/?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6ImRlbW8tMSIsImRpY29tX3VpZCI6IjEuMi4yNzYuMC43MjMwMDEwLjMuMS4yLjIzNDQzMTM3NzUuMTQ5OTIuMTQ1ODA1ODM1OS42ODExIiwib3J0aGFuY19pZCI6bnVsbCwiYW5vbnltaXplZCI6ZmFsc2UsInR5cGUiOiJtZWRkcmVhbS12aWV3ZXItcHVibGljYXRpb24iLCJleHBpcmF0aW9uX2RhdGUiOm51bGx9.lW9gOWIABY-jigewbuxbELvRMbjffu2pS_MXCVKM3ts)).
+- This will generate a temporary `meddream-instant-link` and will redirect you to the MedDream viewer.
