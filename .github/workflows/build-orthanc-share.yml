@@ -27,22 +27,31 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Extract metadata (tags, labels) for Docker (share)
-        id: meta-share
+      - name: Extract metadata (tags, labels) for Docker (orthanc-token-service)
+        id: meta-orthanc-token-service
         uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
         with:
-          images: orthancteam/orthanc-share
+          images: orthancteam/orthanc-token-service
           labels: |
-            org.opencontainers.image.title=orthanc-share
+            org.opencontainers.image.title=orthanc-token-service
             org.opencontainers.image.vendor=Orthanc Team SRL
 
-      - name: Extract metadata (tags, labels) for Docker (anonymizer)
-        id: meta-anonymizer
+      - name: Extract metadata (tags, labels) for Docker (orthanc-anonymizer)
+        id: meta-orthanc-anonymizer
         uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
         with:
           images: orthancteam/orthanc-anonymizer
           labels: |
             org.opencontainers.image.title=orthanc-anonymizer
+            org.opencontainers.image.vendor=Orthanc Team SRL
+
+      - name: Extract metadata (tags, labels) for Docker (orthanc-share-landing)
+        id: meta-orthanc-share-landing
+        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+        with:
+          images: orthancteam/orthanc-share-landing
+          labels: |
+            org.opencontainers.image.title=orthanc-share-landing
             org.opencontainers.image.vendor=Orthanc Team SRL
 
       - name: Extract metadata (tags, labels) for Docker (meddream-viewer)
@@ -63,14 +72,14 @@ jobs:
             org.opencontainers.image.title=meddream-token-service
             org.opencontainers.image.vendor=Orthanc Team SRL
 
-      - name: Build and push orthanc-share Docker image
+      - name: Build and push orthanc-token-service Docker image
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
         with:
           context: sources/
-          file: sources/Dockerfile.orthanc-share
+          file: sources/Dockerfile.orthanc-token-service
           push: true
-          tags: ${{ steps.meta-share.outputs.tags }}
-          labels: ${{ steps.meta-share.outputs.labels }}
+          tags: ${{ steps.meta-orthanc-token-service.outputs.tags }}
+          labels: ${{ steps.meta-orthanc-token-service.outputs.labels }}
 
       - name: Build and push orthanc-anonymizer Docker image
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
@@ -78,8 +87,17 @@ jobs:
           context: sources/
           file: sources/Dockerfile.orthanc-anonymizer
           push: true
-          tags: ${{ steps.meta-anonymizer.outputs.tags }}
-          labels: ${{ steps.meta-anonymizer.outputs.labels }}
+          tags: ${{ steps.meta-orthanc-anonymizer.outputs.tags }}
+          labels: ${{ steps.meta-orthanc-anonymizer.outputs.labels }}
+
+      - name: Build and push orthanc-share-landing Docker image
+        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        with:
+          context: sources/
+          file: sources/Dockerfile.orthanc-share-landing
+          push: true
+          tags: ${{ steps.meta-orthanc-share-landing.outputs.tags }}
+          labels: ${{ steps.meta-orthanc-share-landing.outputs.labels }}
 
       - name: Build and push meddream-viewer Docker image
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
