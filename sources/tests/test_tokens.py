@@ -15,7 +15,7 @@ here = pathlib.Path(__file__).parent.resolve()
 
 class TestTokensGenerator(unittest.TestCase):
 
-    def test_hs_256_nominal_no_expiration_date(self):
+    def test_hs_256_standard_no_expiration_date(self):
         # create a token
         share_request = ShareRequest(
             id="id",
@@ -28,7 +28,7 @@ class TestTokensGenerator(unittest.TestCase):
 
         self._test_tokens(token, tokens)
 
-    def test_hs_256_nominal_with_expiration_date(self):
+    def test_hs_256_standard_with_expiration_date(self):
         # create a token
         share_request = ShareRequest(
             id="id",
@@ -42,7 +42,7 @@ class TestTokensGenerator(unittest.TestCase):
 
         self._test_tokens(token, tokens)
 
-    def test_hs_256_nominal_with_expired_expiration_date(self):
+    def test_hs_256_standard_with_expired_expiration_date(self):
         # create a token
         share_request = ShareRequest(
             id="id",
@@ -139,7 +139,7 @@ class TestTokensGenerator(unittest.TestCase):
 
         tokens = Hs256TokensManager(
             secret_key="toto",
-            nominal_server_identifier="nominal-id",
+            standard_server_identifier="nominal-id",
             anonymized_server_identifier="anonymized-id"
         )
 
