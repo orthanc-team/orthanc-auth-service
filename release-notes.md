@@ -1,5 +1,13 @@
-v 22.8.0
+v 22.9.0
 ========
 
-- first version of `orthanc-share` allowing creation of publication link for the OsimisViewer only
-- first version of `orthanc-anonymizer` anonymizing the OsimisViewer only
+- Full refactoring of the code
+- introduced server-identifier (auth plugin v 0.3.0)
+- allow MedDream shares + anonymized shares
+- now generating 5 Docker images
+  - `orthancteam:orthanc-token-service`
+  - `orthancteam:orthanc-share-landing`
+  - `orthancteam:orthanc-anonymizer`
+  - `orthancteam:meddream-viewer`
+  - `orthancteam:meddream-token-service`
+
