@@ -117,20 +117,29 @@ jobs:
           tags: ${{ steps.meta-meddream-token-service.outputs.tags }}
           labels: ${{ steps.meta-meddream-token-service.outputs.labels }}
 
-      - name: Docker Hub Description (share)
+      - name: Docker Hub Description (orthanc-token-service)
         uses: peter-evans/dockerhub-description@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-          repository: orthancteam/orthanc-share
+          repository: orthancteam/orthanc-token-service
           short-description: Web service to run next to orthanc to handle sharing of studies
-          readme-filepath: sources/README-dockerhub-share.md
+          readme-filepath: sources/README-dockerhub-orthanc-token-service.md
 
-      - name: Docker Hub Description (anonymizer)
+      - name: Docker Hub Description (orthanc-anonymizer)
         uses: peter-evans/dockerhub-description@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           repository: orthancteam/orthanc-anonymizer
           short-description: Web service to run in front of Orthanc to anonymize API on-the-fly
-          readme-filepath: sources/README-dockerhub-anonymizer.md
+          readme-filepath: sources/README-dockerhub-orthanc-anonymizer.md
+
+      - name: Docker Hub Description (orthanc-share-landing)
+        uses: peter-evans/dockerhub-description@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          repository: orthancteam/orthanc-share-landing
+          short-description: Web service to run next to orthanc to handle sharing of studies
+          readme-filepath: sources/README-dockerhub-orthanc-share-landing.md

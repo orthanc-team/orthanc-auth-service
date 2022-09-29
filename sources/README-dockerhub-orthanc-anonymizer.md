@@ -1,6 +1,6 @@
 # Orthanc-anonymizer
 
-Web service to run in front of an orthanc to anonymize some of the routes on-the-fly.  
+Web service to run in front of Orthanc to anonymize some of the routes on-the-fly.  
 Right now, it only anonymizes routes used by the OsimisViewer in the scope of anonymized publication links.
 
 
