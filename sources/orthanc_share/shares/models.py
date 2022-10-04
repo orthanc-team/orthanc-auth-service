@@ -31,7 +31,7 @@ class ShareType(str, Enum):
 
 
 class ShareRequest(BaseModel):
-    id: str
+    id: Optional[str] = None
     dicom_uid: Optional[str] = Field(alias="dicom-uid", default=None)
     orthanc_id: Optional[str] = Field(alias="orthanc-id", default=None)
     anonymized: bool = False
