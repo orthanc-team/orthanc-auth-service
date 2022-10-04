@@ -27,10 +27,10 @@ To start the setup, type: `./start-demo.sh`
 
 - Orthanc UI with full admin access is accessible at [http://localhost/orthanc-admin/ui/app/](http://localhost/orthanc-admin/ui/app/).  Login/pwd = `admin/admin`
 - upload a study, get its orthanc-id (through the API button: `copy study orthanc id`.  e.g: `ba19d592-4bb03a7b-65f06402-ae2b8ab1-6b33c7dc`), get its UID (through the clipboard icon)
-- create a public share by issuing this command:
+- create a public share by issuing this command (`id` is optional and is dedicated to the client app):
 ```bash
 curl -X PUT http://localhost:8000/shares -H 'Content-Type: application/json' \
-  -d '{"id": "toto", 
+  -d '{"id": "id_for_client_app", 
        "dicom-uid": "1.2.276.0.7230010.3.1.2.2344313775.14992.1458058359.6811", 
        "orthanc-id": "ba19d592-4bb03a7b-65f06402-ae2b8ab1-6b33c7dc",
        "anonymized": false, 

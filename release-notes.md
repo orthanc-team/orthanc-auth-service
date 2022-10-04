@@ -1,3 +1,9 @@
+v 22.10.0
+========
+
+- Made `id` parameter optional for share request
+
+
 v 22.9.0
 ========
 
