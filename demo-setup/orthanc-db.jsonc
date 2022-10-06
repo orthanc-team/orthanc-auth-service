@@ -1,6 +1,6 @@
 {
     "PostgreSQL" : {
-        "EnableStorage": true,
+        "EnableIndex": true,
         "Host": "orthanc-db",
         "IndexConnectionsCount": 10
     }
