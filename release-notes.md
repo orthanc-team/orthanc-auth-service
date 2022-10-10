@@ -1,11 +1,13 @@
+v 22.10.2
+========
+
+- Added `USERS` env var for `orthanc-tokenc-service` to list the allowed users login/pwd
+- Added the `orthanc-nginx` Docker image.
+
 v 22.10.1
 ========
 
 - Made `id` parameter optional for share request
-
-v 22.10.0
-========
-NA
 
 v 22.9.0
 ========
