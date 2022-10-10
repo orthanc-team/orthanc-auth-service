@@ -39,6 +39,8 @@ services:
 
       ORTHANC__AUTHORIZATION__WEB_SERVICE: "http://orthanc-token-service:8000/shares/validate"
       ORTHANC__AUTHORIZATION__WEB_SERVICE_IDENTIFIER: "standard-server-id"
+      ORTHANC__AUTHORIZATION__WEB_SERVICE_USERNAME: "share-user"
+      ORTHANC__AUTHORIZATION__WEB_SERVICE_PASSWORD: "share-password"
 
   orthanc-for-anon-shares:
     image: osimis/orthanc:22.9.2
@@ -56,6 +58,8 @@ services:
 
       ORTHANC__AUTHORIZATION__WEB_SERVICE: "http://orthanc-token-service:8000/shares/validate"
       ORTHANC__AUTHORIZATION__WEB_SERVICE_IDENTIFIER: "anonymized-server-id"
+      ORTHANC__AUTHORIZATION__WEB_SERVICE_USERNAME: "share-user"
+      ORTHANC__AUTHORIZATION__WEB_SERVICE_PASSWORD: "share-password"
 
   orthanc-token-service:
     image: orthancteam/orthanc-token-service
@@ -69,6 +73,13 @@ services:
       PUBLIC_LANDING_ROOT: "http://localhost/welcome/"
       SERVER_IDENTIFIER: "standard-server-id"
       ANONYMIZED_SERVER_IDENTIFIER: "anonymized-server-id"
+      USERS: |
+        {
+          "share-user": "share-password",
+          "demo-script-user": "demo-script-password",
+          "orthanc-oe2-user": "orthanc-oe2-password"
+        }
+      
 
   orthanc-share-landing:
     image: orthancteam/orthanc-share-landing

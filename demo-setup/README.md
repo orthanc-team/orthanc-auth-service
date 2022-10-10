@@ -29,7 +29,7 @@ To start the setup, type: `./start-demo.sh`
 - upload a study, get its orthanc-id (through the API button: `copy study orthanc id`.  e.g: `ba19d592-4bb03a7b-65f06402-ae2b8ab1-6b33c7dc`), get its UID (through the clipboard icon)
 - create a public share by issuing this command (`id` is optional and is dedicated to the client app):
 ```bash
-curl -X PUT http://localhost:8000/shares -H 'Content-Type: application/json' \
+curl -X PUT http://demo-script-user:demo-script-password@localhost:8000/shares -H 'Content-Type: application/json' \
   -d '{"id": "id_for_client_app", 
        "dicom-uid": "1.2.276.0.7230010.3.1.2.2344313775.14992.1458058359.6811", 
        "orthanc-id": "ba19d592-4bb03a7b-65f06402-ae2b8ab1-6b33c7dc",
@@ -41,7 +41,7 @@ curl -X PUT http://localhost:8000/shares -H 'Content-Type: application/json' \
 - the `orthanc-share-landing` service will then check that your token can be decoded and has not expired and then forward you to the viewer
 - create an anonymized public share by issuing this command:
 ```bash
-curl -X PUT http://localhost:8000/shares -H 'Content-Type: application/json' \
+curl -X PUT http://demo-script-user:demo-script-password@localhost:8000/shares -H 'Content-Type: application/json' \
   -d '{"id": "demo-1", 
        "dicom-uid": "1.2.276.0.7230010.3.1.2.2344313775.14992.1458058359.6811", 
        "orthanc-id": "ba19d592-4bb03a7b-65f06402-ae2b8ab1-6b33c7dc", 
@@ -59,7 +59,7 @@ To start the setup, type: `./start-demo-with-meddream.sh`
 
 - A script or application requests the `orthanc-token-service` web-service to generate a `meddream-instant-link` token via the Rest API:
 ```bash
-curl -X PUT http://localhost:8000/shares -H 'Content-Type: application/json' \
+curl -X PUT http://demo-script-user:demo-script-password@localhost:8000/shares -H 'Content-Type: application/json' \
   -d '{"id": "demo-1",
        "dicom-uid": "1.2.276.0.7230010.3.1.2.2344313775.14992.1458058359.6811", 
        "type": "meddream-instant-link"}'
@@ -68,7 +68,7 @@ curl -X PUT http://localhost:8000/shares -H 'Content-Type: application/json' \
 
 - A script or application may also requests the `orthanc-token-service` web-service to generate a `meddream-viewer-publication` token via the Rest API:
 ```bash
-curl -X PUT http://localhost:8000/shares -H 'Content-Type: application/json' \
+curl -X PUT http://demo-script-user:demo-script-password@localhost:8000/shares -H 'Content-Type: application/json' \
   -d '{"id": "demo-1",
        "dicom-uid": "1.2.276.0.7230010.3.1.2.2344313775.14992.1458058359.6811", 
        "type": "meddream-viewer-publication"}'

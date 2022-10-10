@@ -12,14 +12,22 @@ This repo also includes a reverse proxy that can perform on-the-fly anonymizatio
 ## how it works ?
 
 - `orthanc-token-service` is a web service that generates `token` to grant access to a particular study in Orthanc.
-- You must configure the `orthanc-token-service` web-service by providing these environment variables (or Docker secrets)
-  - `SECRET_KEY` is a high entropy text that will be used to encode and decode the JWT
-  - To enable orthanc standard shares (without anonymization):
-    - `PUBLIC_ORTHANC_ROOT` is the root url of the public Orthanc
-    - `SERVER_IDENTIFIER` is the identifier defined in the Authorization plugin configuration of the standard Orthanc (not required if not allowing anonymized shares)
-  - To enable orthanc anonymized shares, you should define these additionnal environment variables:
-    - `PUBLIC_ANONYMIZED_ORTHANC_ROOT` is the root url of the public anonymized Orthanc
-    - `ANONYMIZED_SERVER_IDENTIFIER` is the identifier defined in the Authorization plugin configuration of the anonymized Orthanc 
+  - You must configure the `orthanc-token-service` web-service by providing these environment variables (or Docker secrets)
+    - `SECRET_KEY` is a high entropy text that will be used to encode and decode the JWT
+    - To enable orthanc standard shares (without anonymization):
+      - `PUBLIC_ORTHANC_ROOT` is the root url of the public Orthanc
+      - `SERVER_IDENTIFIER` is the identifier defined in the Authorization plugin configuration of the standard Orthanc (not required if not allowing anonymized shares)
+    - To enable orthanc anonymized shares, you should define these additionnal environment variables:
+      - `PUBLIC_ANONYMIZED_ORTHANC_ROOT` is the root url of the public anonymized Orthanc
+      - `ANONYMIZED_SERVER_IDENTIFIER` is the identifier defined in the Authorization plugin configuration of the anonymized Orthanc
+    - `USERS` is an optional environment variable that should contain a json array of allowed usernames/passwords to access the service.
+      ```json
+      {
+        "user1": "pwd1",
+        "user2": "pwd2"
+      }
+      ```
+      If not defined, the token-service is available without authentication.  If you expose the web-service publicly, you should always configure authentication.
 - If you want to display a message to the user when the token has expired or is invalid, you should also define 
   `PUBLIC_LANDING_ROOT` pointing to the `orthanc-share-landing` web service that must be configured with the same
   environment variables as the `orthanc-token-service`.
