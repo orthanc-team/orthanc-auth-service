@@ -1,0 +1,15 @@
+FROM nginx:1.23
+
+RUN mkdir /etc/nginx/enabled-reverse-proxies
+RUN mkdir /scripts
+
+ADD nginx/reverse-proxy.* /etc/nginx/disabled-reverse-proxies/
+COPY nginx/orthanc-nginx.conf /etc/nginx/conf.d/default.conf
+
+COPY nginx/docker-entrypoint.sh /scripts/
+
+RUN ls -al /etc/nginx/disabled-reverse-proxies/
+
+ENTRYPOINT ["./scripts/docker-entrypoint.sh"]
+CMD ["nginx", "-g", "daemon off;"]
+

@@ -6,9 +6,9 @@ version: "3"
 services:
 
   nginx:
-    volumes:
-      - ./demo-setup/meddream/nginx.meddream.partial.conf:/etc/nginx/sites-extensions/meddream.conf
-    depends_on: [orthanc-for-admin, orthanc-for-shares, orthanc-anonymizer, meddream-viewer]
+    depends_on: [orthanc-for-admin, orthanc-for-shares, orthanc-anonymizer, orthanc-token-service, meddream-viewer]
+    environment:
+      ENABLE_MEDDREAM: "true"
 
   orthanc-token-service:
     environment:
