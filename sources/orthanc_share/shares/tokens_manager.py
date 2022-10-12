@@ -62,11 +62,13 @@ class TokensManager:
             granted = share_request.dicom_uid == dicom_uid
             if not granted:
                 logging.warning(f"Token Validation: invalid dicom_uid, from request: {dicom_uid}, from token: {share_request.dicom_uid}")
+                return False
 
-        if not granted and orthanc_id and share_request.orthanc_id:
+        if orthanc_id and share_request.orthanc_id:
             granted = share_request.orthanc_id == orthanc_id
             if not granted:
                 logging.warning(f"Token Validation: invalid orthanc_id, from request: {orthanc_id}, from token: {share_request.orthanc_id}")
+                return False
 
         # check the server identifier
         if share_request.anonymized and self.anonymized_server_identifier_:
