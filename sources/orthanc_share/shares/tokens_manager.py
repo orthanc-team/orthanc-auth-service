@@ -54,21 +54,19 @@ class TokensManager:
             logging.warning(f"Token Validation: failed to decode token")
             return False
 
-        granted = True
+        granted = False
 
         # check the ids.  The share_request might have been generated with 2 ids
-        # but when we check, we'll probably only have a single ID
-        if dicom_uid:
-            id_is_valid = share_request.dicom_uid == dicom_uid
-            if not id_is_valid:
-                logging.warning(f"Token Validation: invalid dicom_uid")
-            granted = granted and id_is_valid
+        # but when we check, we'll probably only have a single ID (the orthanc_id for Orthanc Rest API and the dicom_uid for DicomWeb)
+        if dicom_uid and share_request.dicom_uid:
+            granted = share_request.dicom_uid == dicom_uid
+            if not granted:
+                logging.warning(f"Token Validation: invalid dicom_uid, from request: {dicom_uid}, from token: {share_request.dicom_uid}")
 
-        if orthanc_id:
-            id_is_valid = share_request.orthanc_id == orthanc_id
-            if not id_is_valid:
-                logging.warning(f"Token Validation: invalid orthanc_id")
-            granted = granted and id_is_valid
+        if not granted and orthanc_id and share_request.orthanc_id:
+            granted = share_request.orthanc_id == orthanc_id
+            if not granted:
+                logging.warning(f"Token Validation: invalid orthanc_id, from request: {orthanc_id}, from token: {share_request.orthanc_id}")
 
         # check the server identifier
         if share_request.anonymized and self.anonymized_server_identifier_:

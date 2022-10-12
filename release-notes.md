@@ -1,3 +1,9 @@
+v 22.10.3
+========
+
+- Fixed token verification if one of the id is `null`
+- improvied logging in case of id mismatch
+
 v 22.10.2
 ========
 
