@@ -38,7 +38,7 @@ curl -X PUT http://localhost:8000/shares -H 'Content-Type: application/json' \
        "orthanc-id": "ba19d592-4bb03a7b-65f06402-ae2b8ab1-6b33c7dc",
        "anonymized": true, 
        "type": "osimis-viewer-publication", 
-       "expiration_date": "2022-12-31T11:00:00Z"}'
+       "expiration-date": "2022-12-31T11:00:00Z"}'
 ```
 - the `orthanc-token-service` replies with a share with the token and a link to the viewer:
 ```json
@@ -47,7 +47,7 @@ curl -X PUT http://localhost:8000/shares -H 'Content-Type: application/json' \
       "id":"toto",
       "orthanc-id":"0195f13e-4afe6822-8b494cc4-5162c50d-0daf66aa",
       "type":"osimis-viewer-publication",
-      "expiration_date":"2022-07-07T11:00:00+00:00"
+      "expiration-date":"2022-07-07T11:00:00+00:00"
     },
     "token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6InRvdG8iLCJkaWNvbV91aWQiOiIxLjIiLCJvcnRoYW5jX2lkIjoiMDE5NWYxM2UtNGFmZTY4MjItOGI0OTRjYzQtNTE2MmM1MGQtMGRhZjY2YWEiLCJ0eXBlIjoib3NpbWlzLXZpZXdlci1wdWJsaWNhdGlvbiIsImV4cGlyYXRpb25fZGF0ZSI6IjIwMjItMDctMDdUMTE6MDA6MDArMDA6MDAifQ.8mzvYXCrjhM8OWPhu5HQJbEtCO9y6XyFqV-Ak1n-9Tw",
     "url":"http://localhost/welcom/?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6InRvdG8iLCJkaWNvbV91aWQiOiIxLjIiLCJvcnRoYW5jX2lkIjoiMDE5NWYxM2UtNGFmZTY4MjItOGI0OTRjYzQtNTE2MmM1MGQtMGRhZjY2YWEiLCJ0eXBlIjoib3NpbWlzLXZpZXdlci1wdWJsaWNhdGlvbiIsImV4cGlyYXRpb25fZGF0ZSI6IjIwMjItMDctMDdUMTE6MDA6MDArMDA6MDAifQ.8mzvYXCrjhM8OWPhu5HQJbEtCO9y6XyFqV-Ak1n-9Tw"
@@ -88,9 +88,9 @@ curl -X PUT http://localhost:8000/shares -H 'Content-Type: application/json' \
   -d '{"id": "toto", 
        "dicom-uid": "1.2", 
        "type": "meddream-viewer-publication", 
-       "expiration_date": "2022-07-07T11:00:00Z"}'
+       "expiration-date": "2022-07-07T11:00:00Z"}'
 ```
-  Allowed values for `type` are `meddream-instant-link` and `meddream-viewer-publication`.  The `expiration_date` is 
+  Allowed values for `type` are `meddream-instant-link` and `meddream-viewer-publication`.  The `expiration-date` is 
   never used for `meddream-instant-link` since the validity is actually configured in the MedDream Token Service.
 - if generating a `meddream-instant-link`, `orthanc-token-service` replies with a share with the token and a link to the 
   MedDream viewer that shall be opened directly after (within a few minutes):
@@ -101,7 +101,7 @@ curl -X PUT http://localhost:8000/shares -H 'Content-Type: application/json' \
       "dicom-uid":"1.2",
       "orthanc-id":null,
       "type":"meddream-instant-link",
-      "expiration_date":null
+      "expiration-date":null
     },
     "token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6InRvdG8iLCJkaWNvbV91aWQiOiIxLjIiLCJvcnRoYW5jX2lkIjoiMDE5NWYxM2UtNGFmZTY4MjItOGI0OTRjYzQtNTE2MmM1MGQtMGRhZjY2YWEiLCJ0eXBlIjoib3NpbWlzLXZpZXdlci1wdWJsaWNhdGlvbiIsImV4cGlyYXRpb25fZGF0ZSI6IjIwMjItMDctMDdUMTE6MDA6MDArMDA6MDAifQ.8mzvYXCrjhM8OWPhu5HQJbEtCO9y6XyFqV-Ak1n-9Tw",
     "url":"http://localhost/meddream/?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6InRvdG8iLCJkaWNvbV91aWQiOiIxLjIiLCJvcnRoYW5jX2lkIjoiMDE5NWYxM2UtNGFmZTY4MjItOGI0OTRjYzQtNTE2MmM1MGQtMGRhZjY2YWEiLCJ0eXBlIjoib3NpbWlzLXZpZXdlci1wdWJsaWNhdGlvbiIsImV4cGlyYXRpb25fZGF0ZSI6IjIwMjItMDctMDdUMTE6MDA6MDArMDA6MDAifQ.8mzvYXCrjhM8OWPhu5HQJbEtCO9y6XyFqV-Ak1n-9Tw"
@@ -115,7 +115,7 @@ curl -X PUT http://localhost:8000/shares -H 'Content-Type: application/json' \
       "dicom-uid":"1.2",
       "orthanc-id":null,
       "type":"meddream-viewer-publication",
-      "expiration_date":"2022-07-07T11:00:00Z"
+      "expiration-date":"2022-07-07T11:00:00Z"
     },
     "token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6InRvdG8iLCJkaWNvbV91aWQiOiIxLjIiLCJvcnRoYW5jX2lkIjoiMDE5NWYxM2UtNGFmZTY4MjItOGI0OTRjYzQtNTE2MmM1MGQtMGRhZjY2YWEiLCJ0eXBlIjoib3NpbWlzLXZpZXdlci1wdWJsaWNhdGlvbiIsImV4cGlyYXRpb25fZGF0ZSI6IjIwMjItMDctMDdUMTE6MDA6MDArMDA6MDAifQ.8mzvYXCrjhM8OWPhu5HQJbEtCO9y6XyFqV-Ak1n-9Tw",
     "url":"http://localhost/welcom/?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6InRvdG8iLCJkaWNvbV91aWQiOiIxLjIiLCJvcnRoYW5jX2lkIjoiMDE5NWYxM2UtNGFmZTY4MjItOGI0OTRjYzQtNTE2MmM1MGQtMGRhZjY2YWEiLCJ0eXBlIjoib3NpbWlzLXZpZXdlci1wdWJsaWNhdGlvbiIsImV4cGlyYXRpb25fZGF0ZSI6IjIwMjItMDctMDdUMTE6MDA6MDArMDA6MDAifQ.8mzvYXCrjhM8OWPhu5HQJbEtCO9y6XyFqV-Ak1n-9Tw"

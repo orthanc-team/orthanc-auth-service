@@ -1,3 +1,9 @@
+v 22.10.4
+========
+
+- BREAKING-CHANGE: in Rest API: renamed `expiration_date` into `expiration-date`
+
+
 v 22.10.3
 ========
 

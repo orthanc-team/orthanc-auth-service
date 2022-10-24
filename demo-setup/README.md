@@ -35,7 +35,7 @@ curl -X PUT http://demo-script-user:demo-script-password@localhost:8000/shares -
        "orthanc-id": "ba19d592-4bb03a7b-65f06402-ae2b8ab1-6b33c7dc",
        "anonymized": false, 
        "type": "osimis-viewer-publication", 
-       "expiration_date": "2022-12-31T11:00:00Z"}'
+       "expiration-date": "2022-12-31T11:00:00Z"}'
 ```
 - then open the url from the response ([sample](http://localhost/welcome/?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6InRvdG8iLCJkaWNvbV91aWQiOiIxLjIuMjc2LjAuNzIzMDAxMC4zLjEuMi4yMzQ0MzEzNzc1LjE0OTkyLjE0NTgwNTgzNTkuNjgxMSIsIm9ydGhhbmNfaWQiOiJiYTE5ZDU5Mi00YmIwM2E3Yi02NWYwNjQwMi1hZTJiOGFiMS02YjMzYzdkYyIsImFub255bWl6ZWQiOmZhbHNlLCJ0eXBlIjoib3NpbWlzLXZpZXdlci1wdWJsaWNhdGlvbiIsImV4cGlyYXRpb25fZGF0ZSI6IjIwMjItMTItMzFUMTE6MDA6MDArMDA6MDAifQ.0uO1pUXm9ih81yCDKpaLqoIiuLJqdF66PIggmLI3Hoo)).
 - the `orthanc-share-landing` service will then check that your token can be decoded and has not expired and then forward you to the viewer
@@ -47,7 +47,7 @@ curl -X PUT http://demo-script-user:demo-script-password@localhost:8000/shares -
        "orthanc-id": "ba19d592-4bb03a7b-65f06402-ae2b8ab1-6b33c7dc", 
        "anonymized": true, 
        "type": "osimis-viewer-publication", 
-       "expiration_date": null}'
+       "expiration-date": null}'
 ```
 - then open the url from the response ([sample](http://localhost/welcome/?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6ImRlbW8tMSIsImRpY29tX3VpZCI6IjEuMi4yNzYuMC43MjMwMDEwLjMuMS4yLjIzNDQzMTM3NzUuMTQ5OTIuMTQ1ODA1ODM1OS42ODExIiwib3J0aGFuY19pZCI6ImJhMTlkNTkyLTRiYjAzYTdiLTY1ZjA2NDAyLWFlMmI4YWIxLTZiMzNjN2RjIiwiYW5vbnltaXplZCI6dHJ1ZSwidHlwZSI6Im9zaW1pcy12aWV3ZXItcHVibGljYXRpb24iLCJleHBpcmF0aW9uX2RhdGUiOm51bGx9.agqiD0EeD_DR4yboXIwsAN80ZjAZlgoey4-QxUkfAqU)). 
 - the `orthanc-share-landing` service will then check that your token can be decoded and has not expired and then forward you to the viewer

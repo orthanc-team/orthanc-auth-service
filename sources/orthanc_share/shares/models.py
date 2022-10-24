@@ -36,7 +36,7 @@ class ShareRequest(BaseModel):
     orthanc_id: Optional[str] = Field(alias="orthanc-id", default=None)
     anonymized: bool = False
     type: ShareType
-    expiration_date: Union[StringDateTime, None] = None
+    expiration_date: Optional[StringDateTime] = Field(alias="expiration-date", default=None)
 
     class Config:    # allow creating object from dict (used when deserializing the JWT)
         allow_population_by_field_name = True
