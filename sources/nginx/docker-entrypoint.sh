@@ -3,6 +3,7 @@
 set -o errexit
 
 enableOrthancForAdmin="${ENABLE_ORTHANC_FOR_ADMIN:-false}"
+enableOrthancForIngest="${ENABLE_ORTHANC_FOR_INGEST:-false}"
 enableOrthancForShares="${ENABLE_ORTHANC_FOR_SHARES:-false}"
 enableOrthancForAnonShares="${ENABLE_ORTHANC_FOR_ANON_SHARES:-false}"
 enableOrthancTokenService="${ENABLE_ORTHANC_TOKEN_SERVICE:-false}"
@@ -13,6 +14,11 @@ ls -al /etc/nginx/disabled-reverse-proxies/
 if [[ $enableOrthancForAdmin == "true" ]]; then
   echo "ENABLE_ORTHANC_FOR_ADMIN is true -> enable /orthanc-admin/ reverse proxy"
   cp -f /etc/nginx/disabled-reverse-proxies/reverse-proxy.orthanc-admin.conf /etc/nginx/enabled-reverse-proxies/
+fi
+
+if [[ enableOrthancForIngest == "true" ]]; then
+  echo "ENABLE_ORTHANC_FOR_INGEST is true -> enable /orthanc-ingest/ reverse proxy"
+  cp -f /etc/nginx/disabled-reverse-proxies/reverse-proxy.orthanc-ingest.conf /etc/nginx/enabled-reverse-proxies/
 fi
 
 if [[ $enableOrthancForShares == "true" ]]; then
