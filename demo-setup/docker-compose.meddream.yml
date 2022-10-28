@@ -10,6 +10,11 @@ services:
     environment:
       ENABLE_MEDDREAM: "true"
 
+  orthanc-for-admin:
+    environment:
+      ORTHANC__ORTHANC_EXPLORER_2__SHARES__ENABLE_MED_DREAM_INSTANT_LINKS: "true"
+      ORTHANC__ORTHANC_EXPLORER_2__UI_OPTIONS__ENABLE_OPEN_IN_MED_DREAM_VIEWER: "true"
+
   orthanc-token-service:
     environment:
       MEDDREAM_TOKEN_SERVICE_URL: "http://meddream-token-service:8088/v3/generate"

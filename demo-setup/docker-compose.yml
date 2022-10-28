@@ -15,7 +15,7 @@ services:
 
   # first setup through configuration file and build step
   orthanc-for-admin:
-    image: osimis/orthanc:22.9.2
+    image: osimis/orthanc:master-unstable
     volumes:
       - orthanc-storage:/var/lib/orthanc/db
       - ./demo-setup/orthanc-admin.jsonc:/etc/orthanc/orthanc-admin.json

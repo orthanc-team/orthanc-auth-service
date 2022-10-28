@@ -25,7 +25,16 @@ To start the setup, type: `./start-demo.sh`
 
 # demo
 
+## Using the UI
+
 - Orthanc UI with full admin access is accessible at [http://localhost/orthanc-admin/ui/app/](http://localhost/orthanc-admin/ui/app/).  Login/pwd = `admin/admin`
+- follow the instructions in this video to share a study
+
+![Sharing a study in OE2](doc/Share-study.gif)
+
+
+## Using the API
+
 - upload a study, get its orthanc-id (through the API button: `copy study orthanc id`.  e.g: `ba19d592-4bb03a7b-65f06402-ae2b8ab1-6b33c7dc`), get its UID (through the clipboard icon)
 - create a public share by issuing this command (`id` is optional and is dedicated to the client app):
 ```bash

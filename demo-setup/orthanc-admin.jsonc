@@ -1,15 +1,31 @@
 {
-  "Name": "Orthanc for Admin",
+    "Name": "Orthanc for Admin",
 
-  "OrthancExplorer2": {
-    "IsDefaultUI": true,
-    "UiOptions": {
-      "EnableApiViewMenu": true
-    }
-  },
+    "OrthancExplorer2": {
+        "IsDefaultUI": true,
+        "UiOptions": {
+            "EnableApiViewMenu": true,
 
-  "RegisteredUsers": {
+            "EnableShares": true,
+            "DefaultShareDuration": 0,
+            "ShareDurations": [0, 7, 15, 30, 90, 365],
+            "AnonymizeSharesByDefault": false
+        },
+        "Shares" : {
+            "TokenService" : {
+                "Url": "http://orthanc-token-service:8000/shares",
+                "Username": "orthanc-oe2-user",
+                "Password": "orthanc-oe2-password"
+            },
+            "Type": "osimis-viewer-publication",
+            "EnableMedDreamInstantLinks": false,
+            "EnableAnonymizedShares": true,
+            "EnableStandardShares": true
+        }
+    },
+
+    "RegisteredUsers": {
     "admin": "admin"
-  }
+    }
 
 }
