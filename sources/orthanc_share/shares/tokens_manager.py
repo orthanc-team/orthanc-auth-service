@@ -57,17 +57,21 @@ class TokensManager:
         granted = False
 
         # check the ids.  The share_request might have been generated with 2 ids
+        share_request_has_dicom_uids = all([s.dicom_uid is not None for s in share_request.studies])
+        share_request_has_orthanc_ids = all([s.orthanc_id is not None for s in share_request.studies])
         # but when we check, we'll probably only have a single ID (the orthanc_id for Orthanc Rest API and the dicom_uid for DicomWeb)
-        if dicom_uid and share_request.dicom_uid:
-            granted = share_request.dicom_uid == dicom_uid
+        if dicom_uid and share_request_has_dicom_uids:
+            granted = any([s.dicom_uid == dicom_uid for s in share_request.studies])
             if not granted:
-                logging.warning(f"Token Validation: invalid dicom_uid, from request: {dicom_uid}, from token: {share_request.dicom_uid}")
+                all_dicom_uids = ", ".join([s.dicom_uid for s in share_request.studies])
+                logging.warning(f"Token Validation: invalid dicom_uid, from request: {dicom_uid}, from token: {all_dicom_uids}")
                 return False
 
-        if orthanc_id and share_request.orthanc_id:
-            granted = share_request.orthanc_id == orthanc_id
+        if orthanc_id and share_request_has_orthanc_ids:
+            granted = any([s.orthanc_id == orthanc_id for s in share_request.studies])
             if not granted:
-                logging.warning(f"Token Validation: invalid orthanc_id, from request: {orthanc_id}, from token: {share_request.orthanc_id}")
+                all_orthanc_ids = ", ".join([s.orthanc_id for s in share_request.studies])
+                logging.warning(f"Token Validation: invalid orthanc_id, from request: {orthanc_id}, from token: {all_orthanc_ids}")
                 return False
 
         # check the server identifier

@@ -1,6 +1,6 @@
 import datetime
 
-from orthanc_share import Hs256TokensManager, TokensManager, ShareRequest, ShareType, ShareValidationRequest
+from orthanc_share import Hs256TokensManager, TokensManager, ShareRequest, ShareType, ShareValidationRequest, SharedStudy
 
 import unittest
 import subprocess
@@ -19,8 +19,9 @@ class TestTokensGenerator(unittest.TestCase):
         # create a token
         share_request = ShareRequest(
             id="id",
-            orthanc_id="orthanc_id",
-            dicom_uid="dicom_uid",
+            studies = [SharedStudy(
+                orthanc_id="orthanc_id",
+                dicom_uid="dicom_uid")],
             type=ShareType.osimis_viewer_publication
         )
         tokens = Hs256TokensManager(secret_key="toto")
@@ -32,8 +33,9 @@ class TestTokensGenerator(unittest.TestCase):
         # create a token
         share_request = ShareRequest(
             id="id",
-            orthanc_id="orthanc_id",
-            dicom_uid="dicom_uid",
+            studies = [SharedStudy(
+                orthanc_id="orthanc_id",
+                dicom_uid="dicom_uid")],
             type=ShareType.osimis_viewer_publication,
             expiration_date=pytz.UTC.localize(datetime.datetime(2100, 12, 31, 0, 0, 0))
         )
@@ -46,8 +48,9 @@ class TestTokensGenerator(unittest.TestCase):
         # create a token
         share_request = ShareRequest(
             id="id",
-            orthanc_id="orthanc_id",
-            dicom_uid="dicom_uid",
+            studies = [SharedStudy(
+                orthanc_id="orthanc_id",
+                dicom_uid="dicom_uid")],
             type=ShareType.osimis_viewer_publication,
             expiration_date=pytz.UTC.localize(datetime.datetime(2000, 12, 31, 0, 0, 0))
         )
@@ -146,8 +149,9 @@ class TestTokensGenerator(unittest.TestCase):
         # anonymized token with right id
         token = tokens.generate_token(share_request=ShareRequest(
             id="id",
-            orthanc_id="orthanc_id",
-            dicom_uid="dicom_uid",
+            studies=[SharedStudy(
+                orthanc_id="orthanc_id",
+                dicom_uid="dicom_uid")],
             anonymized=True,
             type=ShareType.osimis_viewer_publication
         ))
@@ -162,8 +166,9 @@ class TestTokensGenerator(unittest.TestCase):
         # nominal token with right id
         token = tokens.generate_token(share_request=ShareRequest(
             id="id",
-            orthanc_id="orthanc_id",
-            dicom_uid="dicom_uid",
+            studies=[SharedStudy(
+                orthanc_id="orthanc_id",
+                dicom_uid="dicom_uid")],
             anonymized=False,
             type=ShareType.osimis_viewer_publication
         ))

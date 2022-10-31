@@ -39,9 +39,11 @@ To start the setup, type: `./start-demo.sh`
 - create a public share by issuing this command (`id` is optional and is dedicated to the client app):
 ```bash
 curl -X PUT http://demo-script-user:demo-script-password@localhost:8000/shares -H 'Content-Type: application/json' \
-  -d '{"id": "id_for_client_app", 
-       "dicom-uid": "1.2.276.0.7230010.3.1.2.2344313775.14992.1458058359.6811", 
-       "orthanc-id": "ba19d592-4bb03a7b-65f06402-ae2b8ab1-6b33c7dc",
+  -d '{"id": "id_for_client_app",
+       "studies" : [{
+         "dicom-uid": "1.2.276.0.7230010.3.1.2.2344313775.14992.1458058359.6811", 
+         "orthanc-id": "ba19d592-4bb03a7b-65f06402-ae2b8ab1-6b33c7dc"
+       }],
        "anonymized": false, 
        "type": "osimis-viewer-publication", 
        "expiration-date": "2022-12-31T11:00:00Z"}'
@@ -52,8 +54,10 @@ curl -X PUT http://demo-script-user:demo-script-password@localhost:8000/shares -
 ```bash
 curl -X PUT http://demo-script-user:demo-script-password@localhost:8000/shares -H 'Content-Type: application/json' \
   -d '{"id": "demo-1", 
-       "dicom-uid": "1.2.276.0.7230010.3.1.2.2344313775.14992.1458058359.6811", 
-       "orthanc-id": "ba19d592-4bb03a7b-65f06402-ae2b8ab1-6b33c7dc", 
+       "studies" : [{
+         "dicom-uid": "1.2.276.0.7230010.3.1.2.2344313775.14992.1458058359.6811", 
+         "orthanc-id": "ba19d592-4bb03a7b-65f06402-ae2b8ab1-6b33c7dc"
+       }],
        "anonymized": true, 
        "type": "osimis-viewer-publication", 
        "expiration-date": null}'
@@ -70,7 +74,9 @@ To start the setup, type: `./start-demo-with-meddream.sh`
 ```bash
 curl -X PUT http://demo-script-user:demo-script-password@localhost:8000/shares -H 'Content-Type: application/json' \
   -d '{"id": "demo-1",
-       "dicom-uid": "1.2.276.0.7230010.3.1.2.2344313775.14992.1458058359.6811", 
+       "studies" : [{
+         "dicom-uid": "1.2.276.0.7230010.3.1.2.2344313775.14992.1458058359.6811"
+       }],
        "type": "meddream-instant-link"}'
 ```
 - then open the url from the response ([sample](http://localhost/meddream/?token=B0VKYtVmPoa2Ye8IRLoc9GZ4SHf-02_DmHEFvlsvOm1TYmALSq9S56FiDG7_2t-XZJZXF_b-BVfDwlxWHLPfgaRxHULrkuuSaSHn1jx_c4Q7YLnQxbQ=)).
@@ -79,7 +85,12 @@ curl -X PUT http://demo-script-user:demo-script-password@localhost:8000/shares -
 ```bash
 curl -X PUT http://demo-script-user:demo-script-password@localhost:8000/shares -H 'Content-Type: application/json' \
   -d '{"id": "demo-1",
-       "dicom-uid": "1.2.276.0.7230010.3.1.2.2344313775.14992.1458058359.6811", 
+       "studies" : [{
+         "dicom-uid": "1.2.276.0.7230010.3.1.2.2344313775.14992.1458058359.6811"
+       },
+       {
+         "dicom-uid": "1.2.276.0.7230010.3.1.2.1215942821.4756.1664826045.3529"
+       }],
        "type": "meddream-viewer-publication"}'
 ```
 - then open the url from the response ([sample](http://localhost/welcome/?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6ImRlbW8tMSIsImRpY29tX3VpZCI6IjEuMi4yNzYuMC43MjMwMDEwLjMuMS4yLjIzNDQzMTM3NzUuMTQ5OTIuMTQ1ODA1ODM1OS42ODExIiwib3J0aGFuY19pZCI6bnVsbCwiYW5vbnltaXplZCI6ZmFsc2UsInR5cGUiOiJtZWRkcmVhbS12aWV3ZXItcHVibGljYXRpb24iLCJleHBpcmF0aW9uX2RhdGUiOm51bGx9.lW9gOWIABY-jigewbuxbELvRMbjffu2pS_MXCVKM3ts)).

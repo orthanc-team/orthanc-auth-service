@@ -51,8 +51,11 @@ class OrthancTokenService:
 
     def _generate_url(self, share_request: ShareRequest, token: str, skip_landing_page: bool = False):
 
+        share_request_has_dicom_uids = all([s.dicom_uid is not None for s in share_request.studies])
+        share_request_has_orthanc_ids = all([s.orthanc_id is not None for s in share_request.studies])
+
         if share_request.type == ShareType.osimis_viewer_publication:
-            if share_request.orthanc_id is None:
+            if not share_request_has_orthanc_ids:
                 logging.error("No orthanc_id provided while generating a link to the Osimis WebViewer")
                 return None
 
@@ -66,7 +69,7 @@ class OrthancTokenService:
                 return urllib.parse.urljoin(self.public_orthanc_root_, f"/welcome/?token={token}")
 
         elif share_request.type == ShareType.meddream_instant_link:
-            if share_request.dicom_uid is None:
+            if not share_request_has_dicom_uids:
                 logging.error("No dicom_uid provided while generating a link to the MedDream Viewer")
                 return None
 
@@ -115,19 +118,24 @@ class OrthancTokenService:
 
         elif share_request.type == ShareType.meddream_instant_link:
             # for the instant link, we get the token directly from the meddream token service
+            items = []
+            for study in share_request.studies:
+                items.append({
+                        "studies" : {
+                            "study": study.dicom_uid,
+                            "storage": "Orthanc"
+                        }
+                    })
+
             token = httpx.post(self.meddream_token_service_url_, json={
-                "items": [{
-                    "studies": {
-                        "study": share_request.dicom_uid,
-                        "storage": "Orthanc"
-                    }
-                }]
+                "items": items
             }).text
 
         elif share_request.type == ShareType.meddream_viewer_publication:
             # we do not generate a meddream token now, this will be handled by the meddread-share-redirect service at the time we try to access the link
+            share_request_has_dicom_uids = all([s.dicom_uid is not None for s in share_request.studies])
 
-            if share_request.dicom_uid is None:
+            if not share_request_has_dicom_uids:
                 raise SharesException("No dicom_uid provided while generating a link to the MedDream Viewer")
 
             token = self.tokens_manager_.generate_token(share_request=share_request)

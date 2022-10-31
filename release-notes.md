@@ -1,3 +1,8 @@
+v 22.10.6
+========
+
+- BREAKING-CHANGE: `orthanc-token-service` API: `study` field has been renamed into `studies` and is now a list of `SharedStudy`.
+
 v 22.10.5
 ========
 

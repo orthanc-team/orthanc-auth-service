@@ -34,8 +34,10 @@ This repo also includes a reverse proxy that can perform on-the-fly anonymizatio
 - A script or application requests the `orthanc-token-service` to generate such a token via the Rest API:
 ```bash
 curl -X PUT http://localhost:8000/shares -H 'Content-Type: application/json' \
-  -d '{"id": "toto", 
-       "orthanc-id": "ba19d592-4bb03a7b-65f06402-ae2b8ab1-6b33c7dc",
+  -d '{"id": "toto",
+       "studies" : [{
+         "orthanc-id": "ba19d592-4bb03a7b-65f06402-ae2b8ab1-6b33c7dc"
+       }],
        "anonymized": true, 
        "type": "osimis-viewer-publication", 
        "expiration-date": "2022-12-31T11:00:00Z"}'
@@ -45,7 +47,10 @@ curl -X PUT http://localhost:8000/shares -H 'Content-Type: application/json' \
   {
     "request":{
       "id":"toto",
-      "orthanc-id":"0195f13e-4afe6822-8b494cc4-5162c50d-0daf66aa",
+      "studies" : [
+        {
+          "orthanc-id": "0195f13e-4afe6822-8b494cc4-5162c50d-0daf66aa"
+        }],  
       "type":"osimis-viewer-publication",
       "expiration-date":"2022-07-07T11:00:00+00:00"
     },
@@ -85,8 +90,10 @@ curl -X POST http://localhost:8000/shares/validate -H 'token: eyJ0eXAiOiJKV1QiLC
 - A script or application requests the `orthanc-token-service` to generate such a token via the Rest API:
 ```bash
 curl -X PUT http://localhost:8000/shares -H 'Content-Type: application/json' \
-  -d '{"id": "toto", 
-       "dicom-uid": "1.2", 
+  -d '{"id": "toto",
+       "studies" : [{
+         "dicom-uid": "1.2"
+       }],
        "type": "meddream-viewer-publication", 
        "expiration-date": "2022-07-07T11:00:00Z"}'
 ```
@@ -98,8 +105,11 @@ curl -X PUT http://localhost:8000/shares -H 'Content-Type: application/json' \
   {
     "request":{
       "id":"toto",
-      "dicom-uid":"1.2",
-      "orthanc-id":null,
+      "studies" : [
+        {
+          "dicom-uid": "1.2",
+          "orthanc-id": null
+        }],  
       "type":"meddream-instant-link",
       "expiration-date":null
     },
@@ -112,8 +122,11 @@ curl -X PUT http://localhost:8000/shares -H 'Content-Type: application/json' \
   {
     "request":{
       "id":"toto",
-      "dicom-uid":"1.2",
-      "orthanc-id":null,
+      "studies" : [
+        {
+          "dicom-uid": "1.2",
+          "orthanc-id": null
+        }],  
       "type":"meddream-viewer-publication",
       "expiration-date":"2022-07-07T11:00:00Z"
     },

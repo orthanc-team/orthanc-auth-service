@@ -2,7 +2,7 @@ from fastapi import FastAPI, Request, status, Header
 from dateutil import parser
 
 from enum import Enum
-from typing import Union, Optional
+from typing import Union, Optional, List
 from fastapi import FastAPI
 from pydantic import BaseModel, Field
 from pydantic.datetime_parse import parse_datetime
@@ -30,10 +30,17 @@ class ShareType(str, Enum):
     meddream_viewer_publication = 'meddream-viewer-publication'       # a link to open the MedDream viewer valid for a long period
 
 
-class ShareRequest(BaseModel):
-    id: Optional[str] = None
+class SharedStudy(BaseModel):
     dicom_uid: Optional[str] = Field(alias="dicom-uid", default=None)
     orthanc_id: Optional[str] = Field(alias="orthanc-id", default=None)
+
+    class Config:    # allow creating object from dict (used when deserializing the JWT)
+        allow_population_by_field_name = True
+
+
+class ShareRequest(BaseModel):
+    id: Optional[str] = None
+    studies: List[SharedStudy]
     anonymized: bool = False
     type: ShareType
     expiration_date: Optional[StringDateTime] = Field(alias="expiration-date", default=None)
