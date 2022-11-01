@@ -16,7 +16,7 @@ if [[ $enableOrthancForAdmin == "true" ]]; then
   cp -f /etc/nginx/disabled-reverse-proxies/reverse-proxy.orthanc-admin.conf /etc/nginx/enabled-reverse-proxies/
 fi
 
-if [[ enableOrthancForIngest == "true" ]]; then
+if [[ $enableOrthancForIngest == "true" ]]; then
   echo "ENABLE_ORTHANC_FOR_INGEST is true -> enable /orthanc-ingest/ reverse proxy"
   cp -f /etc/nginx/disabled-reverse-proxies/reverse-proxy.orthanc-ingest.conf /etc/nginx/enabled-reverse-proxies/
 fi
