@@ -1,3 +1,13 @@
+v 22.11.0
+========
+
+- fix sharing studies with Osimis viewer (take into account multiple studies API) 
+
+v 22.10.7
+========
+
+- fix `orthanc-ingest`
+
 v 22.10.6
 ========
 

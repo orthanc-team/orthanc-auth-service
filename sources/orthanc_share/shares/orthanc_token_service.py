@@ -64,7 +64,9 @@ class OrthancTokenService:
                     public_root = self.public_anonymized_orthanc_root_
                 else:
                     public_root = self.public_orthanc_root_
-                return urllib.parse.urljoin(public_root, f"osimis-viewer/app/index.html?study={share_request.orthanc_id}&token={token}")
+
+                sharedStudyIds = ",".join([s.orthanc_id for s in share_request.studies])
+                return urllib.parse.urljoin(public_root, f"osimis-viewer/app/index.html?pickableStudyIds={sharedStudyIds}&selectedStudyIds={sharedStudyIds}&token={token}")
             else:
                 return urllib.parse.urljoin(self.public_orthanc_root_, f"/welcome/?token={token}")
 
