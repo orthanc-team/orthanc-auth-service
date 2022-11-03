@@ -39,7 +39,7 @@ curl -X PUT http://localhost:8000/shares -H 'Content-Type: application/json' \
          "orthanc-id": "ba19d592-4bb03a7b-65f06402-ae2b8ab1-6b33c7dc"
        }],
        "anonymized": true, 
-       "type": "osimis-viewer-publication", 
+       "type": "stone-viewer-publication", 
        "expiration-date": "2022-12-31T11:00:00Z"}'
 ```
 - the `orthanc-token-service` replies with a share with the token and a link to the viewer:
@@ -51,7 +51,7 @@ curl -X PUT http://localhost:8000/shares -H 'Content-Type: application/json' \
         {
           "orthanc-id": "0195f13e-4afe6822-8b494cc4-5162c50d-0daf66aa"
         }],  
-      "type":"osimis-viewer-publication",
+      "type":"stone-viewer-publication",
       "expiration-date":"2022-07-07T11:00:00+00:00"
     },
     "token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6InRvdG8iLCJkaWNvbV91aWQiOiIxLjIiLCJvcnRoYW5jX2lkIjoiMDE5NWYxM2UtNGFmZTY4MjItOGI0OTRjYzQtNTE2MmM1MGQtMGRhZjY2YWEiLCJ0eXBlIjoib3NpbWlzLXZpZXdlci1wdWJsaWNhdGlvbiIsImV4cGlyYXRpb25fZGF0ZSI6IjIwMjItMDctMDdUMTE6MDA6MDArMDA6MDAifQ.8mzvYXCrjhM8OWPhu5HQJbEtCO9y6XyFqV-Ak1n-9Tw",
@@ -59,7 +59,7 @@ curl -X PUT http://localhost:8000/shares -H 'Content-Type: application/json' \
   }
 ```
 - once the users clicks on this link, the `orthanc-share-landing` will check the token validity and redirect the browser
-  to the Osimis Viewer
+  to the Stone Viewer
 - once the Viewer tries to access the study, the authorization plugin will issue a request to `orthanc-token-service` to validate the token.
   Since `orthanc-token-service` is the only one to know the secret key, it is able to validate the token to grant access to this particular study.
 
@@ -142,7 +142,7 @@ curl -X PUT http://localhost:8000/shares -H 'Content-Type: application/json' \
 This repo builds a few images that can be reused directly and published on Dockerhub.
 
 - `orthanc-token-service` is the webservice generating and validating tokens.
-- `orthanc-share-landing` is the webservice providing error messages to the user and/or redirecting to MedDream or the OsimisViewer.
+- `orthanc-share-landing` is the webservice providing error messages to the user and/or redirecting to MedDream, the StoneViewer or the OsimisViewer.
 - `orthanc-anonymizer` is a reverse-proxy that performs on-the-fly anonymization of the Orthanc Rest API routes that are used by the Osimis Viewer.
 - `meddream-viewer` is a pre-configured version of the [meddream:orthanc-dicom-viewer](https://hub.docker.com/r/meddream/orthanc-dicom-viewer) image
 - `meddream-token-service` is a pre-configured version of the [meddream:token-service](https://hub.docker.com/r/meddream/token-service) image

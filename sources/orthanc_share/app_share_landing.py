@@ -15,7 +15,7 @@ def html_response(msg: str) -> HTMLResponse:
     html_content = f"<html><body><h1>{msg}</h1></body></html>"
     return HTMLResponse(content=html_content, status_code=200)
 
-# route used as a landing page to check tokens and possibly redirect meddream-viewer-publication to meddream-instant-links on the fly
+# route used as a landing page to check tokens, display a nice error message and redirect to the final viewer
 @app.get("/share-landing/")
 def landing_page(token: str = None):
 

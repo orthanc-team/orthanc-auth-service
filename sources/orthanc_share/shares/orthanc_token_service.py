@@ -68,7 +68,20 @@ class OrthancTokenService:
                 sharedStudyIds = ",".join([s.orthanc_id for s in share_request.studies])
                 return urllib.parse.urljoin(public_root, f"osimis-viewer/app/index.html?pickableStudyIds={sharedStudyIds}&selectedStudyIds={sharedStudyIds}&token={token}")
             else:
-                return urllib.parse.urljoin(self.public_orthanc_root_, f"/welcome/?token={token}")
+                return urllib.parse.urljoin(self.public_landing_root_, f"?token={token}")
+
+        elif share_request.type == ShareType.stone_viewer_publication:
+            if not share_request_has_dicom_uids:
+                logging.error("No dicom_uid provided while generating a link to the StoneViewer")
+                return None
+
+            if skip_landing_page or self.public_landing_root_ is None:
+                public_root = self.public_orthanc_root_
+
+                sharedStudyIds = ",".join([s.dicom_uid for s in share_request.studies])
+                return urllib.parse.urljoin(public_root, f"stone-webviewer/index.html?study={sharedStudyIds}&selectedStudies={sharedStudyIds}&token={token}")
+            else:
+                return urllib.parse.urljoin(self.public_landing_root_, f"?token={token}")
 
         elif share_request.type == ShareType.meddream_instant_link:
             if not share_request_has_dicom_uids:
@@ -88,6 +101,12 @@ class OrthancTokenService:
                 raise SharesException("Anonymized 'osimis-viewer-publication' are disabled")
             elif not is_anonymized and self.public_orthanc_root_ is None:
                 raise SharesException("Standard 'osimis-viewer-publication' are disabled")
+
+        elif type == ShareType.stone_viewer_publication:
+            if is_anonymized:
+                raise SharesException("Anonymized shares are not available with StoneViewer")
+            elif not is_anonymized and self.public_orthanc_root_ is None:
+                raise SharesException("Standard 'stone-viewer-publication' are disabled")
 
         elif is_anonymized and type in [ShareType.meddream_instant_link, ShareType.meddream_viewer_publication]:
             raise SharesException("Anonymized shares are not available with MedDream")
@@ -115,7 +134,7 @@ class OrthancTokenService:
 
         self.check_share_is_allowed(type=share_request.type, is_anonymized=share_request.anonymized)
 
-        if share_request.type == ShareType.osimis_viewer_publication:
+        if share_request.type in [ShareType.osimis_viewer_publication, ShareType.stone_viewer_publication]:
             token = self.tokens_manager_.generate_token(share_request=share_request)
 
         elif share_request.type == ShareType.meddream_instant_link:
@@ -165,7 +184,7 @@ class OrthancTokenService:
         # extract the initial share request from the token
         share_request = self.tokens_manager_.get_share_request_from_token(token=token)
 
-        if share_request.type == ShareType.osimis_viewer_publication:
+        if share_request.type in [ShareType.osimis_viewer_publication, ShareType.stone_viewer_publication]:
 
             # check it is valid (this actually only checks the expiration date since we get the ids from the request itself !)
             if not self.is_expired(share_request):

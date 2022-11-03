@@ -25,9 +25,10 @@ class StringDateTime(datetime):
 
 
 class ShareType(str, Enum):
-    osimis_viewer_publication = 'osimis-viewer-publication'    # a link to open the Osimis viewer valid for a long period
-    meddream_instant_link = 'meddream-instant-link'     # a direct link to MedDream viewer that is valid only a few minutes for immediate publication
-    meddream_viewer_publication = 'meddream-viewer-publication'       # a link to open the MedDream viewer valid for a long period
+    osimis_viewer_publication = 'osimis-viewer-publication'         # a link to open the Osimis viewer valid for a long period
+    meddream_instant_link = 'meddream-instant-link'                 # a direct link to MedDream viewer that is valid only a few minutes for immediate publication
+    meddream_viewer_publication = 'meddream-viewer-publication'     # a link to open the MedDream viewer valid for a long period
+    stone_viewer_publication = 'stone-viewer-publication'           # a link to open the Stone viewer valid for a long period
 
 
 class SharedStudy(BaseModel):

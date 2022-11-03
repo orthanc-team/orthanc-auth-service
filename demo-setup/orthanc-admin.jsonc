@@ -17,7 +17,7 @@
                 "Username": "orthanc-oe2-user",
                 "Password": "orthanc-oe2-password"
             },
-            "Type": "osimis-viewer-publication",
+            "Type": "stone-viewer-publication",
             "EnableMedDreamInstantLinks": false,
             "EnableAnonymizedShares": true,
             "EnableStandardShares": true

@@ -13,7 +13,8 @@
         "UncheckedFolders": [
             // no check for Webviewer static resources
             "/osimis-viewer/app/",
-            "/osimis-viewer/languages/"
+            "/osimis-viewer/languages/",
+            "/stone-webviewer/"
         ],
         "UncheckedLevels" : [  // check at study level
             "patients",

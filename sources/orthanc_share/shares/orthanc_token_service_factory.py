@@ -13,7 +13,7 @@ def create_token_service_from_secrets():
     public_landing_root = None
 
     if is_secret_defined("PUBLIC_ORTHANC_ROOT"):
-        logging.warning("PUBLIC_ORTHANC_ROOT is defined, configuring generator for standard 'osimis-viewer-publication' shares")
+        logging.warning("PUBLIC_ORTHANC_ROOT is defined, configuring generator for standard 'osimis-viewer-publication' and 'stone-viewer-publication' shares")
         public_orthanc_root = get_secret_or_die("PUBLIC_ORTHANC_ROOT")
         server_identifier = None
 
@@ -33,7 +33,7 @@ def create_token_service_from_secrets():
             public_landing_root=public_landing_root
         )
     else:
-        logging.warning("PUBLIC_ORTHANC_ROOT is not defined, the generator will not allow 'osimis-viewer-publication' shares")
+        logging.warning("PUBLIC_ORTHANC_ROOT is not defined, the generator will not allow 'osimis-viewer-publication' or 'stone-viewer-publication' shares")
 
     if is_secret_defined("PUBLIC_ANONYMIZED_ORTHANC_ROOT"):
         logging.warning("PUBLIC_ANONYMIZED_ORTHANC_ROOT is defined, configuring generator for anonymized 'osimis-viewer-publication' shares")

@@ -1,3 +1,5 @@
+- added support for `stone-viewer-publication` but not yet functional, need an updated orthanc-authorization plugin
+
 v 22.11.0
 ========
 

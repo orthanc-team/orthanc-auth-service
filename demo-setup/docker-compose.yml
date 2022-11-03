@@ -23,7 +23,10 @@ services:
     depends_on: [orthanc-db]
     restart: unless-stopped
     environment:
+      ORTHANC__ORTHANC_EXPLORER_2__SHARES__TYPE: "osimis-viewer-publication"
       OSIMIS_WEB_VIEWER1_PLUGIN_ENABLED: "true"
+      STONE_WEB_VIEWER_PLUGIN_ENABLED: "true"
+      DICOM_WEB_PLUGIN_ENABLED: "true"
 
 
   orthanc-for-shares:
@@ -39,6 +42,8 @@ services:
       VERBOSE_ENABLED: "true"
       VERBOSE_STARTUP: "true"
       OSIMIS_WEB_VIEWER1_PLUGIN_ENABLED: "true"
+      STONE_WEB_VIEWER_PLUGIN_ENABLED: "true"
+      DICOM_WEB_PLUGIN_ENABLED: "true"
 
       ORTHANC__AUTHORIZATION__WEB_SERVICE: "http://orthanc-token-service:8000/shares/validate"
       ORTHANC__AUTHORIZATION__WEB_SERVICE_IDENTIFIER: "standard-server-id"
