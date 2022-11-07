@@ -1,4 +1,5 @@
 - added support for `stone-viewer-publication` but not yet functional, need an updated orthanc-authorization plugin
+- added new `ENABLE_HTTPS` env var in `orthanc-nginx` docker image.
 
 v 22.11.0
 ========
@@ -18,7 +19,7 @@ v 22.10.6
 v 22.10.5
 ========
 
-- new ENABLE_ORTHANC_FOR_INGEST env var in `orthanc-nginx` docker image.
+- new `ENABLE_ORTHANC_FOR_INGEST` env var in `orthanc-nginx` docker image.
 
 v 22.10.4
 ========

@@ -4,7 +4,8 @@ RUN mkdir /etc/nginx/enabled-reverse-proxies
 RUN mkdir /scripts
 
 ADD nginx/reverse-proxy.* /etc/nginx/disabled-reverse-proxies/
-COPY nginx/orthanc-nginx.conf /etc/nginx/conf.d/default.conf
+
+ADD nginx/orthanc-nginx-*.conf /etc/nginx/disabled-conf/
 
 COPY nginx/docker-entrypoint.sh /scripts/
 

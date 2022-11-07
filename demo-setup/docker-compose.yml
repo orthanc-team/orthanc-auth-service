@@ -6,6 +6,11 @@ services:
     depends_on: [orthanc-for-admin, orthanc-for-shares, orthanc-anonymizer, orthanc-token-service]
     restart: unless-stopped
     ports: ["80:80"]
+# if setting ENABLE_HTTPS: "true" env var, uncomment the following 4 lines and comment the line with 'ports: ["80:80"]'
+#    ports: ["443:443"]
+#    volumes:
+#      - /.../crt.pem:/etc/nginx/tls/crt.pem
+#      - /.../key.pem:/etc/nginx/tls/key.pem
     environment:
       ENABLE_ORTHANC_FOR_ADMIN: "true"
       ENABLE_ORTHANC_FOR_SHARES: "true"

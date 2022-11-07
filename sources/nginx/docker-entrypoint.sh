@@ -7,7 +7,18 @@ enableOrthancForIngest="${ENABLE_ORTHANC_FOR_INGEST:-false}"
 enableOrthancForShares="${ENABLE_ORTHANC_FOR_SHARES:-false}"
 enableOrthancForAnonShares="${ENABLE_ORTHANC_FOR_ANON_SHARES:-false}"
 enableOrthancTokenService="${ENABLE_ORTHANC_TOKEN_SERVICE:-false}"
+enableHttps="${ENABLE_HTTPS:-false}"
 enableMedDream="${ENABLE_MEDDREAM:-false}"
+
+ls -al /etc/nginx/disabled-conf/
+
+if [[ $enableHttps == "true" ]]; then
+  echo "ENABLE_HTTPS is true -> will listen on port 443 and read certificate from /etc/nginx/tls/crt.pem and private key from /etc/nginx/tls/key.pem"
+  cp -f /etc/nginx/disabled-conf/orthanc-nginx-https.conf /etc/nginx/conf.d/default.conf
+else
+  echo "ENABLE_HTTPS is false or not set -> will listen on port 80"
+  cp -f /etc/nginx/disabled-conf/orthanc-nginx-http.conf /etc/nginx/conf.d/default.conf
+fi
 
 ls -al /etc/nginx/disabled-reverse-proxies/
 
