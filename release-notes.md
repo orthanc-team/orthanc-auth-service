@@ -1,3 +1,11 @@
+v 22.11.2
+========
+
+- `orthanc-share-landing`: added 4 env var to customize error messages + ability to provide your own html files for error messages.
+
+v 22.11.1
+========
+
 - added support for `stone-viewer-publication` but not yet functional, need an updated orthanc-authorization plugin
 - added new `ENABLE_HTTPS` env var in `orthanc-nginx` docker image.
 

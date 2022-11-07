@@ -92,6 +92,8 @@ services:
           "demo-script-user": "demo-script-password",
           "orthanc-oe2-user": "orthanc-oe2-password"
         }
+      TITLE_EXPIRED_TOKEN: "We are sorry to let you know that your token has expired.<br/>Please request a new token by sending us a mail."
+      TITLE_INVALID_TOKEN: "We are sorry to let you know that your token is invalid.<br/>Please make sure you've copied it entirely."
       
 
   orthanc-share-landing:
