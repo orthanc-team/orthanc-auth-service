@@ -59,6 +59,8 @@ class Share(BaseModel):
 class ShareValidationRequest(BaseModel):
     dicom_uid: Optional[str] = Field(alias="dicom-uid", default=None)
     orthanc_id: Optional[str] = Field(alias="orthanc-id", default=None)
+    token_key: Optional[str] = Field(alias="token-key", default=None)
+    token_value: Optional[str] = Field(alias="token-value", default=None)
     identifier: Optional[str]
     level: str
     method: str

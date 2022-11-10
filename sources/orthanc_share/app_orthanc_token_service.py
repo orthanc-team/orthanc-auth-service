@@ -78,7 +78,11 @@ def validate_authorization(validation_request: ShareValidationRequest, token=Hea
     try:
         logging.info("validating share: " + validation_request.json())
 
-        # TODO: check token-key & token-value
+        if validation_request.token_value and not token:
+            token = validation_request.token_value
+
+        if token.startswith("Bearer "):
+            token = token.replace("Bearer ", "")
 
         response = ShareValidationResponse(
             granted=token_service.is_valid(

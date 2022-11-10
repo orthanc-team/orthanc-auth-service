@@ -1,3 +1,9 @@
+v 22.11.3
+========
+
+- fix support for `stone-viewer-publication`
+- demo-setup: simplified authorization plugin configuration (v0.4.0)
+
 v 22.11.2
 ========
 
