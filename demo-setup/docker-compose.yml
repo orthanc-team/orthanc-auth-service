@@ -15,7 +15,7 @@ services:
       ENABLE_ORTHANC_FOR_ADMIN: "true"
       ENABLE_ORTHANC_FOR_SHARES: "true"
       ENABLE_ORTHANC_FOR_ANON_SHARES: "true"
-      ENABLE_ORTHANC_TOKEN_SERVICE: "true"
+      ENABLE_ORTHANC_TOKEN_SERVICE: "false"
 
 
   # first setup through configuration file and build step
@@ -28,7 +28,6 @@ services:
     depends_on: [orthanc-db]
     restart: unless-stopped
     environment:
-      ORTHANC__ORTHANC_EXPLORER_2__SHARES__TYPE: "meddream-viewer-publication"
       OSIMIS_WEB_VIEWER1_PLUGIN_ENABLED: "true"
       STONE_WEB_VIEWER_PLUGIN_ENABLED: "true"
       DICOM_WEB_PLUGIN_ENABLED: "true"
@@ -101,8 +100,6 @@ services:
           "demo-script-user": "demo-script-password",
           "orthanc-oe2-user": "orthanc-oe2-password"
         }
-      TITLE_EXPIRED_TOKEN: "We are sorry to let you know that your token has expired.<br/>Please request a new token by sending us a mail."
-      TITLE_INVALID_TOKEN: "We are sorry to let you know that your token is invalid.<br/>Please make sure you've copied it entirely."
       
 
   orthanc-share-landing:
@@ -115,6 +112,8 @@ services:
       PUBLIC_LANDING_ROOT: "http://localhost/welcome/"
       SERVER_IDENTIFIER: "standard-server-id"
       ANONYMIZED_SERVER_IDENTIFIER: "anonymized-server-id"
+      TITLE_EXPIRED_TOKEN: "We are sorry to let you know that your token has expired.<br/>Please request a new token by sending us a mail."
+      TITLE_INVALID_TOKEN: "We are sorry to let you know that your token is invalid.<br/>Please make sure you've copied it entirely."
 
   orthanc-anonymizer:
     image: orthancteam/orthanc-anonymizer

@@ -1,12 +1,22 @@
 # orthanc-share
 
-Web services to run next to orthanc to handle sharing of studies by issuing [JWT](https://jwt.io/) that can then be passed
-in authorization headers that will be checked by the [Authorization plugin](https://book.orthanc-server.com/plugins/authorization.html).
+This repository contains a set of web services to run next to orthanc to handle secure sharing of studies by issuing [JWT](https://jwt.io/) that can then be passed
+in authorization headers.  The HTTP headers are then checked by the [Orthanc authorization plugin](https://book.orthanc-server.com/plugins/authorization.html) to validate the access.
 
-The web services also allows generating links to open the MedDream viewer.
+These web services integrates with [Orthanc Explorer 2](https://book.orthanc-server.com/plugins/orthanc-explorer-2.html).
 
-This repo also includes a reverse proxy that can perform on-the-fly anonymization of some Orthanc REST API routes.
-
+Features:
+- `orthanc-token-service` to generate & validate tokens
+- `orthanc-share-landing` to display user friendly messages if tokens are invalid
+- Generates publication links for:
+  - [Stone Viewer](https://www.orthanc-server.com/static.php?page=stone-web-viewer)
+  - [Osimis Viewer](https://book.orthanc-server.com/plugins/osimis-webviewer.html)
+  - [MedDream Viewer](https://www.softneta.com/online-dicom-viewer/) (commercial - CE approved)
+- Handles expiration date
+- `orthanc-anonymizer` to handle anonymized publications (still experimental, only works with the Osimis Viewer)
+- Full [demo setup](./demo-setup) including integration with Orthanc Explorer 2
+- Boilerplate [docker-compose.yml](.minimal-setup/docker-compose.yml) to bootstrap a setup
+- Used in production
 
 
 ## how it works ?
@@ -141,11 +151,12 @@ curl -X PUT http://localhost:8000/shares -H 'Content-Type: application/json' \
 
 This repo builds a few images that can be reused directly and published on Dockerhub.
 
-- `orthanc-token-service` is the webservice generating and validating tokens.
-- `orthanc-share-landing` is the webservice providing error messages to the user and/or redirecting to MedDream, the StoneViewer or the OsimisViewer.
-- `orthanc-anonymizer` is a reverse-proxy that performs on-the-fly anonymization of the Orthanc Rest API routes that are used by the Osimis Viewer.
-- `meddream-viewer` is a pre-configured version of the [meddream:orthanc-dicom-viewer](https://hub.docker.com/r/meddream/orthanc-dicom-viewer) image
-- `meddream-token-service` is a pre-configured version of the [meddream:token-service](https://hub.docker.com/r/meddream/token-service) image
-
+- [orthancteam/orthanc-token-service](https://hub.docker.com/repository/docker/orthancteam/orthanc-token-service) is the webservice generating and validating tokens.
+- [orthancteam/orthanc-share-landing](https://hub.docker.com/repository/docker/orthancteam/orthanc-share-landing) is the webservice providing error messages to the user and/or redirecting to MedDream, the StoneViewer or the OsimisViewer.
+- [orthancteam/orthanc-anonymizer](https://hub.docker.com/repository/docker/orthancteam/orthanc-anonymizer) is a reverse-proxy that performs on-the-fly anonymization of the Orthanc Rest API routes that are used by the Osimis Viewer.
+- [orthancteam/meddream-viewer](https://hub.docker.com/repository/docker/orthancteam/meddream-viewer) is a pre-configured version of the [meddream:orthanc-dicom-viewer](https://hub.docker.com/r/meddream/orthanc-dicom-viewer) image
+- [orthancteam/meddream-token-service](https://hub.docker.com/repository/docker/orthancteam/meddream-token-service) is a pre-configured version of the [meddream:token-service](https://hub.docker.com/r/meddream/token-service) image
 
 Check the [demo setup](./demo-setup/) for more info.
+
+Check the [release notes](release-notes.md).
