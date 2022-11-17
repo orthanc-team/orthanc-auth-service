@@ -27,6 +27,9 @@ Features:
 - Used in production
 
 
+![Sharing a study in OE2](./demo-setup/doc/Share-study.gif)
+
+
 ## how it works ?
 
 - `orthanc-token-service` is a web service that generates `token` to grant access to a particular study in Orthanc.
