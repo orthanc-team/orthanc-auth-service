@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2022 Orthanc Team SRL <info@orthanc.team>
+#
+# SPDX-License-Identifier: CC0-1.0
+
 # this file is downloaded from https://www.softneta.com/files/meddreampacs/lite/meddream.py
 
 import json

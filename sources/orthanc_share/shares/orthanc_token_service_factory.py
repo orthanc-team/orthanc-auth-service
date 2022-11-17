@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2022 Orthanc Team SRL <info@orthanc.team>
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 from .orthanc_token_service import OrthancTokenService
 from .utils.utils import get_secret_or_die, is_secret_defined
 

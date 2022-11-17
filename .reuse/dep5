@@ -1,0 +1,10 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: orthanc-share
+Upstream-Contact: Orthanc Team SRL <info@orthanc.team>
+Source: https://github.com/orthanc-team/orthanc-share
+
+# Sample paragraph, commented out:
+#
+# Files: src/*
+# Copyright: $YEAR $NAME <$CONTACT>
+# License: ...

@@ -1,7 +1,0 @@
-{
-    "PostgreSQL" : {
-        "EnableIndex": true,
-        "Host": "orthanc-db",
-        "IndexConnectionsCount": 10
-    }
-}

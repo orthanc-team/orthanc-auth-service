@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2022 Orthanc Team SRL <info@orthanc.team>
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 import datetime
 
 from orthanc_share import Hs256TokensManager, TokensManager, ShareRequest, ShareType, ShareValidationRequest, SharedStudy

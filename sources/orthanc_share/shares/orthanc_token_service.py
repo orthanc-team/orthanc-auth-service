@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2022 Orthanc Team SRL <info@orthanc.team>
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
 from .tokens_manager import Hs256TokensManager, TokensManager
 from .models import *
 import urllib

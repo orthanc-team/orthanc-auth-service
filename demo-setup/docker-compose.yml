@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2022 Orthanc Team SRL <info@orthanc.team>
+#
+# SPDX-License-Identifier: CC0-1.0
+
 version: "3"
 services:
 
@@ -24,63 +28,45 @@ services:
     volumes:
       - orthanc-storage:/var/lib/orthanc/db
       - ./demo-setup/orthanc-admin.jsonc:/etc/orthanc/orthanc-admin.json
-      - ./demo-setup/orthanc-db.jsonc:/etc/orthanc/orthanc-db.json
     depends_on: [orthanc-db]
     restart: unless-stopped
+    env_file:
+      - ./demo-setup/common-orthanc.env
     environment:
-      OSIMIS_WEB_VIEWER1_PLUGIN_ENABLED: "true"
-      STONE_WEB_VIEWER_PLUGIN_ENABLED: "true"
-      DICOM_WEB_PLUGIN_ENABLED: "true"
+      ORTHANC__NAME: "Orthanc for admin"
 
 
   orthanc-for-shares:
     image: osimis/orthanc:22.11.2
     volumes:
       - orthanc-storage:/var/lib/orthanc/db
-      - ./demo-setup/orthanc-db.jsonc:/etc/orthanc/orthanc-db.json
     depends_on: [orthanc-db]
     restart: unless-stopped
+    env_file:
+      - ./demo-setup/common-orthanc.env
+      - ./demo-setup/common-share-orthanc.env
     environment:
       ORTHANC__NAME: "Orthanc for shares"
+      ORTHANC__AUTHORIZATION__WEB_SERVICE_IDENTIFIER: "standard-server-id"
+
       VERBOSE_ENABLED: "true"
       VERBOSE_STARTUP: "true"
-      OSIMIS_WEB_VIEWER1_PLUGIN_ENABLED: "true"
-      STONE_WEB_VIEWER_PLUGIN_ENABLED: "true"
-      DICOM_WEB_PLUGIN_ENABLED: "true"
-
-      # disable basic auth since we use the auth plugin
-      ORTHANC__AUTHENTICATION_ENABLED: "false"
-      ORTHANC__AUTHORIZATION__STANDARD_CONFIGURATIONS: |
-        ["osimis-web-viewer", "stone-webviewer"]
-      ORTHANC__AUTHORIZATION__CHECKED_LEVEL: "studies"
-      ORTHANC__AUTHORIZATION__WEB_SERVICE: "http://orthanc-token-service:8000/shares/validate"
-      ORTHANC__AUTHORIZATION__WEB_SERVICE_IDENTIFIER: "standard-server-id"
-      ORTHANC__AUTHORIZATION__WEB_SERVICE_USERNAME: "share-user"
-      ORTHANC__AUTHORIZATION__WEB_SERVICE_PASSWORD: "share-password"
-
 
   orthanc-for-anon-shares:
     image: osimis/orthanc:22.11.2
     volumes:
       - orthanc-storage:/var/lib/orthanc/db
-      - ./demo-setup/orthanc-db.jsonc:/etc/orthanc/orthanc-db.json
     depends_on: [orthanc-db]
     restart: unless-stopped
+    env_file:
+      - ./demo-setup/common-orthanc.env
+      - ./demo-setup/common-share-orthanc.env
     environment:
       ORTHANC__NAME: "Orthanc for anon shares"
+      ORTHANC__AUTHORIZATION__WEB_SERVICE_IDENTIFIER: "anonymized-server-id"
       VERBOSE_ENABLED: "true"
       VERBOSE_STARTUP: "true"
-      OSIMIS_WEB_VIEWER1_PLUGIN_ENABLED: "true"
 
-      # disable basic auth since we use the auth plugin
-      ORTHANC__AUTHENTICATION_ENABLED: "false"
-      ORTHANC__AUTHORIZATION__STANDARD_CONFIGURATIONS: |
-        ["osimis-web-viewer", "stone-webviewer"]
-      ORTHANC__AUTHORIZATION__CHECKED_LEVEL: "studies"
-      ORTHANC__AUTHORIZATION__WEB_SERVICE: "http://orthanc-token-service:8000/shares/validate"
-      ORTHANC__AUTHORIZATION__WEB_SERVICE_IDENTIFIER: "anonymized-server-id"
-      ORTHANC__AUTHORIZATION__WEB_SERVICE_USERNAME: "share-user"
-      ORTHANC__AUTHORIZATION__WEB_SERVICE_PASSWORD: "share-password"
 
   orthanc-token-service:
     image: orthancteam/orthanc-token-service

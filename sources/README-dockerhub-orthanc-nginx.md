@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2022 Orthanc Team SRL <info@orthanc.team>
+
+SPDX-License-Identifier: CC0-1.0
+-->
+
 # Orthanc-nginx
 
 Web service to run in front of Orthanc to handle sharing of studies & admin interface.

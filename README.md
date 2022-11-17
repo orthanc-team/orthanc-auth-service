@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2019 Jane Doe <jane@example.com>
+
+SPDX-License-Identifier: GPL-3.0-or-later
+-->
+
 # orthanc-share
 
 This repository contains a set of web services to run next to orthanc to handle secure sharing of studies by issuing [JWT](https://jwt.io/) that can then be passed

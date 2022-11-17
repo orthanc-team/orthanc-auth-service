@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2022 Orthanc Team SRL <info@orthanc.team>
+
+SPDX-License-Identifier: CC-BY-4.0
+-->
+
 # Purpose
 
 This is a sample setup to demonstrate how to run Orthanc-Explorer-2 together with the `orthanc-share`

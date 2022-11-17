@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2022 Orthanc Team SRL <info@orthanc.team>
+#
+# SPDX-License-Identifier: CC0-1.0
+
 FROM meddream/orthanc-dicom-viewer:8.0.0
 
 # you must define these environment variables:

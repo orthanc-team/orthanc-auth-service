@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2022 Orthanc Team SRL <info@orthanc.team>
+
+SPDX-License-Identifier: CC0-1.0
+-->
+
 # Orthanc-share-landing
 
 Web service to run next to Orthanc to handle sharing of studies.

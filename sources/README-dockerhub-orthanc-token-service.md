@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2022 Orthanc Team SRL <info@orthanc.team>
+
+SPDX-License-Identifier: CC0-1.0
+-->
+
 # Orthanc-token-service
 
 Web service to run next to Orthanc to handle sharing of studies by issuing [JWT](https://jwt.io/) that can then be passed
