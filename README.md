@@ -4,6 +4,8 @@ SPDX-FileCopyrightText: 2019 Jane Doe <jane@example.com>
 SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
+[![REUSE status](https://api.reuse.software/badge/github.com/orthanc-team/orthanc-share)](https://api.reuse.software/info/github.com/orthanc-team/orthanc-share)
+
 # orthanc-share
 
 This repository contains a set of web services to run next to orthanc to handle secure sharing of studies by issuing [JWT](https://jwt.io/) that can then be passed
