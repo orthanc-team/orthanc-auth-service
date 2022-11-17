@@ -36,18 +36,17 @@ services:
     image: osimis/orthanc:22.9.2
     volumes:
       - orthanc-storage:/var/lib/orthanc/db
-      - ./demo-setup/orthanc-db.jsonc:/etc/orthanc/orthanc-db.json
       - ./demo-setup/meddream/meddream-plugin.py:/scripts/meddream-plugin.py
     depends_on: [orthanc-db]
     restart: unless-stopped
+    env_file:
+      - ./demo-setup/common-orthanc.env
     environment:
       ORTHANC__NAME: "Orthanc for MedDream"
       VERBOSE_ENABLED: "true"
       VERBOSE_STARTUP: "true"
       ORTHANC__PYTHON_SCRIPT: "/scripts/meddream-plugin.py"
       ORTHANC__AUTHENTICATION_ENABLED: "false"
-#      ORTHANC__REGISTERED_USERS: |
-#        {"orthanc-meddream-user": "orthanc-meddream-pwd"}
 
   meddream-token-service:
     image: orthancteam/meddream-token-service
