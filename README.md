@@ -15,7 +15,7 @@ Features:
 - Handles expiration date
 - `orthanc-anonymizer` to handle anonymized publications (still experimental, only works with the Osimis Viewer)
 - Full [demo setup](./demo-setup) including integration with Orthanc Explorer 2
-- Boilerplate [docker-compose.yml](.minimal-setup/docker-compose.yml) to bootstrap a setup
+- Boilerplate [docker-compose.yml](minimal-setup/docker-compose.yml) to bootstrap a setup
 - Used in production
 
 
