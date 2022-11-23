@@ -13,6 +13,8 @@ in authorization headers.  The HTTP headers are then checked by the [Orthanc aut
 
 These web services integrates with [Orthanc Explorer 2](https://book.orthanc-server.com/plugins/orthanc-explorer-2.html).
 
+This solution has been [presented](https://orthanc.team/files/doc/OrthancCon2022-Sharing-DICOM-studies-with-Orthanc.pdf) at [OrthancCon 2022](https://www.orthanc-server.com/static.php?page=orthanc-con-2022).
+
 Features:
 - `orthanc-token-service` to generate & validate tokens
 - `orthanc-share-landing` to display user friendly messages if tokens are invalid
