@@ -4,6 +4,13 @@ SPDX-FileCopyrightText: 2022 Orthanc Team SRL <info@orthanc.team>
 SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
+
+v 22.11.4
+========
+
+- added admin user (and corresponding env var) to meddream properties file, so that, registration page is reachable to fill a licence key
+
+
 v 22.11.3
 ========
 

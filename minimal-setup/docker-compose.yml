@@ -6,7 +6,7 @@ version: "3"
 services:
 
   nginx:
-    image: orthancteam/orthanc-nginx:22.11.3
+    image: orthancteam/orthanc-nginx:22.11.4
     depends_on: [orthanc-for-admin, orthanc-for-shares, orthanc-token-service]
     restart: unless-stopped
     ports: ["80:80"]
@@ -70,7 +70,7 @@ services:
         ["token"]
 
   orthanc-token-service:
-    image: orthancteam/orthanc-token-service:22.11.3
+    image: orthancteam/orthanc-token-service:22.11.4
     restart: unless-stopped
     environment:
       SECRET_KEY: "change-me-I-am-a-secret-key"
@@ -78,7 +78,7 @@ services:
       PUBLIC_LANDING_ROOT: "http://localhost/welcome/"
 
   orthanc-share-landing:
-    image: orthancteam/orthanc-share-landing:22.11.3
+    image: orthancteam/orthanc-share-landing:22.11.4
     restart: unless-stopped
     environment:
       SECRET_KEY: "change-me-I-am-a-secret-key"
