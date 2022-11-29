@@ -63,6 +63,7 @@ services:
       ORTHANC_BASE_URL: "http://orthanc-for-meddream:8042"
       ORTHANC_USER: "orthanc-meddream-user"
       ORTHANC_MEDDREAM_PYTHON_PLUGIN_ENABLED: "true"
+      MEDDREAM_ADMIN_PASSWORD: "admin"
     volumes:
       - meddream-license:/opt/meddream/license
 
