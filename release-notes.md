@@ -5,11 +5,15 @@ SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
 
+v 23.1.0
+========
+
+- added permissions stuff in meddream prop file to enable Export button when the viewer is opened through a token
+
 v 22.11.4
 ========
 
 - added admin user (and corresponding env var) to meddream properties file, so that, registration page is reachable to fill a licence key
-
 
 v 22.11.3
 ========
