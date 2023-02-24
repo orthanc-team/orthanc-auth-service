@@ -2,14 +2,14 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from fastapi import FastAPI, Request, status, Header, HTTPException, Depends
+from fastapi import FastAPI, Request, status, Header, HTTPException, Depends, Query
 from fastapi.responses import RedirectResponse
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 import logging
 import urllib.parse
-import httpx
 import json
 import secrets
+import os
 import pprint
 from shares.models import *
 from shares.orthanc_token_service_factory import create_token_service_from_secrets
@@ -32,7 +32,7 @@ else:
     logging.warning("!!!! HTTP Basic auth is NOT required to connect to the web-service !!!!")
 
 
-# callback that is used on every request to check the caller's credentials
+# callback that is used on every request to check the auth-service caller's credentials
 def authorize(credentials: HTTPBasicCredentials = Depends(security)):
 
     is_known_user = credentials.username in basic_auth_users
@@ -57,16 +57,21 @@ else:
     basic_auth_dependencies = []
 
 
-# route to create shares
-@app.put("/shares", dependencies=basic_auth_dependencies)
-def create_share(share_request: ShareRequest):
+# route to create tokens
+@app.put("/tokens/{token_type}", dependencies=basic_auth_dependencies)
+def create_token(token_type: str, request: TokenCreationRequest):
     try:
-        logging.info("creating share: " + share_request.json())
+        if request.type is None:
+            request.type = token_type
+        elif request.type != token_type:
+            raise HTTPException(status_code=400, detail="'type' field should match the url segment /tokens/{type}")
 
-        share = token_service.create_share(share_request=share_request)
+        logging.info("creating token: " + request.json())
 
-        logging.info("created share: " + share.json())
-        return share
+        token = token_service.create_token(request=request)
+
+        logging.info("created token: " + token.json())
+        return token
 
     except ValueError as ex:
         raise HTTPException(status_code=400, detail=str(ex))
@@ -76,28 +81,33 @@ def create_share(share_request: ShareRequest):
 
 
 # route called by the Orthanc Authorization plugin to validate a token can access to a resource
-@app.post("/shares/validate", dependencies=basic_auth_dependencies)
-def validate_authorization(validation_request: ShareValidationRequest, token=Header(default=None)):
+@app.post("/tokens/validate", dependencies=basic_auth_dependencies)
+def validate_authorization(request: TokenValidationRequest, token=Header(default=None)):
 
     try:
-        logging.info("validating share: " + validation_request.json())
+        logging.info("validating token: " + request.json())
 
-        if validation_request.token_value and not token:
-            token = validation_request.token_value
+        if request.token_value and not token:
+            token = request.token_value
 
-        if token.startswith("Bearer "):
-            token = token.replace("Bearer ", "")
+        granted = False
+        if token is not None:  # token may be None for Anonymous requests (no tokens)
 
-        response = ShareValidationResponse(
-            granted=token_service.is_valid(
+            if token.startswith("Bearer "):
+                token = token.replace("Bearer ", "")
+
+            granted = token_service.is_valid(
                 token=token,
-                orthanc_id=validation_request.orthanc_id,
-                dicom_uid=validation_request.dicom_uid,
-                server_identifier=validation_request.identifier
-            ),
+                orthanc_id=request.orthanc_id,
+                dicom_uid=request.dicom_uid,
+                server_id=request.server_id
+            )
+
+        response = TokenValidationResponse(
+            granted=granted,
             validity=60
         )
-        logging.info("validate share: " + response.json())
+        logging.info("validate token: " + response.json())
         return response
 
     except ValueError as ex:
@@ -106,3 +116,40 @@ def validate_authorization(validation_request: ShareValidationRequest, token=Hea
         logging.exception(ex)
         raise HTTPException(status_code=500, detail=str(ex))
 
+
+@app.post("/user/get-profile")  # this is a POST and not a GET because we want to same kind of payload as for other routes
+def get_user_profile(user_profile_request: UserProfileRequest):
+# def get_user_profile(token_key: str = Query(alias='token-key'),
+#                      token_value: str = Query(alias='token-value'),
+#                      server_id: Optional[str] = Query(alias='server-id', default=None)
+#                      ):
+#     user_profile_request = UserProfileRequest(
+#         token_value=token_value,
+#         token_key=token_key,
+#         server_id=server_id)
+    logging.info("get user profile: " + user_profile_request.json())
+
+    # logging.info("token alone: " + validation_request.token_value)
+
+    if user_profile_request.token_key is not None:
+        # TODO get name and role from keycloak + transform roles into permissions
+
+        response = UserProfileResponse(
+            name="John Doe",
+            permissions=[
+                UserPermissions.VIEW,
+                UserPermissions.DOWNLOAD,
+                UserPermissions.SEND,
+                UserPermissions.Q_R_REMOTE_MODALITIES,
+                UserPermissions.UPLOAD,
+            ],
+            validity=60
+        )
+    else:
+        response = UserProfileResponse(
+            name="Anonymous",
+            permissions=[],
+            validity=60
+        )
+
+    return response

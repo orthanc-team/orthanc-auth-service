@@ -39,10 +39,9 @@ Features:
     - `SECRET_KEY` is a high entropy text that will be used to encode and decode the JWT
     - To enable orthanc standard shares (without anonymization):
       - `PUBLIC_ORTHANC_ROOT` is the root url of the public Orthanc
-      - `SERVER_IDENTIFIER` is the identifier defined in the Authorization plugin configuration of the standard Orthanc (not required if not allowing anonymized shares)
+      - `SERVER_ID` is the identifier defined in the Authorization plugin configuration of the standard Orthanc (not required if not allowing anonymized shares)
     - To enable orthanc anonymized shares, you should define these additionnal environment variables:
       - `PUBLIC_ANONYMIZED_ORTHANC_ROOT` is the root url of the public anonymized Orthanc
-      - `ANONYMIZED_SERVER_IDENTIFIER` is the identifier defined in the Authorization plugin configuration of the anonymized Orthanc
     - `USERS` is an optional environment variable that should contain a json array of allowed usernames/passwords to access the service.
       ```json
       {
@@ -56,29 +55,44 @@ Features:
   environment variables as the `orthanc-token-service`.
 - A script or application requests the `orthanc-token-service` to generate such a token via the Rest API:
 ```bash
-curl -X PUT http://localhost:8000/shares -H 'Content-Type: application/json' \
+curl -X PUT http://localhost:8000/tokens/stone-viewer-publication -H 'Content-Type: application/json' \
   -d '{"id": "toto",
-       "studies" : [{
-         "orthanc-id": "ba19d592-4bb03a7b-65f06402-ae2b8ab1-6b33c7dc"
+       "resources" : [{
+         "dicom-uid": "1.2",
+         "level": "study"
        }],
-       "anonymized": true, 
        "type": "stone-viewer-publication", 
-       "expiration-date": "2022-12-31T11:00:00Z"}'
+       "expiration-date": "2026-12-31T11:00:00Z"}'
 ```
+  Note that a user that is authenticated to Orthanc and that has the permission to access this url can also call
+  the auth-plugin directly with an orthanc flavored API call:
+```bash
+curl -X PUT http://localhost:8042/auth/tokens/stone-viewer-publication -H 'Content-Type: application/json' \
+  -d '{"ID": "toto",
+       "Resources" : [{
+         "DicomUid": "1.2",
+         "OrthancId": "",
+         "Level": "study"
+       }],
+       "Type": "stone-viewer-publication", 
+       "ExpirationDate": "2026-12-31T11:00:00Z"}'
+```
+
+
 - the `orthanc-token-service` replies with a share with the token and a link to the viewer:
 ```json
   {
     "request":{
       "id":"toto",
-      "studies" : [
+      "resources" : [
         {
-          "orthanc-id": "0195f13e-4afe6822-8b494cc4-5162c50d-0daf66aa"
+          "dicom-uid": "1.2"
         }],  
       "type":"stone-viewer-publication",
-      "expiration-date":"2022-07-07T11:00:00+00:00"
+      "expiration-date":"2026-07-07T11:00:00+00:00"
     },
-    "token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6InRvdG8iLCJkaWNvbV91aWQiOiIxLjIiLCJvcnRoYW5jX2lkIjoiMDE5NWYxM2UtNGFmZTY4MjItOGI0OTRjYzQtNTE2MmM1MGQtMGRhZjY2YWEiLCJ0eXBlIjoib3NpbWlzLXZpZXdlci1wdWJsaWNhdGlvbiIsImV4cGlyYXRpb25fZGF0ZSI6IjIwMjItMDctMDdUMTE6MDA6MDArMDA6MDAifQ.8mzvYXCrjhM8OWPhu5HQJbEtCO9y6XyFqV-Ak1n-9Tw",
-    "url":"http://localhost/welcom/?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6InRvdG8iLCJkaWNvbV91aWQiOiIxLjIiLCJvcnRoYW5jX2lkIjoiMDE5NWYxM2UtNGFmZTY4MjItOGI0OTRjYzQtNTE2MmM1MGQtMGRhZjY2YWEiLCJ0eXBlIjoib3NpbWlzLXZpZXdlci1wdWJsaWNhdGlvbiIsImV4cGlyYXRpb25fZGF0ZSI6IjIwMjItMDctMDdUMTE6MDA6MDArMDA6MDAifQ.8mzvYXCrjhM8OWPhu5HQJbEtCO9y6XyFqV-Ak1n-9Tw"
+    "token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6InRvdG8iLCJyZXNvdXJjZXMiOlt7ImRpY29tX3VpZCI6IjEuMiIsIm9ydGhhbmNfaWQiOm51bGwsInVybCI6bnVsbCwibGV2ZWwiOiJzdHVkeSJ9XSwidHlwZSI6InN0b25lLXZpZXdlci1wdWJsaWNhdGlvbiIsImV4cGlyYXRpb25fZGF0ZSI6IjIwMjYtMTItMzFUMTE6MDA6MDArMDA6MDAifQ.RlB9x56eQSaJNt3t4hDxAHdM7BhBbah5CWWBBZQf7x0",
+    "url":"http://localhost/welcom/?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6InRvdG8iLCJyZXNvdXJjZXMiOlt7ImRpY29tX3VpZCI6IjEuMiIsIm9ydGhhbmNfaWQiOm51bGwsInVybCI6bnVsbCwibGV2ZWwiOiJzdHVkeSJ9XSwidHlwZSI6InN0b25lLXZpZXdlci1wdWJsaWNhdGlvbiIsImV4cGlyYXRpb25fZGF0ZSI6IjIwMjYtMTItMzFUMTE6MDA6MDArMDA6MDAifQ.RlB9x56eQSaJNt3t4hDxAHdM7BhBbah5CWWBBZQf7x0"
   }
 ```
 - once the users clicks on this link, the `orthanc-share-landing` will check the token validity and redirect the browser
@@ -88,11 +102,11 @@ curl -X PUT http://localhost:8000/shares -H 'Content-Type: application/json' \
 
 - sample request issued to `orthanc-token-service` to validate a token
 ```bash
-curl -X POST http://localhost:8000/shares/validate -H 'token: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6InRvdG8iLCJkaWNvbV91aWQiOiIxLjIiLCJvcnRoYW5jX2lkIjoiMDE5NWYxM2UtNGFmZTY4MjItOGI0OTRjYzQtNTE2MmM1MGQtMGRhZjY2YWEiLCJhbm9ueW1pemVkIjp0cnVlLCJ0eXBlIjoib3NpbWlzLXZpZXdlci1wdWJsaWNhdGlvbiIsImV4cGlyYXRpb25fZGF0ZSI6IjIwMjItMTItMzFUMTE6MDA6MDArMDA6MDAifQ.vQPmlhoVQHUlbXg-JGenBIGQbNU0DhWXJPMdCMzBTFg' \
+curl -X POST http://localhost:8000/tokens/validate -H 'token: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6InRvdG8iLCJyZXNvdXJjZXMiOlt7ImRpY29tX3VpZCI6IjEuMiIsIm9ydGhhbmNfaWQiOm51bGwsInVybCI6bnVsbCwibGV2ZWwiOiJzdHVkeSJ9XSwidHlwZSI6InN0b25lLXZpZXdlci1wdWJsaWNhdGlvbiIsImV4cGlyYXRpb25fZGF0ZSI6IjIwMjYtMTItMzFUMTE6MDA6MDArMDA6MDAifQ.RlB9x56eQSaJNt3t4hDxAHdM7BhBbah5CWWBBZQf7x0' \
   -H 'Content-Type: application/json' \
-  -d '{"dicom-uid": null, 
+  -d '{"dicom-uid": "1.2", 
        "orthanc-id": "0195f13e-4afe6822-8b494cc4-5162c50d-0daf66aa",
-       "identifier": "anonymized-server-id", 
+       "server-id": "server-id", 
        "level": "study", 
        "method": "get"}'
 ```

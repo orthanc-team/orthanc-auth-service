@@ -6,6 +6,7 @@ from .tokens_manager import Hs256TokensManager, TokensManager
 from .models import *
 import urllib
 import httpx
+import logging
 from typing import Optional
 from .exceptions import *
 
@@ -18,9 +19,7 @@ class OrthancTokenService:
     secret_key_: str
 
     public_orthanc_root_: Optional[str] = None
-    standard_server_identifier_: Optional[str] = None
-    public_anonymized_orthanc_root_: Optional[str] = None
-    anonymized_server_identifier_: Optional[str] = None
+    server_id_: Optional[str] = None
 
     meddream_token_service_url_: Optional[str] = None
     public_meddream_root_: Optional[str] = None
@@ -29,14 +28,10 @@ class OrthancTokenService:
     def __init__(self, secret_key: str):
         self.secret_key_ = secret_key
 
-    def _configure_server(self, public_orthanc_root: str, server_identifier: Optional[str] = None, public_landing_root: Optional[str] = None):
+    def _configure_server(self, public_orthanc_root: str, server_id: Optional[str] = None, public_landing_root: Optional[str] = None):
         self.public_orthanc_root_ = public_orthanc_root
-        self.server_identifier_ = server_identifier
+        self.server_id_ = server_id
         self.public_landing_root_ = public_landing_root
-
-    def _configure_anonymized_server(self, public_anonymized_orthanc_root: str, anonymized_server_identifier: Optional[str] = None):
-        self.public_anonymized_orthanc_root_ = public_anonymized_orthanc_root
-        self.anonymized_server_identifier_ = anonymized_server_identifier
 
     def _configure_meddream(self, meddream_token_service_url: str, public_meddream_root: str, public_landing_root: str):
         self.meddream_token_service_url_ = meddream_token_service_url
@@ -47,107 +42,110 @@ class OrthancTokenService:
         if not self.tokens_manager_:
             self.tokens_manager_ = Hs256TokensManager(
                 secret_key=self.secret_key_,
-                standard_server_identifier=self.standard_server_identifier_,
-                anonymized_server_identifier=self.anonymized_server_identifier_
+                server_id=self.server_id_
             )
         return self.tokens_manager_
 
 
-    def _generate_url(self, share_request: ShareRequest, token: str, skip_landing_page: bool = False):
+    def _generate_url(self, request: TokenCreationRequest, token: str, skip_landing_page: bool = False):
 
-        share_request_has_dicom_uids = all([s.dicom_uid is not None for s in share_request.studies])
-        share_request_has_orthanc_ids = all([s.orthanc_id is not None for s in share_request.studies])
+        has_dicom_uids = all([s.dicom_uid is not None for s in request.resources])
+        has_orthanc_ids = all([s.orthanc_id is not None for s in request.resources])
 
-        if share_request.type == ShareType.osimis_viewer_publication:
-            if not share_request_has_orthanc_ids:
+        if request.type == TokenType.OSIMIS_VIEWER_PUBLICATION:
+            if not has_orthanc_ids:
                 logging.error("No orthanc_id provided while generating a link to the Osimis WebViewer")
                 return None
 
             if skip_landing_page or self.public_landing_root_ is None:
-                if share_request.anonymized:
-                    public_root = self.public_anonymized_orthanc_root_
-                else:
-                    public_root = self.public_orthanc_root_
+                public_root = self.public_orthanc_root_
 
-                sharedStudyIds = ",".join([s.orthanc_id for s in share_request.studies])
-                return urllib.parse.urljoin(public_root, f"osimis-viewer/app/index.html?pickableStudyIds={sharedStudyIds}&selectedStudyIds={sharedStudyIds}&token={token}")
+                studyIds = ",".join([s.orthanc_id for s in request.resources])
+                return urllib.parse.urljoin(public_root, f"osimis-viewer/app/index.html?pickableStudyIds={studyIds}&selectedStudyIds={studyIds}&token={token}")
             else:
                 return urllib.parse.urljoin(self.public_landing_root_, f"?token={token}")
 
-        elif share_request.type == ShareType.stone_viewer_publication:
-            if not share_request_has_dicom_uids:
+        elif request.type == TokenType.STONE_VIEWER_PUBLICATION:
+            if not has_dicom_uids:
                 logging.error("No dicom_uid provided while generating a link to the StoneViewer")
                 return None
 
             if skip_landing_page or self.public_landing_root_ is None:
                 public_root = self.public_orthanc_root_
 
-                sharedStudyIds = ",".join([s.dicom_uid for s in share_request.studies])
-                return urllib.parse.urljoin(public_root, f"stone-webviewer/index.html?study={sharedStudyIds}&selectedStudies={sharedStudyIds}&token={token}")
+                studyIds = ",".join([s.dicom_uid for s in request.resources])
+                return urllib.parse.urljoin(public_root, f"stone-webviewer/index.html?study={studyIds}&selectedStudies={studyIds}&token={token}")
             else:
                 return urllib.parse.urljoin(self.public_landing_root_, f"?token={token}")
 
-        elif share_request.type == ShareType.meddream_instant_link:
-            if not share_request_has_dicom_uids:
+        elif request.type == TokenType.MEDDREAM_INSTANT_LINK:
+            if not has_dicom_uids:
                 logging.error("No dicom_uid provided while generating a link to the MedDream Viewer")
                 return None
 
             logging.warning("generateUrl meddream instant " + self.public_meddream_root_)
             return urllib.parse.urljoin(self.public_meddream_root_, f"?token={token}")
 
-        elif share_request.type == ShareType.meddream_viewer_publication:
+        elif request.type == TokenType.MEDDREAM_VIEWER_PUBLICATION:
             logging.warning("generateUrl meddream publication " + self.public_meddream_root_)
             return urllib.parse.urljoin(self.public_landing_root_, f"?token={token}")
 
-    def check_share_is_allowed(self, type: ShareType, is_anonymized: bool):
-        if type == ShareType.osimis_viewer_publication:
-            if is_anonymized and self.public_anonymized_orthanc_root_ is None:
-                raise SharesException("Anonymized 'osimis-viewer-publication' are disabled")
-            elif not is_anonymized and self.public_orthanc_root_ is None:
-                raise SharesException("Standard 'osimis-viewer-publication' are disabled")
+        elif request.type in [
+            TokenType.VIEWER_INSTANT_LINK,
+            TokenType.DOWNLOAD_INSTANT_LINK
+            ]:
+            # no url, the user must build it himself
+            return None
 
-        elif type == ShareType.stone_viewer_publication:
-            if is_anonymized:
-                raise SharesException("Anonymized shares are not available with StoneViewer")
-            elif not is_anonymized and self.public_orthanc_root_ is None:
-                raise SharesException("Standard 'stone-viewer-publication' are disabled")
+    def check_token_is_allowed(self, type: TokenType):
+        if type in [TokenType.OSIMIS_VIEWER_PUBLICATION, TokenType.STONE_VIEWER_PUBLICATION]:
+            if self.public_orthanc_root_ is None:
+                raise SharesException(f"'{type}' are disabled")
 
-        elif is_anonymized and type in [ShareType.meddream_instant_link, ShareType.meddream_viewer_publication]:
-            raise SharesException("Anonymized shares are not available with MedDream")
+        elif type == TokenType.MEDDREAM_INSTANT_LINK and self.meddream_token_service_url_ is None:
+            raise SharesException(f"'{type}' are disabled")
 
-        elif type == ShareType.meddream_instant_link and self.meddream_token_service_url_ is None:
-            raise SharesException("'meddream-instant-link' are disabled")
+        elif type == TokenType.MEDDREAM_VIEWER_PUBLICATION and self.public_landing_root_ is None:
+            raise SharesException(f"'{type}' are disabled")
 
-        elif type == ShareType.meddream_viewer_publication and self.public_landing_root_ is None:
-            raise SharesException("'meddream-viewer-publication' are disabled")
+        # no restrictions for others, the user must build the url himself
 
-    def is_expired(self, share_request: ShareRequest) -> bool:
-        return self.tokens_manager_.is_expired(share_request)
+    def is_expired(self, token_request: TokenCreationRequest) -> bool:
+        return self.tokens_manager_.is_expired(token_request)
 
 
-    def is_valid(self, token: str, orthanc_id: Optional[str], dicom_uid: Optional[str], server_identifier: Optional[str]) -> bool:
+    def is_valid(self, token: str, orthanc_id: Optional[str], dicom_uid: Optional[str], server_id: Optional[str]) -> bool:
         return self.tokens_manager_.is_valid(
             token=token,
             orthanc_id=orthanc_id,
             dicom_uid=dicom_uid,
-            server_identifier=server_identifier
+            server_id=server_id
         )
 
-    def create_share(self, share_request: ShareRequest):
-        logging.info("creating share: " + share_request.json())
+    def create_token(self, request: TokenCreationRequest):
+        logging.info("creating token: " + request.json())
 
-        self.check_share_is_allowed(type=share_request.type, is_anonymized=share_request.anonymized)
+        self.check_token_is_allowed(type=request.type)
 
-        if share_request.type in [ShareType.osimis_viewer_publication, ShareType.stone_viewer_publication]:
-            token = self.tokens_manager_.generate_token(share_request=share_request)
+        if request.type in [
+            TokenType.OSIMIS_VIEWER_PUBLICATION,
+            TokenType.STONE_VIEWER_PUBLICATION,
+            TokenType.DOWNLOAD_INSTANT_LINK,
+            TokenType.VIEWER_INSTANT_LINK
+        ]:
+            token = self.tokens_manager_.generate_token(request=request)
 
-        elif share_request.type == ShareType.meddream_instant_link:
+        elif request.type == TokenType.MEDDREAM_INSTANT_LINK:
             # for the instant link, we get the token directly from the meddream token service
             items = []
-            for study in share_request.studies:
+            for resource in request.resources:
+                if resource.level != Levels.STUDY:
+                    logging.error(f"'{request.type}': Not a study")
+                    return None
+
                 items.append({
                         "studies" : {
-                            "study": study.dicom_uid,
+                            "study": resource.dicom_uid,
                             "storage": "Orthanc"
                         }
                     })
@@ -156,29 +154,29 @@ class OrthancTokenService:
                 "items": items
             }).text
 
-        elif share_request.type == ShareType.meddream_viewer_publication:
+        elif request.type == TokenType.MEDDREAM_VIEWER_PUBLICATION:
             # we do not generate a meddream token now, this will be handled by the meddread-share-redirect service at the time we try to access the link
-            share_request_has_dicom_uids = all([s.dicom_uid is not None for s in share_request.studies])
+            has_dicom_uids = all([s.dicom_uid is not None for s in request.resources])
 
-            if not share_request_has_dicom_uids:
+            if not has_dicom_uids:
                 raise SharesException("No dicom_uid provided while generating a link to the MedDream Viewer")
 
-            token = self.tokens_manager_.generate_token(share_request=share_request)
+            token = self.tokens_manager_.generate_token(share_request=request)
 
-        share = Share(
-            request=share_request,
+        response = TokenCreationResponse(
+            request=request,
             token=token,
             url=self._generate_url(
-                share_request=share_request,
+                request=request,
                 token=token
             )
         )
-        logging.info("created share: " + share.json())
-        return share
+        logging.info("created token: " + response.json())
+        return response
 
 
-    def get_share_request_from_token(self, token: str) -> ShareRequest:
-        return self.tokens_manager_.get_share_request_from_token(token=token)
+    def get_request_from_token(self, token: str) -> TokenCreationRequest:
+        return self.tokens_manager_.get_request_from_token(token=token)
 
 
     def redirect_to_viewer(self, token: str = None) -> str:
@@ -186,25 +184,25 @@ class OrthancTokenService:
         logging.warning("redirecting to viewer: " + token)
 
         # extract the initial share request from the token
-        share_request = self.tokens_manager_.get_share_request_from_token(token=token)
+        request = self.tokens_manager_.get_request_from_token(token=token)
 
-        if share_request.type in [ShareType.osimis_viewer_publication, ShareType.stone_viewer_publication]:
+        if request.type in [TokenType.OSIMIS_VIEWER_PUBLICATION, TokenType.STONE_VIEWER_PUBLICATION]:
 
             # check it is valid (this actually only checks the expiration date since we get the ids from the request itself !)
-            if not self.is_expired(share_request):
+            if not self.is_expired(request):
                 return self._generate_url(
-                    share_request=share_request,
+                    request=request,
                     token=token,
                     skip_landing_page=True  # this time, we want a direct link to the viewer
                 )
 
-        elif share_request.type == ShareType.meddream_viewer_publication:
+        elif request.type == TokenType.MEDDREAM_VIEWER_PUBLICATION:
 
             # check it is valid (this actually only checks the expiration date since we get the ids from the request itself !)
-            if not self.is_expired(share_request):
+            if not self.is_expired(request):
                 # generate a new meddream token that will be valid for only a few minutes
-                share_request.type = ShareType.meddream_instant_link
-                share = self.create_share(share_request)
-                return share.url
+                request.type = TokenType.MEDDREAM_INSTANT_LINK
+                new_token = self.create_token(request)
+                return new_token.url
 
         raise SharesException("Token is not valid")

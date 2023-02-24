@@ -4,7 +4,7 @@
 
 import datetime
 
-from orthanc_share import Hs256TokensManager, TokensManager, ShareRequest, ShareType, ShareValidationRequest, SharedStudy
+from orthanc_share import Hs256TokensManager, TokensManager, TokenCreationRequest, TokenType, TokenValidationRequest, OrthancResource, Levels
 
 import unittest
 import subprocess
@@ -21,45 +21,49 @@ class TestTokensGenerator(unittest.TestCase):
 
     def test_hs_256_standard_no_expiration_date(self):
         # create a token
-        share_request = ShareRequest(
+        share_request = TokenCreationRequest(
             id="id",
-            studies = [SharedStudy(
+            resources = [OrthancResource(
                 orthanc_id="orthanc_id",
-                dicom_uid="dicom_uid")],
-            type=ShareType.osimis_viewer_publication
+                dicom_uid="dicom_uid",
+                level=Levels.STUDY)],
+            type=TokenType.OSIMIS_VIEWER_PUBLICATION
         )
         tokens = Hs256TokensManager(secret_key="toto")
-        token = tokens.generate_token(share_request=share_request)
+        token = tokens.generate_token(request=share_request)
 
         self._test_tokens(token, tokens)
 
     def test_hs_256_standard_with_expiration_date(self):
         # create a token
-        share_request = ShareRequest(
+        share_request = TokenCreationRequest(
             id="id",
-            studies = [SharedStudy(
+            resources = [OrthancResource(
                 orthanc_id="orthanc_id",
-                dicom_uid="dicom_uid")],
-            type=ShareType.osimis_viewer_publication,
+                dicom_uid="dicom_uid",
+                level=Levels.STUDY)],
+            type=TokenType.OSIMIS_VIEWER_PUBLICATION,
             expiration_date=pytz.UTC.localize(datetime.datetime(2100, 12, 31, 0, 0, 0))
         )
         tokens = Hs256TokensManager(secret_key="toto")
-        token = tokens.generate_token(share_request=share_request)
+        token = tokens.generate_token(request=share_request)
 
         self._test_tokens(token, tokens)
 
     def test_hs_256_standard_with_expired_expiration_date(self):
         # create a token
-        share_request = ShareRequest(
+        request = TokenCreationRequest(
             id="id",
-            studies = [SharedStudy(
+            resources = [OrthancResource(
                 orthanc_id="orthanc_id",
-                dicom_uid="dicom_uid")],
-            type=ShareType.osimis_viewer_publication,
+                dicom_uid="dicom_uid",
+                level=Levels.STUDY
+            )],
+            type=TokenType.OSIMIS_VIEWER_PUBLICATION,
             expiration_date=pytz.UTC.localize(datetime.datetime(2000, 12, 31, 0, 0, 0))
         )
         tokens = Hs256TokensManager(secret_key="toto")
-        token = tokens.generate_token(share_request=share_request)
+        token = tokens.generate_token(request=request)
 
         self.assertFalse(tokens.is_valid(
             token=token,
@@ -142,44 +146,27 @@ class TestTokensGenerator(unittest.TestCase):
         ))
 
 
-    def test_hs_256_server_identifier(self):
+    def test_hs_256_server_id(self):
 
         tokens = Hs256TokensManager(
             secret_key="toto",
-            standard_server_identifier="nominal-id",
-            anonymized_server_identifier="anonymized-id"
+            server_id="server-id"
         )
-
-        # anonymized token with right id
-        token = tokens.generate_token(share_request=ShareRequest(
-            id="id",
-            studies=[SharedStudy(
-                orthanc_id="orthanc_id",
-                dicom_uid="dicom_uid")],
-            anonymized=True,
-            type=ShareType.osimis_viewer_publication
-        ))
-
-        # valid on anonymized server
-        self.assertTrue(tokens.is_valid(token=token, orthanc_id="orthanc_id", server_identifier="anonymized-id"))
-        # invalid on nominal server
-        self.assertFalse(tokens.is_valid(token=token, orthanc_id="orthanc_id", server_identifier="nominal-id"))
-        # invalid if no server id
-        self.assertFalse(tokens.is_valid(token=token, orthanc_id="orthanc_id", server_identifier=None))
-
         # nominal token with right id
-        token = tokens.generate_token(share_request=ShareRequest(
+        token = tokens.generate_token(request=TokenCreationRequest(
             id="id",
-            studies=[SharedStudy(
+            resources=[OrthancResource(
                 orthanc_id="orthanc_id",
-                dicom_uid="dicom_uid")],
+                dicom_uid="dicom_uid",
+                level=Levels.STUDY
+            )],
             anonymized=False,
-            type=ShareType.osimis_viewer_publication
+            type=TokenType.OSIMIS_VIEWER_PUBLICATION
         ))
 
-        # invalid on anonymized server
-        self.assertFalse(tokens.is_valid(token=token, orthanc_id="orthanc_id", server_identifier="anonymized-id"))
+        # invalid on another server
+        self.assertFalse(tokens.is_valid(token=token, orthanc_id="orthanc_id", server_id="another-server-id"))
         # valid on nominal server
-        self.assertTrue(tokens.is_valid(token=token, orthanc_id="orthanc_id", server_identifier="nominal-id"))
+        self.assertTrue(tokens.is_valid(token=token, orthanc_id="orthanc_id", server_id="server-id"))
         # invalid if no server id
-        self.assertFalse(tokens.is_valid(token=token, orthanc_id="orthanc_id", server_identifier=None))
+        self.assertFalse(tokens.is_valid(token=token, orthanc_id="orthanc_id", server_id=None))

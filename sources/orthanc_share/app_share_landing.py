@@ -46,7 +46,7 @@ def landing_page(request: Request, token: str = None):
     try:
         logging.info("Shares landing: " + token)
 
-        share_request = token_service.get_share_request_from_token(token=token) #this will raise if the token can not be decoded
+        share_request = token_service.get_request_from_token(token=token) #this will raise if the token can not be decoded
 
         if token_service.is_expired(share_request):
             return generic_html_response(request=request, title=title_expired_token, message=message_expired_token, custom_file="expired-token.html")

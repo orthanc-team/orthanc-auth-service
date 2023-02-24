@@ -19,12 +19,12 @@ def create_token_service_from_secrets():
     if is_secret_defined("PUBLIC_ORTHANC_ROOT"):
         logging.warning("PUBLIC_ORTHANC_ROOT is defined, configuring generator for standard 'osimis-viewer-publication' and 'stone-viewer-publication' shares")
         public_orthanc_root = get_secret_or_die("PUBLIC_ORTHANC_ROOT")
-        server_identifier = None
+        server_id = None
 
-        if not is_secret_defined("SERVER_IDENTIFIER"):
-            logging.warning("SERVER_IDENTIFIER is not defined.  This is fine if you do not enable anonymized shares")
+        if not is_secret_defined("SERVER_ID"):
+            logging.warning("SERVER_ID is not defined.  This is not mandatory")
         else:
-            server_identifier = get_secret_or_die("SERVER_IDENTIFIER")
+            server_id = get_secret_or_die("SERVER_ID")
 
         if not is_secret_defined("PUBLIC_LANDING_ROOT"):
             logging.warning("PUBLIC_LANDING_ROOT is not defined.  Users won't get a clear error message if their link is invalid or expired")
@@ -33,28 +33,11 @@ def create_token_service_from_secrets():
 
         token_service._configure_server(
             public_orthanc_root=public_orthanc_root,
-            server_identifier=server_identifier,
+            server_id=server_id,
             public_landing_root=public_landing_root
         )
     else:
         logging.warning("PUBLIC_ORTHANC_ROOT is not defined, the generator will not allow 'osimis-viewer-publication' or 'stone-viewer-publication' shares")
-
-    if is_secret_defined("PUBLIC_ANONYMIZED_ORTHANC_ROOT"):
-        logging.warning("PUBLIC_ANONYMIZED_ORTHANC_ROOT is defined, configuring generator for anonymized 'osimis-viewer-publication' shares")
-        public_anonymized_orthanc_root = get_secret_or_die("PUBLIC_ANONYMIZED_ORTHANC_ROOT")
-        anonymized_server_identifier = None
-
-        if not is_secret_defined("ANONYMIZED_SERVER_IDENTIFIER"):
-            logging.warning("ANONYMIZED_SERVER_IDENTIFIER is not defined.  This is fine if you do not enable standard shares")
-        else:
-            anonymized_server_identifier = get_secret_or_die("ANONYMIZED_SERVER_IDENTIFIER")
-
-        token_service._configure_anonymized_server(
-            public_anonymized_orthanc_root=public_anonymized_orthanc_root,
-            anonymized_server_identifier=anonymized_server_identifier
-        )
-    else:
-        logging.warning("PUBLIC_ANONYMIZED_ORTHANC_ROOT is not defined, the generator will not allow anonymized 'osimis-viewer-publication' shares")
 
     if is_secret_defined("MEDDREAM_TOKEN_SERVICE_URL") and is_secret_defined("PUBLIC_MEDDREAM_ROOT"):
         logging.warning("MEDDREAM_TOKEN_SERVICE_URL and PUBLIC_MEDDREAM_ROOT are defined, configuring generator for 'meddream-instant-links' shares")
