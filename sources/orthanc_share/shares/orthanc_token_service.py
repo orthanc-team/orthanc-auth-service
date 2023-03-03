@@ -83,8 +83,9 @@ class OrthancTokenService:
                 logging.error("No dicom_uid provided while generating a link to the MedDream Viewer")
                 return None
 
+            studyIds = ",".join([s.dicom_uid for s in request.resources])
             logging.warning("generateUrl meddream instant " + self.public_meddream_root_)
-            return urllib.parse.urljoin(self.public_meddream_root_, f"?token={token}")
+            return urllib.parse.urljoin(self.public_meddream_root_, f"?study={studyIds}&token={token}")
 
         elif request.type == TokenType.MEDDREAM_VIEWER_PUBLICATION:
             logging.warning("generateUrl meddream publication " + self.public_meddream_root_)
@@ -174,6 +175,38 @@ class OrthancTokenService:
         logging.info("created token: " + response.json())
         return response
 
+    def decode_token(self, token: str) -> TokenDecoderResponse:
+        try:
+            logging.info("Decode token: " + token)
+
+            response = TokenDecoderResponse()
+
+            # try to decode the token to get the token_creation_request
+            token_creation_request = TokenCreationRequest(**self.tokens_manager_._decode_token(token))  # this will raise if the token can not be decoded
+            response.token_type = token_creation_request.type
+
+            if self.is_expired(token_creation_request):
+                response.error_code = DecoderErrorCodes.EXPIRED
+                return response
+
+            # we can not check that the token is valid for the given study, this will be check by the auth plugin once the viewer opens
+            response.redirect_url = self.redirect_to_viewer(token=token)
+            return response
+
+        except InvalidTokenException as ex:
+            logging.exception(ex)
+            response.error_code = DecoderErrorCodes.INVALID
+            return response
+
+        except SharesException as ex:
+            logging.exception(ex)
+            response.error_code = DecoderErrorCodes.UNKNOWN
+            return response
+
+        except Exception as ex:
+            logging.exception(ex)
+            response.error_code = DecoderErrorCodes.UNKNOWN
+            return response
 
     def get_request_from_token(self, token: str) -> TokenCreationRequest:
         return self.tokens_manager_.get_request_from_token(token=token)

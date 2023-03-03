@@ -11,6 +11,10 @@ import json
 import secrets
 import os
 import pprint
+from datetime import datetime, timedelta
+import requests
+import jwt
+import pytz
 from shares.models import *
 from shares.orthanc_token_service_factory import create_token_service_from_secrets
 
@@ -68,6 +72,10 @@ def create_token(token_type: str, request: TokenCreationRequest):
 
         logging.info("creating token: " + request.json())
 
+        # transform the validity_duration into an expiration_date
+        if request.expiration_date is None and request.validity_duration is not None:
+            request.expiration_date = (pytz.UTC.localize(datetime.now()) + timedelta(seconds=request.validity_duration)).isoformat()
+
         token = token_service.create_token(request=request)
 
         logging.info("created token: " + token.json())
@@ -117,39 +125,204 @@ def validate_authorization(request: TokenValidationRequest, token=Header(default
         raise HTTPException(status_code=500, detail=str(ex))
 
 
+# route called by the Orthanc Authorization plugin to decode a token
+@app.post("/tokens/decode", dependencies=basic_auth_dependencies)
+def decode_token(request: TokenDecoderRequest):
+
+    try:
+        logging.info("decoding token: " + request.json())
+
+        response = token_service.decode_token(
+            token=request.token_value)
+
+        logging.info("decoded token: " + response.json())
+        return response
+
+    except ValueError as ex:
+        raise HTTPException(status_code=400, detail=str(ex))
+    except Exception as ex:
+        logging.exception(ex)
+        raise HTTPException(status_code=500, detail=str(ex))
+
+
 @app.post("/user/get-profile")  # this is a POST and not a GET because we want to same kind of payload as for other routes
 def get_user_profile(user_profile_request: UserProfileRequest):
-# def get_user_profile(token_key: str = Query(alias='token-key'),
-#                      token_value: str = Query(alias='token-value'),
-#                      server_id: Optional[str] = Query(alias='server-id', default=None)
-#                      ):
-#     user_profile_request = UserProfileRequest(
-#         token_value=token_value,
-#         token_key=token_key,
-#         server_id=server_id)
     logging.info("get user profile: " + user_profile_request.json())
 
-    # logging.info("token alone: " + validation_request.token_value)
+    try:
+        if user_profile_request.token_key is not None:
+            response = get_user_profile_from_token(user_profile_request.token_value)
 
-    if user_profile_request.token_key is not None:
-        # TODO get name and role from keycloak + transform roles into permissions
+            # TODO get name and role from keycloak + transform roles into permissions
 
+            response = UserProfileResponse(
+                name="John Doe",
+                permissions=[
+                    UserPermissions.VIEW,
+                    UserPermissions.DOWNLOAD,
+                    UserPermissions.SEND,
+                    UserPermissions.Q_R_REMOTE_MODALITIES,
+                    UserPermissions.UPLOAD,
+                    UserPermissions.SHARE
+                ],
+                validity=60
+            )
+        else:
+            response = UserProfileResponse(
+                name="Anonymous",
+                permissions=[],
+                validity=60
+            )
+
+        return response
+    except jwt.exceptions.InvalidAlgorithmError:
         response = UserProfileResponse(
-            name="John Doe",
-            permissions=[
-                UserPermissions.VIEW,
-                UserPermissions.DOWNLOAD,
-                UserPermissions.SEND,
-                UserPermissions.Q_R_REMOTE_MODALITIES,
-                UserPermissions.UPLOAD,
-            ],
-            validity=60
-        )
-    else:
-        response = UserProfileResponse(
-            name="Anonymous",
+            name="Not a user token",
             permissions=[],
             validity=60
         )
+        return response
+
+
+def get_user_profile_from_token(jwt_token: str) -> UserProfileResponse:
+    decoded_token = decode_token(jwt_token=jwt_token)
+    response = UserProfileResponse(name="", permissions=[], validity=60)
+
+    response.name = get_name_from_decoded_token(decoded_token=decoded_token)
+
+    roles = get_roles_from_decoded_token(decoded_token=decoded_token)
+
+    response.permissions = get_permissions_from_roles(roles)
 
     return response
+
+
+def get_permissions_from_roles(roles: List[str]) -> List[UserPermissions]:
+    response = []
+
+    # for each role received from the token sent by Keycloak
+    for role in roles:
+        # search for it in the configured roles
+        configured_role = configured_roles.get(role)
+        # if it has been configured:
+        if configured_role is not None:
+            # Let's add the permissions in the response
+            for item in configured_role:
+                # (if not already there)
+                if UserPermissions(item) not in response:
+                    response.append(UserPermissions(item))
+
+    return response
+
+
+def get_roles_from_decoded_token(decoded_token: str) -> List[str]:
+    '''
+    Returns the roles extracted form the token.
+    Here is token sample:
+
+        {
+        "exp": 1676637999,
+        "iat": 1676637699,
+        "auth_time": 1676626268,
+        "jti": "2443e1e4-74cc-4eae-bc1b-cec65a7b401c",
+        "iss": "http://localhost:8080/realms/orthanc-realm",
+        "aud": "account",
+        "sub": "3cd50e87-a0e6-40a4-bebf-3eab0cb7b6c0",
+        "typ": "Bearer",
+        "azp": "orthanc-id",
+        "nonce": "c5a6737c-70ea-4703-85e3-bf660c473fae",
+        "session_state": "5b0cdfa4-0781-4b69-a0e9-171ff5d4ded3",
+        "acr": "0",
+        "allowed-origins": [
+            "*"
+        ],
+        "realm_access": {
+            "roles": [
+            "default-roles-orthanc-realm",
+            "offline_access",
+            "uma_authorization",
+            "orthanc-admin"
+            ]
+        },
+        "resource_access": {
+            "account": {
+            "roles": [
+                "manage-account",
+                "manage-account-links",
+                "view-profile"
+            ]
+            }
+        },
+        "scope": "openid profile email",
+        "sid": "5b0cdfa4-0781-4b69-a0e9-171ff5d4ded3",
+        "email_verified": false,
+        "name": "my user",
+        "preferred_username": "myuser",
+        "given_name": "my",
+        "family_name": "user"
+        }
+
+    '''
+    realm_access = decoded_token.get('realm_access')
+    if realm_access is not None:
+        roles = realm_access.get('roles')
+        if roles is not None:
+            return roles
+    return []
+
+
+def get_name_from_decoded_token(decoded_token: str) -> str:
+    name = decoded_token.get('name')
+    if name is not None:
+        return name
+    return ''
+
+
+def decode_token(jwt_token: str) -> str:
+    return jwt.decode(jwt=jwt_token, key=public_key, audience="account", algorithms=["RS256"])
+
+
+def get_keycloak_public_key(keycloak_uri: str) -> str:
+    '''
+    - get public key from keycloak server
+    - add "-----BEGIN PUBLIC KEY-----" (and same for the end)
+    - return it as a bytes string
+    '''
+
+    public_key = requests.get(keycloak_uri).json().get("public_key")
+
+    begin_public_key = "-----BEGIN PUBLIC KEY-----\n"
+    end_public_key = "\n-----END PUBLIC KEY-----"
+
+    return ''.join([begin_public_key, public_key, end_public_key]).encode()
+
+
+def get_config_from_file(file_path: str):
+    with open(file_path) as f:
+        data = json.load(f)
+    return data.get('roles')
+
+
+
+
+# get these values once for all
+keycloak_uri = os.environ.get("KEYCLOAK_URI", "http://keycloak:8080/realms/orthanc-realm/")
+permissions_file_path = os.environ.get("PERMISSIONS_FILE_PATH", "permissions.json")
+
+try:
+    public_key = get_keycloak_public_key(keycloak_uri)
+    logging.info(f"Got the public key from Keycloak.")
+
+except Exception as ex:
+    logging.exception(ex)
+    logging.error(f"Unable to reach keycloak (be patient, Keycloak may need more than 1 min to start), exiting...")
+    exit(-1)
+
+try:
+    configured_roles = get_config_from_file(permissions_file_path)
+    logging.info(f"Got the roles and permissions from configuration file")
+
+except Exception as ex:
+    logging.exception(ex)
+    logging.error(f"Unable to get roles and permissions from configuration file ({permissions_file_path}), exiting...")
+    exit(-1)

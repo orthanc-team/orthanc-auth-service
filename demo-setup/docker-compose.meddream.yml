@@ -51,6 +51,8 @@ services:
   meddream-token-service:
     image: orthancteam/meddream-token-service
     restart: unless-stopped
+    # remove in prod !
+    ports: ["8088:8088"]
 
   meddream-viewer:
     image: orthancteam/meddream-viewer

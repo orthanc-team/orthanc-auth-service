@@ -32,6 +32,12 @@ class Methods(str, Enum):
     DELETE = 'delete'
 
 
+class DecoderErrorCodes(str, Enum):
+    EXPIRED = 'expired'
+    INVALID = 'invalid'
+    UNKNOWN = 'unknown'
+
+
 class TokenType(str, Enum):
     OSIMIS_VIEWER_PUBLICATION = 'osimis-viewer-publication'  # a link to open the Osimis viewer valid for a long period
     MEDDREAM_VIEWER_PUBLICATION = 'meddream-viewer-publication'  # a link to open the MedDream viewer valid for a long period
@@ -64,6 +70,7 @@ class TokenCreationRequest(BaseModel):
     resources: List[OrthancResource]
     type: TokenType = Field(default=TokenType.INVALID)
     expiration_date: Optional[StringDateTime] = Field(alias="expiration-date", default=None)
+    validity_duration: Optional[int] = Field(alias='validity-duration', default=None)            # alternate way to provide an expiration_date, more convenient for instant-links since the duration is relative to the server time, not the client time !
 
     class Config:  # allow creating object from dict (used when deserializing the JWT)
         allow_population_by_field_name = True
@@ -89,6 +96,17 @@ class TokenValidationRequest(BaseModel):
 class TokenValidationResponse(BaseModel):
     granted: bool
     validity: int
+
+
+class TokenDecoderRequest(BaseModel):
+    token_key: Optional[str] = Field(alias="token-key", default=None)
+    token_value: Optional[str] = Field(alias="token-value", default=None)
+
+
+class TokenDecoderResponse(BaseModel):
+    token_type: Optional[TokenType] = Field(alias="token-type", default=None)
+    error_code: Optional[DecoderErrorCodes] = Field(alias="error-code", default=None)
+    redirect_url: Optional[str] = Field(alias="redirect-url", default=None)
 
 
 class UserProfileRequest(BaseModel):
