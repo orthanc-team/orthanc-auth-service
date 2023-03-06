@@ -7,7 +7,7 @@ services:
 
   nginx:
     image: orthancteam/orthanc-nginx
-    depends_on: [orthanc-for-admin, orthanc-for-shares, orthanc-anonymizer, orthanc-token-service]
+    depends_on: [orthanc, orthanc-token-service]
     restart: unless-stopped
     ports: ["80:80"]
 # if setting ENABLE_HTTPS: "true" env var, uncomment the following 4 lines and comment the line with 'ports: ["80:80"]'
@@ -16,57 +16,23 @@ services:
 #      - /.../crt.pem:/etc/nginx/tls/crt.pem
 #      - /.../key.pem:/etc/nginx/tls/key.pem
     environment:
-      ENABLE_ORTHANC_FOR_ADMIN: "true"
-      ENABLE_ORTHANC_FOR_SHARES: "true"
-      ENABLE_ORTHANC_FOR_ANON_SHARES: "true"
+      ENABLE_ORTHANC: "true"
+      ENABLE_KEYCLOAK: "true"
       ENABLE_ORTHANC_TOKEN_SERVICE: "false"
 
 
   # first setup through configuration file and build step
-  orthanc-for-admin:
-    image: osimis/orthanc:22.11.2
+  orthanc:
+    image: osimis/orthanc:keycloak-unstable
     volumes:
       - orthanc-storage:/var/lib/orthanc/db
-      - ./demo-setup/orthanc-admin.jsonc:/etc/orthanc/orthanc-admin.json
+      - ./demo-setup/orthanc.jsonc:/etc/orthanc/orthanc.json
     depends_on: [orthanc-db]
     restart: unless-stopped
     env_file:
       - ./demo-setup/common-orthanc.env
     environment:
-      ORTHANC__NAME: "Orthanc for admin"
-
-
-  orthanc-for-shares:
-    image: osimis/orthanc:22.11.2
-    volumes:
-      - orthanc-storage:/var/lib/orthanc/db
-    depends_on: [orthanc-db]
-    restart: unless-stopped
-    env_file:
-      - ./demo-setup/common-orthanc.env
-      - ./demo-setup/common-share-orthanc.env
-    environment:
-      ORTHANC__NAME: "Orthanc for shares"
-      ORTHANC__AUTHORIZATION__WEB_SERVICE_IDENTIFIER: "standard-server-id"
-
       VERBOSE_ENABLED: "true"
-      VERBOSE_STARTUP: "true"
-
-  orthanc-for-anon-shares:
-    image: osimis/orthanc:22.11.2
-    volumes:
-      - orthanc-storage:/var/lib/orthanc/db
-    depends_on: [orthanc-db]
-    restart: unless-stopped
-    env_file:
-      - ./demo-setup/common-orthanc.env
-      - ./demo-setup/common-share-orthanc.env
-    environment:
-      ORTHANC__NAME: "Orthanc for anon shares"
-      ORTHANC__AUTHORIZATION__WEB_SERVICE_IDENTIFIER: "anonymized-server-id"
-      VERBOSE_ENABLED: "true"
-      VERBOSE_STARTUP: "true"
-
 
   orthanc-token-service:
     image: orthancteam/orthanc-token-service
@@ -75,10 +41,8 @@ services:
     restart: unless-stopped
     environment:
       SECRET_KEY: "my-secret-key"
-      PUBLIC_ORTHANC_ROOT: "http://localhost/shares/"
-      PUBLIC_ANONYMIZED_ORTHANC_ROOT: "http://localhost/anon-shares/"
-      PUBLIC_LANDING_ROOT: "http://localhost/welcome/"
-      SERVER_ID: "server-id"
+      PUBLIC_ORTHANC_ROOT: "http://localhost/orthanc/"
+      PUBLIC_LANDING_ROOT: "http://localhost/orthanc/ui/app/token-landing.html"
       USERS: |
         {
           "share-user": "share-password",
@@ -86,25 +50,6 @@ services:
           "orthanc-oe2-user": "orthanc-oe2-password"
         }
       
-
-  orthanc-share-landing:
-    image: orthancteam/orthanc-share-landing
-    restart: unless-stopped
-    environment:
-      SECRET_KEY: "my-secret-key"
-      PUBLIC_ORTHANC_ROOT: "http://localhost/shares/"
-      PUBLIC_ANONYMIZED_ORTHANC_ROOT: "http://localhost/anon-shares/"
-      PUBLIC_LANDING_ROOT: "http://localhost/welcome/"
-      SERVER_ID: "server-id"
-      TITLE_EXPIRED_TOKEN: "We are sorry to let you know that your token has expired.<br/>Please request a new token by sending us a mail."
-      TITLE_INVALID_TOKEN: "We are sorry to let you know that your token is invalid.<br/>Please make sure you've copied it entirely."
-
-  orthanc-anonymizer:
-    image: orthancteam/orthanc-anonymizer
-    restart: unless-stopped
-    environment:
-      ORTHANC_ROOT: "http://orthanc-for-anon-shares:8042/"
-
   orthanc-db:
     image: postgres:14
     restart: unless-stopped
@@ -112,7 +57,30 @@ services:
     environment:
       POSTGRES_HOST_AUTH_METHOD: "trust"
 
+  keycloak:
+    image: quay.io/keycloak/keycloak:20.0.1
+    ports: ["8080:8080"]
+    depends_on: [keycloak-db]
+    environment:
+      KEYCLOAK_ADMIN: "admin"
+      KEYCLOAK_ADMIN_PASSWORD: "admin"
+      KC_DB: "postgres"
+      KC_DB_URL: "jdbc:postgresql://keycloak-db:5432/keycloak"
+      KC_DB_USERNAME: "keycloak"
+      KC_DB_PASSWORD: "keycloak"
+    # in prod, replace "start-dev" by "start"
+    command: "start-dev --proxy edge --hostname-path=/keycloak --hostname-strict=false"
+
+  keycloak-db:
+    image: postgres:14
+    restart: unless-stopped
+    volumes: ["keycloak-db:/var/lib/postgresql/data"]
+    environment:
+      POSTGRES_PASSWORD: "keycloak"
+      POSTGRES_USER: "keycloak"
+      POSTGRES_DB: "keycloak"
 
 volumes:
   orthanc-storage:
   orthanc-db:
+  keycloak-db:

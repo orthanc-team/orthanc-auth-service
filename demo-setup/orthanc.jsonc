@@ -1,0 +1,74 @@
+// SPDX-FileCopyrightText: 2022 Orthanc Team SRL <info@orthanc.team>
+//
+// SPDX-License-Identifier: CC0-1.0
+
+{
+    "OrthancExplorer2": {
+        "IsDefaultUI": true,
+        "UiOptions": {
+            "EnableShares": true,
+            "DefaultShareDuration": 0,
+            "ShareDurations": [0, 7, 15, 30, 90, 365]
+        },
+        "Tokens" : {
+            "InstantLinksValidity": 7200,
+            "ShareType": "osimis-viewer-publication"
+        },
+        "Keycloak" : {
+            "Enable": true,
+            "Url": "http://localhost/keycloak/",
+            "Realm": "orthanc-realm",
+            "ClientId": "orthanc-id"
+        }
+    },
+
+    "AuthenticationEnabled": false,     // because it is handled by the authorization plugin
+    "Authorization": {
+        "WebServiceRootUrl": "http://orthanc-token-service:8000/",
+        "WebServiceUsername": "share-user",
+        "WebServicePassword": "share-password",
+        "StandardConfigurations" : [
+            "osimis-web-viewer",
+            "stone-webviewer",
+            "orthanc-explorer-2"
+        ],
+        "CheckedLevel": "studies",
+        "Permissions" : [
+            ["post", "^/auth/tokens/decode$", ""],
+
+            // elemental browsing in OE2
+            ["post", "^/tools/find$", "all|view"],
+            ["get" , "^/(patients|studies|series|instances)/([a-f0-9-]+)$", "all|view"],
+            ["get" , "^/(patients|studies|series|instances)/([a-f0-9-]+)/(studies|study|series|instances)$", "all|view"],
+            ["get" , "^/instances/([a-f0-9-]+)/(tags|header)$", "all|view"],
+            ["get" , "^/statistics$", "all|view"],
+
+            // create links to open viewer or download resources
+            ["put", "^/auth/tokens/(viewer-instant-link|meddream-instant-link)$", "all|view"],
+            ["put", "^/auth/tokens/(download-instant-link)$", "all|download"],
+
+            // share a link to open a study
+            ["put", "^/auth/tokens/(stone-viewer-publication|meddream-viewer-publication|osimis-viewer-publication)$", "all|share"],
+
+            // uploads
+            ["post", "^/instances$", "all|upload"],
+
+            // monitor jobs you have created
+            ["get" , "^/jobs/([a-f0-9-]+)$", "all|send|modify|anonymize|q-r-remote-modalities"],
+
+            // interacting with peers/modalities/dicomweb
+            ["post", "^/(peers|modalities)/(.*)/store$", "all|send"],
+            ["get" , "^/(peers|modalities)$", "all|send|q-r-remote-modalities"],
+            ["post", "^/modalities/(.*)/echo$", "all|send|q-r-remote-modalities"],
+            ["post", "^/modalities/(.*)/query$", "all|q-r-remote-modalities"],
+            ["get", "^/queries/([a-f0-9-]+)/answers$", "all|q-r-remote-modalities"],
+            ["post", "^/modalities/(.*)/move$", "all|q-r-remote-modalities"],
+            ["get" , "^/DICOM_WEB_ROOT/servers$", "all|send|q-r-remote-modalities"],
+            ["get" , "^/DICOM_WEB_ROOT/(servers)/(.*)/stow$", "all|send"],
+
+            // modifications/anonymization
+            ["post", "^/(patients|studies|series|instances)/([a-f0-9-]+)/modify(.*)$", "all|modify"],
+            ["post", "^/(patients|studies|series|instances)/([a-f0-9-]+)/anonymize(.*)$", "all|anonymize"]
+        ]
+    }
+}
