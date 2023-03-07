@@ -9,9 +9,9 @@ ENV PYTHONUNBUFFERED=1
 COPY requirements.txt /
 RUN pip install -r requirements.txt
 
-RUN mkdir /orthanc_share
-COPY orthanc_share /orthanc_share
+RUN mkdir /orthanc_auth_service
+COPY orthanc_auth_service /orthanc_auth_service
 
-WORKDIR /orthanc_share
-CMD ["uvicorn", "app_orthanc_token_service:app", "--host", "0.0.0.0", "--port" , "8000"]
+WORKDIR /orthanc_auth_service
+CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port" , "8000"]
 

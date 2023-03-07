@@ -19,7 +19,7 @@ This demo contains:
 - It exposes an Orthanc User Interface on [http://localhost/orthanc/ui/app/](http://localhost/orthanc/ui/app/) accessible only
   to logged in users.
 - a Postgresql container to store the Orthanc database
-- an `orthanc-token-service` web service that handles authorization and permissions
+- an `orthanc-auth-service` web service that handles authorization and permissions
 - a [KeyCloak](https://www.keycloak.org/) container handling authentication and providing user roles.
 
 # Starting the setup
@@ -73,7 +73,7 @@ curl -X PUT http://demo-script-user:demo-script-password@localhost:8000/shares -
 
 To start the setup, type: `./start-demo-with-meddream.sh`
 
-- A script or application requests the `orthanc-token-service` web-service to generate a `meddream-instant-link` token via the Rest API:
+- A script or application requests the `orthanc-auth-service` web-service to generate a `meddream-instant-link` token via the Rest API:
 ```bash
 curl -X PUT http://demo-script-user:demo-script-password@localhost:8000/shares -H 'Content-Type: application/json' \
   -d '{"id": "demo-1",
@@ -84,7 +84,7 @@ curl -X PUT http://demo-script-user:demo-script-password@localhost:8000/shares -
 ```
 - then open the url from the response ([sample](http://localhost/meddream/?token=B0VKYtVmPoa2Ye8IRLoc9GZ4SHf-02_DmHEFvlsvOm1TYmALSq9S56FiDG7_2t-XZJZXF_b-BVfDwlxWHLPfgaRxHULrkuuSaSHn1jx_c4Q7YLnQxbQ=)).
 
-- A script or application may also requests the `orthanc-token-service` web-service to generate a `meddream-viewer-publication` token via the Rest API:
+- A script or application may also requests the `orthanc-auth-service` web-service to generate a `meddream-viewer-publication` token via the Rest API:
 ```bash
 curl -X PUT http://demo-script-user:demo-script-password@localhost:8000/shares -H 'Content-Type: application/json' \
   -d '{"id": "demo-1",

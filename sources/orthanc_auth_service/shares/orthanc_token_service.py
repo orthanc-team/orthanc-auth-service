@@ -11,7 +11,7 @@ from typing import Optional
 from .exceptions import *
 
 
-
+# this class generates JWT tokens that can be used by orthanc to access specific resources
 class OrthancTokenService:
 
     tokens_manager_: TokensManager = None
@@ -210,7 +210,6 @@ class OrthancTokenService:
 
     def get_request_from_token(self, token: str) -> TokenCreationRequest:
         return self.tokens_manager_.get_request_from_token(token=token)
-
 
     def redirect_to_viewer(self, token: str = None) -> str:
 

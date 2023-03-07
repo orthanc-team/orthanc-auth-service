@@ -52,9 +52,7 @@ class TokensManager:
             return False
 
         try:
-            logging.warning(f"decoding")
             r = self._decode_token(token)
-            logging.warning(f"decoded")
             share_request = TokenCreationRequest(**r)
         except:
             logging.warning(f"Token Validation: failed to decode token")

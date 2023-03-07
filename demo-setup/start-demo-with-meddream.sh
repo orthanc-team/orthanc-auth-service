@@ -9,7 +9,7 @@ set -o errexit
 
 pushd ../sources
 docker build -t orthancteam/orthanc-nginx -f nginx/Dockerfile.orthanc-nginx .
-docker build -t orthancteam/orthanc-token-service -f Dockerfile.orthanc-token-service .
+docker build -t orthancteam/orthanc-auth-service -f Dockerfile.orthanc-auth-service .
 docker build -t orthancteam/meddream-viewer  -f meddream/viewer/Dockerfile.meddream-viewer ./meddream/viewer
 docker build -t orthancteam/meddream-token-service  -f meddream/token-service/Dockerfile.meddream-token-service ./meddream/token-service
 

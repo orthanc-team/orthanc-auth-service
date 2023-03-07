@@ -10,7 +10,7 @@ version: "3"
 services:
 
   nginx:
-    depends_on: [orthanc, orthanc-token-service, meddream-viewer]
+    depends_on: [orthanc, orthanc-auth-service, meddream-viewer]
     environment:
       ENABLE_MEDDREAM: "true"
 
@@ -22,7 +22,7 @@ services:
       ORTHANC__ORTHANC_EXPLORER_2__UI_OPTIONS__MED_DREAM_VIEWER_PUBLIC_ROOT: "http://localhost/meddream/"
       ORTHANC__ORTHANC_EXPLORER_2__TOKENS__SHARE_TYPE: "meddream-viewer-publication"
 
-  orthanc-token-service:
+  orthanc-auth-service:
     environment:
       MEDDREAM_TOKEN_SERVICE_URL: "http://meddream-token-service:8088/v3/generate"
       PUBLIC_MEDDREAM_ROOT: "http://localhost/meddream/"

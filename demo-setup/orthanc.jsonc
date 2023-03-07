@@ -24,7 +24,7 @@
 
     "AuthenticationEnabled": false,     // because it is handled by the authorization plugin
     "Authorization": {
-        "WebServiceRootUrl": "http://orthanc-token-service:8000/",
+        "WebServiceRootUrl": "http://orthanc-auth-service:8000/",
         "WebServiceUsername": "share-user",
         "WebServicePassword": "share-password",
         "StandardConfigurations" : [

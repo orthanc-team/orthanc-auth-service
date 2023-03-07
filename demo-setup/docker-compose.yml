@@ -7,7 +7,7 @@ services:
 
   nginx:
     image: orthancteam/orthanc-nginx
-    depends_on: [orthanc, orthanc-token-service]
+    depends_on: [orthanc, orthanc-auth-service]
     restart: unless-stopped
     ports: ["80:80"]
 # if setting ENABLE_HTTPS: "true" env var, uncomment the following 4 lines and comment the line with 'ports: ["80:80"]'
@@ -34,8 +34,8 @@ services:
     environment:
       VERBOSE_ENABLED: "true"
 
-  orthanc-token-service:
-    image: orthancteam/orthanc-token-service
+  orthanc-auth-service:
+    image: orthancteam/orthanc-auth-service
     # disable ports in prod or at least don't make this webservice public !
     ports: ["8000:8000"]
     restart: unless-stopped

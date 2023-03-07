@@ -16,7 +16,7 @@ These web services integrates with [Orthanc Explorer 2](https://book.orthanc-ser
 This solution has been [presented](https://orthanc.team/files/doc/OrthancCon2022-Sharing-DICOM-studies-with-Orthanc.pdf) at [OrthancCon 2022](https://www.orthanc-server.com/static.php?page=orthanc-con-2022).
 
 Features:
-- `orthanc-token-service` to generate & validate tokens
+- `orthanc-auth-service` to generate & validate tokens
 - `orthanc-share-landing` to display user friendly messages if tokens are invalid
 - Generates publication links for:
   - [Stone Viewer](https://www.orthanc-server.com/static.php?page=stone-web-viewer)
@@ -34,8 +34,8 @@ Features:
 
 ## how it works ?
 
-- `orthanc-token-service` is a web service that generates `token` to grant access to a particular study in Orthanc.
-  - You must configure the `orthanc-token-service` web-service by providing these environment variables (or Docker secrets)
+- `orthanc-auth-service` is a web service that generates `token` to grant access to a particular study in Orthanc.
+  - You must configure the `orthanc-auth-service` web-service by providing these environment variables (or Docker secrets)
     - `SECRET_KEY` is a high entropy text that will be used to encode and decode the JWT
     - To enable orthanc standard shares (without anonymization):
       - `PUBLIC_ORTHANC_ROOT` is the root url of the public Orthanc
@@ -52,8 +52,8 @@ Features:
       If not defined, the token-service is available without authentication.  If you expose the web-service publicly, you should always configure authentication.
 - If you want to display a message to the user when the token has expired or is invalid, you should also define 
   `PUBLIC_LANDING_ROOT` pointing to the `orthanc-share-landing` web service that must be configured with the same
-  environment variables as the `orthanc-token-service`.
-- A script or application requests the `orthanc-token-service` to generate such a token via the Rest API:
+  environment variables as the `orthanc-auth-service`.
+- A script or application requests the `orthanc-auth-service` to generate such a token via the Rest API:
 ```bash
 curl -X PUT http://localhost:8000/tokens/stone-viewer-publication -H 'Content-Type: application/json' \
   -d '{"id": "toto",
@@ -79,7 +79,7 @@ curl -X PUT http://localhost:8042/auth/tokens/stone-viewer-publication -H 'Conte
 ```
 
 
-- the `orthanc-token-service` replies with a share with the token and a link to the viewer:
+- the `orthanc-auth-service` replies with a share with the token and a link to the viewer:
 ```json
   {
     "request":{
@@ -97,10 +97,10 @@ curl -X PUT http://localhost:8042/auth/tokens/stone-viewer-publication -H 'Conte
 ```
 - once the users clicks on this link, the `orthanc-share-landing` will check the token validity and redirect the browser
   to the Stone Viewer
-- once the Viewer tries to access the study, the authorization plugin will issue a request to `orthanc-token-service` to validate the token.
-  Since `orthanc-token-service` is the only one to know the secret key, it is able to validate the token to grant access to this particular study.
+- once the Viewer tries to access the study, the authorization plugin will issue a request to `orthanc-auth-service` to validate the token.
+  Since `orthanc-auth-service` is the only one to know the secret key, it is able to validate the token to grant access to this particular study.
 
-- sample request issued to `orthanc-token-service` to validate a token
+- sample request issued to `orthanc-auth-service` to validate a token
 ```bash
 curl -X POST http://localhost:8000/tokens/validate -H 'token: eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6InRvdG8iLCJyZXNvdXJjZXMiOlt7ImRpY29tX3VpZCI6IjEuMiIsIm9ydGhhbmNfaWQiOm51bGwsInVybCI6bnVsbCwibGV2ZWwiOiJzdHVkeSJ9XSwidHlwZSI6InN0b25lLXZpZXdlci1wdWJsaWNhdGlvbiIsImV4cGlyYXRpb25fZGF0ZSI6IjIwMjYtMTItMzFUMTE6MDA6MDArMDA6MDAifQ.RlB9x56eQSaJNt3t4hDxAHdM7BhBbah5CWWBBZQf7x0' \
   -H 'Content-Type: application/json' \
@@ -110,7 +110,7 @@ curl -X POST http://localhost:8000/tokens/validate -H 'token: eyJ0eXAiOiJKV1QiLC
        "level": "study", 
        "method": "get"}'
 ```
-- in response, the `orthanc-token-service` will reply with this payload (required by the authorization plugin):
+- in response, the `orthanc-auth-service` will reply with this payload (required by the authorization plugin):
 ```json
   {
     "granted":false,
@@ -124,7 +124,7 @@ curl -X POST http://localhost:8000/tokens/validate -H 'token: eyJ0eXAiOiJKV1QiLC
   - `PUBLIC_LANDING_ROOT` is required for long validity tokens (see below) 
   - `MEDDREAM_TOKEN_SERVICE_URL` is the url of the MedDream token web service (MedDream has its own webservice to generate short term tokens)
   - `PUBLIC_MEDDREAM_ROOT` is the public root url where the MedDream Viewer can be accessed 
-- A script or application requests the `orthanc-token-service` to generate such a token via the Rest API:
+- A script or application requests the `orthanc-auth-service` to generate such a token via the Rest API:
 ```bash
 curl -X PUT http://localhost:8000/shares -H 'Content-Type: application/json' \
   -d '{"id": "toto",
@@ -136,7 +136,7 @@ curl -X PUT http://localhost:8000/shares -H 'Content-Type: application/json' \
 ```
   Allowed values for `type` are `meddream-instant-link` and `meddream-viewer-publication`.  The `expiration-date` is 
   never used for `meddream-instant-link` since the validity is actually configured in the MedDream Token Service.
-- if generating a `meddream-instant-link`, `orthanc-token-service` replies with a share with the token and a link to the 
+- if generating a `meddream-instant-link`, `orthanc-auth-service` replies with a share with the token and a link to the 
   MedDream viewer that shall be opened directly after (within a few minutes):
 ```json
   {
@@ -154,7 +154,7 @@ curl -X PUT http://localhost:8000/shares -H 'Content-Type: application/json' \
     "url":"http://localhost/meddream/?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6InRvdG8iLCJkaWNvbV91aWQiOiIxLjIiLCJvcnRoYW5jX2lkIjoiMDE5NWYxM2UtNGFmZTY4MjItOGI0OTRjYzQtNTE2MmM1MGQtMGRhZjY2YWEiLCJ0eXBlIjoib3NpbWlzLXZpZXdlci1wdWJsaWNhdGlvbiIsImV4cGlyYXRpb25fZGF0ZSI6IjIwMjItMDctMDdUMTE6MDA6MDArMDA6MDAifQ.8mzvYXCrjhM8OWPhu5HQJbEtCO9y6XyFqV-Ak1n-9Tw"
   }
 ```
-- if generating a `meddream-viewer-publication`, `orthanc-token-service` replies with a share with the token and a link to the `meddream redirect service` that will, once accessed, generate a new MedDream token that can be used within a few minutes:
+- if generating a `meddream-viewer-publication`, `orthanc-auth-service` replies with a share with the token and a link to the `meddream redirect service` that will, once accessed, generate a new MedDream token that can be used within a few minutes:
 ```json
   {
     "request":{
@@ -178,7 +178,7 @@ curl -X PUT http://localhost:8000/shares -H 'Content-Type: application/json' \
 
 This repo builds a few images that can be reused directly and published on Dockerhub.
 
-- [orthancteam/orthanc-token-service](https://hub.docker.com/repository/docker/orthancteam/orthanc-token-service) is the webservice generating and validating tokens.
+- [orthancteam/orthanc-auth-service](https://hub.docker.com/repository/docker/orthancteam/orthanc-auth-service) is the webservice generating and validating tokens.
 - [orthancteam/orthanc-share-landing](https://hub.docker.com/repository/docker/orthancteam/orthanc-share-landing) is the webservice providing error messages to the user and/or redirecting to MedDream, the StoneViewer or the OsimisViewer.
 - [orthancteam/orthanc-anonymizer](https://hub.docker.com/repository/docker/orthancteam/orthanc-anonymizer) is a reverse-proxy that performs on-the-fly anonymization of the Orthanc Rest API routes that are used by the Osimis Viewer.
 - [orthancteam/meddream-viewer](https://hub.docker.com/repository/docker/orthancteam/meddream-viewer) is a pre-configured version of the [meddream:orthanc-dicom-viewer](https://hub.docker.com/r/meddream/orthanc-dicom-viewer) image

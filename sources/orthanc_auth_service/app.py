@@ -3,15 +3,12 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 from fastapi import FastAPI, Request, status, Header, HTTPException, Depends, Query
-from fastapi.responses import RedirectResponse
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 import logging
-import urllib.parse
 import json
 import secrets
 import os
-import pprint
-from datetime import datetime, timedelta
+from datetime import timedelta
 import requests
 import jwt
 import pytz

@@ -8,6 +8,7 @@ from .utils.utils import get_secret_or_die, is_secret_defined
 import os
 import logging
 
+
 def create_token_service_from_secrets():
 
     token_service = OrthancTokenService(

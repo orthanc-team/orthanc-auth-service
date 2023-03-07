@@ -4,7 +4,7 @@
 
 import datetime
 
-from orthanc_share import Hs256TokensManager, TokensManager, TokenCreationRequest, TokenType, TokenValidationRequest, OrthancResource, Levels
+from orthanc_auth_service import Hs256TokensManager, TokensManager, TokenCreationRequest, TokenType, TokenValidationRequest, OrthancResource, Levels
 
 import unittest
 import subprocess
