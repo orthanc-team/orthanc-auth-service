@@ -15,15 +15,12 @@ web-service to provide publication links to specific studies.
 
 This demo contains:
 
-- a nginx container that provides a web server on port 80.  It exposes the 3 Orthanc instances:
-  - [/orthanc-admin/](http://localhost/orthanc-admin/ui/app/) is used by admin users who have access to all studies.
-  - The second orthanc is used only for shared studies.  The UI is blocked as well as many routes.  This orthanc is using the Authorization plugin to validate tokens.
-  - The third orthanc is used only for anonymized shared studies.  It is positioned behind an `orthanc-anonymizer`
-
-- 3 Orthanc containers, one configured for `admin`, one configured for `shares` and one for anonymized `shares`
+- a nginx container that provides a web server on port 80.  
+- It exposes an Orthanc User Interface on [http://localhost/orthanc/ui/app/](http://localhost/orthanc/ui/app/) accessible only
+  to logged in users.
 - a Postgresql container to store the Orthanc database
-- an `orthanc-share` web service that generates publication link (listens on port 8000)
-- an `orthanc-anonymizer` web service that performs on-the-fly anonymization of the Orthanc Rest API that is used by the OsimisViewer.
+- an `orthanc-token-service` web service that handles authorization and permissions
+- a [KeyCloak](https://www.keycloak.org/) container handling authentication and providing user roles.
 
 # Starting the setup
 

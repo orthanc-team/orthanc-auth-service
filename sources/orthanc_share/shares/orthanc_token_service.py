@@ -162,7 +162,7 @@ class OrthancTokenService:
             if not has_dicom_uids:
                 raise SharesException("No dicom_uid provided while generating a link to the MedDream Viewer")
 
-            token = self.tokens_manager_.generate_token(share_request=request)
+            token = self.tokens_manager_.generate_token(request=request)
 
         response = TokenCreationResponse(
             request=request,

@@ -8,6 +8,7 @@
 set -o errexit
 
 enableOrthanc="${ENABLE_ORTHANC:-true}"
+enableOrthancForIngest="${ENABLE_ORTHANC_FOR_INGEST:-false}"
 enableKeycloak="${ENABLE_KEYCLOAK:-true}"
 enableOrthancTokenService="${ENABLE_ORTHANC_TOKEN_SERVICE:-false}"
 enableHttps="${ENABLE_HTTPS:-false}"
@@ -28,6 +29,11 @@ ls -al /etc/nginx/disabled-reverse-proxies/
 if [[ $enableOrthanc == "true" ]]; then
   echo "ENABLE_ORTHANC is true -> enable /orthanc/ reverse proxy"
   cp -f /etc/nginx/disabled-reverse-proxies/reverse-proxy.orthanc.conf /etc/nginx/enabled-reverse-proxies/
+fi
+
+if [[ $enableOrthancForIngest == "true" ]]; then
+  echo "ENABLE_ORTHANC_FOR_INGEST is true -> enable /orthanc-ingest/ reverse proxy"
+  cp -f /etc/nginx/disabled-reverse-proxies/reverse-proxy.orthanc-ingest.conf /etc/nginx/enabled-reverse-proxies/
 fi
 
 if [[ $enableKeycloak == "true" ]]; then
