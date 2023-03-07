@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# SPDX-FileCopyrightText: 2022 Orthanc Team SRL <info@orthanc.team>
+# SPDX-FileCopyrightText: 2022 - 2023 Orthanc Team SRL <info@orthanc.team>
 #
 # SPDX-License-Identifier: CC0-1.0
 
