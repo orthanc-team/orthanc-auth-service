@@ -10,6 +10,7 @@ set -o errexit
 pushd ../sources
 docker build -t orthancteam/orthanc-nginx -f nginx/Dockerfile.orthanc-nginx .
 docker build -t orthancteam/orthanc-auth-service -f Dockerfile.orthanc-auth-service .
+docker build -t orthancteam/orthanc-keycloak -f keycloak/Dockerfile.orthanc-keycloak .
 
 popd
 

@@ -303,7 +303,7 @@ def get_config_from_file(file_path: str):
 
 
 # get these values once for all
-keycloak_uri = os.environ.get("KEYCLOAK_URI", "http://keycloak:8080/realms/orthanc-realm/")
+keycloak_uri = os.environ.get("KEYCLOAK_URI", "http://keycloak:8080/realms/orthanc/")
 permissions_file_path = os.environ.get("PERMISSIONS_FILE_PATH", "permissions.json")
 
 try:
