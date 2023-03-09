@@ -1,4 +1,6 @@
 {
+  "SPDX-License-Identifier" : "CC0-1.0",
+  "SPDX-FileCopyrightText" : "2022 - 2023 Orthanc Team SRL <info@orthanc.team>",
   "id" : "51f8e56b-3df7-4a0e-ae5b-4f961f4a3e78",
   "realm" : "orthanc",
   "notBefore" : 0,

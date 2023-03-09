@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2022 - 2023 Orthanc Team SRL <info@orthanc.team>
+#
+# SPDX-License-Identifier: CC0-1.0
+
 FROM quay.io/keycloak/keycloak:21.0.1 as builder
 
 WORKDIR /opt/keycloak
