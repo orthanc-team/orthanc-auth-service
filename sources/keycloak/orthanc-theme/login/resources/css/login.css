@@ -1,3 +1,8 @@
+/* SPDX-FileCopyrightText: 2022 - 2023 Orthanc Team SRL <info@orthanc.team>
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 /* Patternfly CSS places a "bg-login.jpg" as the background on this ".login-pf" class.
    This clashes with the "keycloak-bg.png' background defined on the body below.
    Therefore the Patternfly background must be set to none. */
