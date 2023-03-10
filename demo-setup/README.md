@@ -7,7 +7,7 @@ SPDX-License-Identifier: CC-BY-4.0
 # Purpose
 
 This is a sample setup to demonstrate how to run Orthanc-Explorer-2 together with the `orthanc-share`
-web-service to provide publication links to specific studies.
+web-service to provide publication links to specific studies. The authentication and the roles of the users are handled by Keycloak.
 
 **Disclaimer**: this sample is provided 'as is' without any guarantee.  Don't use it in production unless you perfectly understand every part of it.
 
@@ -30,7 +30,7 @@ To start the setup, type: `./start-demo.sh`
 
 ## Using the UI
 
-- Orthanc UI with full admin access is accessible at [http://localhost/orthanc-admin/ui/app/](http://localhost/orthanc-admin/ui/app/).  Login/pwd = `admin/admin`
+- Orthanc UI with full admin access is accessible at [http://localhost/orthanc-admin/ui/app/](http://localhost/orthanc-admin/ui/app/).  Login/pwd = `orthanc/orthanc`
 - follow the instructions in this video to share a study
 
 ![Sharing a study in OE2](doc/Share-study.gif)
@@ -68,6 +68,50 @@ curl -X PUT http://demo-script-user:demo-script-password@localhost:8000/shares -
 - then open the url from the response ([sample](http://localhost/welcome/?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6ImRlbW8tMSIsImRpY29tX3VpZCI6IjEuMi4yNzYuMC43MjMwMDEwLjMuMS4yLjIzNDQzMTM3NzUuMTQ5OTIuMTQ1ODA1ODM1OS42ODExIiwib3J0aGFuY19pZCI6ImJhMTlkNTkyLTRiYjAzYTdiLTY1ZjA2NDAyLWFlMmI4YWIxLTZiMzNjN2RjIiwiYW5vbnltaXplZCI6dHJ1ZSwidHlwZSI6Im9zaW1pcy12aWV3ZXItcHVibGljYXRpb24iLCJleHBpcmF0aW9uX2RhdGUiOm51bGx9.agqiD0EeD_DR4yboXIwsAN80ZjAZlgoey4-QxUkfAqU)). 
 - the `orthanc-share-landing` service will then check that your token can be decoded and has not expired and then forward you to the viewer
 
+# Users and roles management
+
+There are 2 different locations to consider for users and roles management:
+- the Keycloak management interface
+- the configuration file
+## Manage users and roles in Keycloak interface
+The first step is the creation of users in keycloak web app (http://localhost:8080), the [Keycloak official documentation](https://www.keycloak.org/docs/latest/server_admin/index.html#assembly-managing-users_server_administration_guide) will give you all the information.
+The current setup comes with 2 pre-defined users:
+- orthanc
+- doctor
+
+The second step is the creation of roles in keycloak web app (http://localhost:8080), the [Keycloak official documentation](https://www.keycloak.org/docs/latest/server_admin/index.html#proc-creating-realm-roles_server_administration_guide) will give you all the information.
+The current setup comes with 2 pref-defined roles:
+- admin: this role is assigned to the `orthanc` user
+- doctor: this role is assigned to the `doctor` user
+
+## Manage permissions in the configuration file
+The last step is the binding between roles and permissions.
+This is done in the `permissions.json` file. Here is a sample:
+```
+{
+  "roles" : {
+    "admin": ["all"],
+    "doctor": ["view", "download", "share", "send"]
+  }
+}
+```
+This file has to be provided to the `orthanc-auth-service` container via the env var `PERMISSIONS_FILE_PATH`.
+Here is the list of available permissions:
+```
+all
+view
+download
+delete
+send
+modify
+anonymize
+upload
+q-r-remote-modalities
+settings
+api-view
+legacy-ui
+share
+```
 
 # MedDream integration
 
@@ -98,3 +142,4 @@ curl -X PUT http://demo-script-user:demo-script-password@localhost:8000/shares -
 ```
 - then open the url from the response ([sample](http://localhost/welcome/?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6ImRlbW8tMSIsImRpY29tX3VpZCI6IjEuMi4yNzYuMC43MjMwMDEwLjMuMS4yLjIzNDQzMTM3NzUuMTQ5OTIuMTQ1ODA1ODM1OS42ODExIiwib3J0aGFuY19pZCI6bnVsbCwiYW5vbnltaXplZCI6ZmFsc2UsInR5cGUiOiJtZWRkcmVhbS12aWV3ZXItcHVibGljYXRpb24iLCJleHBpcmF0aW9uX2RhdGUiOm51bGx9.lW9gOWIABY-jigewbuxbELvRMbjffu2pS_MXCVKM3ts)).
 - This will generate a temporary `meddream-instant-link` and will redirect you to the MedDream viewer.
+
