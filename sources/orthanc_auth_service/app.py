@@ -149,21 +149,6 @@ def get_user_profile(user_profile_request: UserProfileRequest):
     try:
         if user_profile_request.token_key is not None:
             response = get_user_profile_from_token(user_profile_request.token_value)
-
-            # TODO get name and role from keycloak + transform roles into permissions
-
-            response = UserProfileResponse(
-                name="John Doe",
-                permissions=[
-                    UserPermissions.VIEW,
-                    UserPermissions.DOWNLOAD,
-                    UserPermissions.SEND,
-                    UserPermissions.Q_R_REMOTE_MODALITIES,
-                    UserPermissions.UPLOAD,
-                    UserPermissions.SHARE
-                ],
-                validity=60
-            )
         else:
             response = UserProfileResponse(
                 name="Anonymous",

@@ -1,5 +1,6 @@
 {
   "roles" : {
-
+    "admin": ["all"],
+    "doctor": ["view", "download", "share", "send"]
   }
 }

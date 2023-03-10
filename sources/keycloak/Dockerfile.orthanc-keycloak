@@ -9,15 +9,19 @@ ENV KC_DB=postgres
 
 RUN /opt/keycloak/bin/kc.sh build
 
+RUN mkdir /opt/keycloak/themes/orthanc
+ADD keycloak/orthanc-theme /opt/keycloak/themes/orthanc
+
 FROM quay.io/keycloak/keycloak:21.0.1
 COPY --from=builder /opt/keycloak/ /opt/keycloak/
 
 COPY keycloak/realm-export.json /opt/keycloak/data/import/
 
 ENTRYPOINT ["/opt/keycloak/bin/kc.sh"]
-#CMD ["start-dev --import-realm --proxy edge --hostname-path=/keycloak --hostname-strict=false"]
 CMD ["start-dev --import-realm --proxy edge --hostname-strict=false"]
 
-#CMD ["start-dev --import-realm"]
-#CMD ["export --file /usr/tmp/realm-export.json --realm orthanc --users realm_file"]
+# replace last "CMD" command by following one to export the realm to a json file
+# then, rebuild/start and your realm will be available after the keycloak exit
+# (don't forget to bind a volume to /usr/tmp to get the file)
+# CMD ["export --file /usr/tmp/realm-export.json --realm orthanc --users realm_file"]
 

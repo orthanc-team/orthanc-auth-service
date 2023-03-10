@@ -120,6 +120,7 @@ class UserProfileRequest(BaseModel):
 
 
 class UserPermissions(str, Enum):
+    ALL = 'all'
     VIEW = 'view'
     DOWNLOAD = 'download'
     DELETE = 'delete'
