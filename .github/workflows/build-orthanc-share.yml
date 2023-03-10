@@ -70,6 +70,15 @@ jobs:
             org.opencontainers.image.title=meddream-token-service
             org.opencontainers.image.vendor=Orthanc Team SRL
 
+      - name: Extract metadata (tags, labels) for Docker (orthanc-keycloak)
+        id: meta-orthanc-keycloak
+        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+        with:
+          images: orthancteam/orthanc-keycloak
+          labels: |
+            org.opencontainers.image.title=orthanc-keycloak
+            org.opencontainers.image.vendor=Orthanc Team SRL
+
       - name: Build and push orthanc-nginx Docker image
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
         with:
@@ -106,6 +115,15 @@ jobs:
           tags: ${{ steps.meta-meddream-token-service.outputs.tags }}
           labels: ${{ steps.meta-meddream-token-service.outputs.labels }}
 
+      - name: Build and push orthanc-keycloak Docker image
+        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        with:
+          context: sources/
+          file: sources/keycloak/Dockerfile.orthanc-keycloak
+          push: true
+          tags: ${{ steps.meta-orthanc-keycloak.outputs.tags }}
+          labels: ${{ steps.meta-orthanc-keycloak.outputs.labels }}
+
       - name: Docker Hub Description (orthanc-nginx)
         uses: peter-evans/dockerhub-description@v3
         with:
@@ -123,3 +141,12 @@ jobs:
           repository: orthancteam/orthanc-auth-service
           short-description: Web service to run next to orthanc to handle authentication, authorization and sharing of studies
           readme-filepath: sources/README-dockerhub-orthanc-auth-service.md
+
+      - name: Docker Hub Description (orthanc-keycloak)
+        uses: peter-evans/dockerhub-description@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          repository: orthancteam/orthanc-keycloak
+          short-description: Web service to run in front of Orthanc to handle users/roles management
+          readme-filepath: sources/README-dockerhub-orthanc-keycloak.md
