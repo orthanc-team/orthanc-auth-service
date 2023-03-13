@@ -41,6 +41,8 @@ services:
     restart: unless-stopped
     environment:
       SECRET_KEY: "my-secret-key"
+      KEYCLOAK_URI: "http://keycloak:8080/realms/orthanc/"
+      #PERMISSIONS_FILE_PATH: "path_to_the file"
       PUBLIC_ORTHANC_ROOT: "http://localhost/orthanc/"
       PUBLIC_LANDING_ROOT: "http://localhost/orthanc/ui/app/token-landing.html"
       USERS: |
@@ -59,8 +61,6 @@ services:
 
   keycloak:
     image: orthancteam/orthanc-keycloak
-    # in prod: remove that forwarding
-    ports: ["8080:8080"]
     depends_on: [keycloak-db]
     environment:
       KEYCLOAK_ADMIN: "admin"

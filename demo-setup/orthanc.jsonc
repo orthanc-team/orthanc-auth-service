@@ -16,7 +16,7 @@
         },
         "Keycloak" : {
             "Enable": true,
-            "Url": "http://localhost:8080/", // TODO: change that according to nginx config
+            "Url": "http://localhost/keycloak/", // TODO: change that according to nginx config
             "Realm": "orthanc",
             "ClientId": "orthanc"
         }
