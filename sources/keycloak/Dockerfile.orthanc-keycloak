@@ -18,7 +18,10 @@ COPY --from=builder /opt/keycloak/ /opt/keycloak/
 COPY keycloak/realm-export.json /opt/keycloak/data/import/
 
 ENTRYPOINT ["/opt/keycloak/bin/kc.sh"]
-CMD ["start --optimized --import-realm --proxy edge --hostname-path=/keycloak --hostname-admin=/keycloak --hostname-strict=false"]
+#CMD ["start --optimized --import-realm --proxy edge --hostname-path=/keycloak --hostname-strict=false"]
+# This is working without tls
+# Validation with tls in progress...
+CMD ["start --optimized --import-realm --proxy edge --hostname-admin-url=http://localhost/keycloak --hostname-url=http://localhost/keycloak"]
 
 
 ### To export the realm to a json file:
