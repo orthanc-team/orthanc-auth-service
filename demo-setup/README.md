@@ -143,3 +143,13 @@ curl -X PUT http://demo-script-user:demo-script-password@localhost:8000/shares -
 - then open the url from the response ([sample](http://localhost/welcome/?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6ImRlbW8tMSIsImRpY29tX3VpZCI6IjEuMi4yNzYuMC43MjMwMDEwLjMuMS4yLjIzNDQzMTM3NzUuMTQ5OTIuMTQ1ODA1ODM1OS42ODExIiwib3J0aGFuY19pZCI6bnVsbCwiYW5vbnltaXplZCI6ZmFsc2UsInR5cGUiOiJtZWRkcmVhbS12aWV3ZXItcHVibGljYXRpb24iLCJleHBpcmF0aW9uX2RhdGUiOm51bGx9.lW9gOWIABY-jigewbuxbELvRMbjffu2pS_MXCVKM3ts)).
 - This will generate a temporary `meddream-instant-link` and will redirect you to the MedDream viewer.
 
+# TLS handling
+As soon as you want to handle TLS, you should:
+
+- change all the passwords (don't forget the `master`realm)
+- create the DNS record in your registrar configuration
+- set `ENABLE_HTTPS` to `true`in the `nginx` service
+- forward 443 port (in place of 80) in the `nginx`service
+- bind some volumes to make cert and key available in the `nginx` service
+- set `KC_HOSTNAME_URL` and `KC_HOSTNAME_ADMIN_URL` to the right value in the `keycloak` service
+- set `Url` (in `OrthancExplorer2` - `Keycloak`) to the right value in the `orthanc` service (see `orthanc.jsonc` file)

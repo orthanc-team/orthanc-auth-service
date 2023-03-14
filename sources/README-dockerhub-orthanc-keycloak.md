@@ -21,4 +21,4 @@ Full documentation and demo setup will be available [here](https://github.com/or
 This image is provided as a sample. It shouldn't be use as is!
 Among other things to do for a production-ready setup there are:
 - change the passwords
-- handle tls
+- handle tls !

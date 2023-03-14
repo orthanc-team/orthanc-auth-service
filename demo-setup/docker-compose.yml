@@ -19,6 +19,7 @@ services:
       ENABLE_ORTHANC: "true"
       ENABLE_KEYCLOAK: "true"
       ENABLE_ORTHANC_TOKEN_SERVICE: "false"
+      ENABLE_HTTPS: "false"
 
 
   # first setup through configuration file and build step
@@ -69,6 +70,8 @@ services:
       KC_DB_URL: "jdbc:postgresql://keycloak-db:5432/keycloak"
       KC_DB_USERNAME: "keycloak"
       KC_DB_PASSWORD: "keycloak"
+      # KC_HOSTNAME_URL: "https://mydomain.com/keycloak"
+      # KC_HOSTNAME_ADMIN_URL: "https://mydomain.com/keycloak"
     # volumes:
     #  - keycloak-export:/usr/tmp
     

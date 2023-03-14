@@ -6,6 +6,8 @@ FROM quay.io/keycloak/keycloak:21.0.1 as builder
 
 WORKDIR /opt/keycloak
 ENV KC_DB=postgres
+ENV KC_HOSTNAME_URL=http://localhost/keycloak
+ENV KC_HOSTNAME_ADMIN_URL=http://localhost/keycloak
 
 RUN mkdir /opt/keycloak/themes/orthanc
 ADD keycloak/orthanc-theme /opt/keycloak/themes/orthanc
@@ -17,11 +19,12 @@ COPY --from=builder /opt/keycloak/ /opt/keycloak/
 
 COPY keycloak/realm-export.json /opt/keycloak/data/import/
 
+ENV KC_HOSTNAME_URL=http://localhost/keycloak
+ENV KC_HOSTNAME_ADMIN_URL=http://localhost/keycloak
+
 ENTRYPOINT ["/opt/keycloak/bin/kc.sh"]
 #CMD ["start --optimized --import-realm --proxy edge --hostname-path=/keycloak --hostname-strict=false"]
-# This is working without tls
-# Validation with tls in progress...
-CMD ["start --optimized --import-realm --proxy edge --hostname-admin-url=http://localhost/keycloak --hostname-url=http://localhost/keycloak"]
+CMD ["start --optimized --import-realm --proxy edge"]
 
 
 ### To export the realm to a json file:
