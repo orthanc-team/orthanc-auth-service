@@ -153,4 +153,4 @@ As soon as you want to handle TLS, you should:
 - bind some volumes to make cert and key available in the `nginx` service
 - set `KC_HOSTNAME_URL` and `KC_HOSTNAME_ADMIN_URL` to the right value in the `keycloak` service
 - set `Url` (in `OrthancExplorer2` - `Keycloak`) to the right value in the `orthanc` service (see `orthanc.jsonc` file)
-- in the Keycloak configuration, set the `Valid redirect URIs` and `Web origins` values (see [official doc](https://www.keycloak.org/getting-started/getting-started-docker#_secure_the_first_application))
+- in the Keycloak web interface, set the `Valid redirect URIs` and `Web origins` values (see [official doc](https://www.keycloak.org/getting-started/getting-started-docker#_secure_the_first_application))
