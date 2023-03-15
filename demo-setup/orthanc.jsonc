@@ -11,8 +11,8 @@
             "ShareDurations": [0, 7, 15, 30, 90, 365]
         },
         "Tokens" : {
-            "InstantLinksValidity": 7200,
-            "ShareType": "osimis-viewer-publication"
+            "InstantLinksValidity": 3600,
+            "ShareType": "stone-viewer-publication"
         },
         "Keycloak" : {
             "Enable": true,
@@ -68,7 +68,10 @@
 
             // modifications/anonymization
             ["post", "^/(patients|studies|series|instances)/([a-f0-9-]+)/modify(.*)$", "all|modify"],
-            ["post", "^/(patients|studies|series|instances)/([a-f0-9-]+)/anonymize(.*)$", "all|anonymize"]
+            ["post", "^/(patients|studies|series|instances)/([a-f0-9-]+)/anonymize(.*)$", "all|anonymize"],
+
+            // deletes
+            ["delete" , "^/(patients|studies|series|instances)/([a-f0-9-]+)$", "all|delete"]
         ]
     }
 }

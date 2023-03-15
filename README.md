@@ -1,7 +1,7 @@
 <!--
-SPDX-FileCopyrightText: 2019 Jane Doe <jane@example.com>
+SPDX-FileCopyrightText: 2022 - 2023 Orthanc Team SRL <info@orthanc.team>
 
-SPDX-License-Identifier: GPL-3.0-or-later
+SPDX-License-Identifier: CC-BY-4.0
 -->
 
 [![REUSE status](https://api.reuse.software/badge/github.com/orthanc-team/orthanc-share)](https://api.reuse.software/info/github.com/orthanc-team/orthanc-share)

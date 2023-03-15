@@ -6,8 +6,8 @@ SPDX-License-Identifier: CC-BY-4.0
 
 # Purpose
 
-This is a sample setup to demonstrate how to run Orthanc-Explorer-2 together with the `orthanc-share`
-web-service to provide publication links to specific studies. The authentication and the roles of the users are handled by Keycloak.
+This is a sample setup to demonstrate how to run Orthanc-Explorer-2 together with the `orthanc-auth-service`
+web-service to provide tokens to authenticate users or grant access to specific resources e.g. by providing public links to specific studies. The authentication and the roles of the users are handled by Keycloak.
 
 **Disclaimer**: this sample is provided 'as is' without any guarantee.  Don't use it in production unless you perfectly understand every part of it.
 
@@ -30,7 +30,7 @@ To start the setup, type: `./start-demo.sh`
 
 ## Using the UI
 
-- Orthanc UI with full admin access is accessible at [http://localhost/orthanc-admin/ui/app/](http://localhost/orthanc-admin/ui/app/).  Login/pwd = `orthanc/orthanc`
+- Orthanc UI with full admin access is accessible at [http://localhost/orthanc/ui/app/](http://localhost/orthanc/ui/app/).  Login/pwd = `orthanc/orthanc`
 - follow the instructions in this video to share a study
 
 ![Sharing a study in OE2](doc/Share-study.gif)
