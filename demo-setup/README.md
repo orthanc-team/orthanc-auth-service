@@ -109,7 +109,6 @@ upload
 q-r-remote-modalities
 settings
 api-view
-legacy-ui
 share
 ```
 

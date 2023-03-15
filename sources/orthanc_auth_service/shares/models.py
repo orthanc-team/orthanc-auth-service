@@ -131,7 +131,6 @@ class UserPermissions(str, Enum):
     Q_R_REMOTE_MODALITIES = 'q-r-remote-modalities'
     SETTINGS = 'settings'
     API_VIEW = 'api-view'
-    LEGACY_UI = 'legacy-ui'
 
     SHARE = 'share'
 
