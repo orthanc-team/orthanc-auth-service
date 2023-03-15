@@ -142,7 +142,7 @@ def decode_token(request: TokenDecoderRequest):
         raise HTTPException(status_code=500, detail=str(ex))
 
 
-@app.post("/user/get-profile")  # this is a POST and not a GET because we want to same kind of payload as for other routes
+@app.post("/user/get-profile", dependencies=basic_auth_dependencies)  # this is a POST and not a GET because we want to same kind of payload as for other routes
 def get_user_profile(user_profile_request: UserProfileRequest):
     logging.info("get user profile: " + user_profile_request.json())
 
