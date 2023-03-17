@@ -148,7 +148,6 @@ def get_user_profile(user_profile_request: UserProfileRequest):
     logging.info("get user profile: " + user_profile_request.json())
 
     try:
-        raise HTTPException(status_code=400, detail=str("Not a user token"))
         if keycloak is None:
             logging.warning("Keycloak is not configured, all users are considered anonymous")
             response = UserProfileResponse(
