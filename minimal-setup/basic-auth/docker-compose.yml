@@ -1,0 +1,123 @@
+# SPDX-FileCopyrightText: 2022 - 2023 Orthanc Team SRL <info@orthanc.team>
+#
+# SPDX-License-Identifier: CC0-1.0
+
+version: "3"
+services:
+
+  nginx:
+    image: orthancteam/orthanc-nginx
+    depends_on: [orthanc, orthanc-auth-service, orthanc-for-shares]
+    restart: unless-stopped
+    ports: ["80:80"]
+# if setting ENABLE_HTTPS: "true" env var, uncomment the following 4 lines and comment the line with 'ports: ["80:80"]'
+#    ports: ["443:443"]
+#    volumes:
+#      - /.../crt.pem:/etc/nginx/tls/crt.pem
+#      - /.../key.pem:/etc/nginx/tls/key.pem
+    environment:
+      ENABLE_ORTHANC: "true"
+      ENABLE_ORTHANC_FOR_SHARES: "true"
+      ENABLE_ORTHANC_TOKEN_SERVICE: "false"
+      ENABLE_HTTPS: "false"
+
+  orthanc:
+    image: osimis/orthanc:keycloak-unstable
+    volumes:
+      - orthanc-storage:/var/lib/orthanc/db
+    depends_on: [orthanc-db]
+    restart: unless-stopped
+    environment:
+      STONE_WEB_VIEWER_PLUGIN_ENABLED: "true"
+      DICOM_WEB_PLUGIN_ENABLED: "true"
+      ORTHANC__POSTGRESQL__HOST: "orthanc-db"
+      ORTHANC_JSON: |
+        {
+          "Name": "Orthanc",
+          "OrthancExplorer2": {
+            "IsDefaultUI": true,
+            "UiOptions": {
+              "EnableShares": true,
+              "DefaultShareDuration": 0,
+              "ShareDurations": [0, 7, 15, 30, 90, 365]
+            },
+            "Tokens" : {
+              "ShareType": "stone-viewer-publication"
+            }
+          },
+          "AuthenticationEnabled": true,
+          "RegisteredUsers": {
+            "admin": "admin"
+          },
+          "Authorization": {  // the auth-plugin is used only to generate tokens when sharing a study
+            //"WebServiceRootUrl": "http://orthanc-auth-service:8000/",
+            "WebServiceTokenCreationBaseUrl": "http://orthanc-auth-service:8000/tokens/",
+            "WebServiceUsername": "share-user",
+            "WebServicePassword": "share-password"
+            //"CheckedLevel": "studies"
+          }
+        
+        }
+
+  orthanc-for-shares:
+    image: osimis/orthanc:keycloak-unstable
+    volumes:
+      - orthanc-storage:/var/lib/orthanc/db
+    depends_on: [orthanc-db]
+    restart: unless-stopped
+    environment:
+      STONE_WEB_VIEWER_PLUGIN_ENABLED: "true"
+      DICOM_WEB_PLUGIN_ENABLED: "true"
+      ORTHANC__POSTGRESQL__HOST: "orthanc-db"
+      ORTHANC_JSON: |
+        {
+          "Name": "Orthanc",
+          "OrthancExplorer2": {
+            "IsDefaultUI": true,
+            "UiOptions": {
+              "EnableShares": true,
+              "DefaultShareDuration": 0,
+              "ShareDurations": [0, 7, 15, 30, 90, 365]
+            },
+            "Tokens" : {
+              "ShareType": "stone-viewer-publication"
+            }
+          },
+          "AuthenticationEnabled": false,     // because it is handled by the authorization plugin
+          "Authorization": {
+            "WebServiceRootUrl": "http://orthanc-auth-service:8000/",
+            "WebServiceUsername": "share-user",
+            "WebServicePassword": "share-password",
+            "StandardConfigurations" : [
+              "osimis-web-viewer",
+              "stone-webviewer",
+              "orthanc-explorer-2"    // required for the token-landing page
+            ],
+            "CheckedLevel": "studies"
+          }
+        }
+
+  orthanc-auth-service:
+    image: orthancteam/orthanc-auth-service
+    restart: unless-stopped
+    environment:
+      SECRET_KEY: "change-me-I-am-a-secret-key"
+      #PERMISSIONS_FILE_PATH: "path_to_the file"
+      PUBLIC_ORTHANC_ROOT: "http://localhost/shares/"
+      PUBLIC_LANDING_ROOT: "http://localhost/shares/ui/app/token-landing.html"
+      USERS: |
+        {
+          "share-user": "share-password",
+          "demo-script-user": "demo-script-password"
+        }
+
+  orthanc-db:
+    image: postgres:14
+    restart: unless-stopped
+    volumes: ["orthanc-db:/var/lib/postgresql/data"]
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: "trust"
+
+volumes:
+  orthanc-storage:
+  orthanc-db:

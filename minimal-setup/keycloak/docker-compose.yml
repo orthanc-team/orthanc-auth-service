@@ -6,7 +6,7 @@ version: "3"
 services:
 
   nginx:
-    image: orthancteam/orthanc-nginx
+    image: orthancteam/orthanc-nginx:new-api
     depends_on: [orthanc, orthanc-auth-service]
     restart: unless-stopped
     ports: ["80:80"]
@@ -21,39 +21,65 @@ services:
       ENABLE_ORTHANC_TOKEN_SERVICE: "false"
       ENABLE_HTTPS: "false"
 
-
-  # first setup through configuration file and build step
   orthanc:
     image: osimis/orthanc:keycloak-unstable
     volumes:
       - orthanc-storage:/var/lib/orthanc/db
-      - ./demo-setup/orthanc.jsonc:/etc/orthanc/orthanc.json
     depends_on: [orthanc-db]
     restart: unless-stopped
-    env_file:
-      - ./demo-setup/common-orthanc.env
     environment:
-      VERBOSE_ENABLED: "true"
+      STONE_WEB_VIEWER_PLUGIN_ENABLED: "true"
+      DICOM_WEB_PLUGIN_ENABLED: "true"
+      ORTHANC__POSTGRESQL__HOST: "orthanc-db"
+      ORTHANC_JSON: |
+        {
+          "Name": "Orthanc",
+          "OrthancExplorer2": {
+            "IsDefaultUI": true,
+            "UiOptions": {
+              "EnableShares": true,
+              "DefaultShareDuration": 0,
+              "ShareDurations": [0, 7, 15, 30, 90, 365]
+            },
+            "Tokens" : {
+              "InstantLinksValidity": 3600,
+              "ShareType": "stone-viewer-publication"
+            },
+            "Keycloak" : {
+              "Enable": true,
+              "Url": "http://localhost/keycloak/",
+              "Realm": "orthanc",
+              "ClientId": "orthanc"
+            }
+          },
+          "AuthenticationEnabled": false,     // because it is handled by the authorization plugin
+          "Authorization": {
+            "WebServiceRootUrl": "http://orthanc-auth-service:8000/",
+            "WebServiceUsername": "share-user",
+            "WebServicePassword": "share-password",
+            "StandardConfigurations" : [
+              "osimis-web-viewer",
+              "stone-webviewer",
+              "orthanc-explorer-2"
+            ],
+            "CheckedLevel": "studies"
+          }
+        }
 
   orthanc-auth-service:
     image: orthancteam/orthanc-auth-service
-    # disable ports in prod or at least don't make this webservice public !
-    ports: ["8000:8000"]
     restart: unless-stopped
     environment:
-      SECRET_KEY: "my-secret-key"
+      SECRET_KEY: "change-me-I-am-a-secret-key"
       ENABLE_KEYCLOAK: "true"
-      KEYCLOAK_URI: "http://keycloak:8080/realms/orthanc/"
-      #PERMISSIONS_FILE_PATH: "path_to_the file"
       PUBLIC_ORTHANC_ROOT: "http://localhost/orthanc/"
       PUBLIC_LANDING_ROOT: "http://localhost/orthanc/ui/app/token-landing.html"
       USERS: |
         {
           "share-user": "share-password",
-          "demo-script-user": "demo-script-password",
-          "orthanc-oe2-user": "orthanc-oe2-password"
+          "demo-script-user": "demo-script-password"
         }
-      
+
   orthanc-db:
     image: postgres:14
     restart: unless-stopped
@@ -62,11 +88,11 @@ services:
       POSTGRES_HOST_AUTH_METHOD: "trust"
 
   keycloak:
-    image: orthancteam/orthanc-keycloak
+    image: orthancteam/orthanc-keycloak:new-api
     depends_on: [keycloak-db]
     environment:
       KEYCLOAK_ADMIN: "admin"
-      KEYCLOAK_ADMIN_PASSWORD: "admin"
+      KEYCLOAK_ADMIN_PASSWORD: "change-me"
       KC_DB: "postgres"
       KC_DB_URL: "jdbc:postgresql://keycloak-db:5432/keycloak"
       KC_DB_USERNAME: "keycloak"
@@ -75,7 +101,7 @@ services:
       # KC_HOSTNAME_ADMIN_URL: "https://mydomain.com/keycloak"
     # volumes:
     #  - keycloak-export:/usr/tmp
-    
+
   keycloak-db:
     image: postgres:14
     restart: unless-stopped
@@ -89,4 +115,3 @@ volumes:
   orthanc-storage:
   orthanc-db:
   keycloak-db:
-  # keycloak-export:

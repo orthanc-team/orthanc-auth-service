@@ -145,7 +145,7 @@ curl -X PUT http://demo-script-user:demo-script-password@localhost:8000/shares -
 # TLS handling
 As soon as you want to handle TLS, you should:
 
-- change all the passwords (don't forget the `master`realm)
+- change all the passwords (don't forget the `master` realm)
 - create the DNS record in your registrar configuration
 - set `ENABLE_HTTPS` to `true`in the `nginx` service
 - forward 443 port (in place of 80) in the `nginx`service
