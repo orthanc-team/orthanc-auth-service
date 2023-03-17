@@ -6,7 +6,7 @@ SPDX-License-Identifier: CC-BY-4.0
 
 [![REUSE status](https://api.reuse.software/badge/github.com/orthanc-team/orthanc-share)](https://api.reuse.software/info/github.com/orthanc-team/orthanc-share)
 
-# orthanc-share
+# orthanc-auth-service
 
 This repository contains web services to run next to orthanc to handle user permissions through an integration with [Keycloak](keycloak.org) 
 and secure sharing of studies by issuing [JWT](https://jwt.io/) that can then be passed
@@ -41,6 +41,56 @@ Features:
 ## Release notes
 
 Check the [release notes](release-notes.md).
+
+
+# Users and roles management
+
+There are 2 different locations to consider for users and roles management:
+- the Keycloak management interface
+- the configuration file
+
+## Manage users and roles in Keycloak interface
+
+The first step is the creation of users in keycloak web app (http://localhost/keycloak/), the [Keycloak official documentation](https://www.keycloak.org/docs/latest/server_admin/index.html#assembly-managing-users_server_administration_guide) will give you all the information.
+The current setup comes with 2 pre-defined users:
+- `orthanc`
+- `doctor`
+
+And 2 pre-defined roles:
+- `admin`: this role is assigned to the `orthanc` user
+- `doctor`: this role is assigned to the `doctor` user
+
+## Manage permissions in the configuration file
+
+The last step is the binding between roles and permissions.
+This is done in the `permissions.json` file. Here is the default file:
+```
+{
+  "roles" : {
+    "admin": ["all"],
+    "doctor": ["view", "download", "share", "send"]
+  }
+}
+```
+This file has to be provided to the `orthanc-auth-service` container via the env var `PERMISSIONS_FILE_PATH`.
+Here is the list of available permissions:
+```
+all
+view
+download
+delete
+send
+modify
+anonymize
+upload
+q-r-remote-modalities
+settings
+api-view
+share
+```
+
+These permissions are also configured in the Orthanc authorization plugin (in the `Authorization.Permissions` configuration).
+The [default configuration](https://hg.orthanc-server.com/orthanc-authorization/file/tip/Plugin/DefaultConfiguration.json) is suitable to work with this sample.
 
 
 ## how it works (internals) ?
