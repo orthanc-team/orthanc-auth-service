@@ -6,6 +6,8 @@ SPDX-License-Identifier: GPL-3.0-or-later
 
 v 23.x.x
 ========
+- repository renamed from `orthanc-share` to `orthanc-auth-service`
+- almost completely rewrote the project.  Make sure to read the documentation and check the minimal setups again.
 - replaced orthanc-for-ingest by orthanc-for-api
 
 v 23.1.0

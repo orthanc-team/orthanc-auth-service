@@ -47,13 +47,13 @@ services:
           },
           "AuthenticationEnabled": true,
           "RegisteredUsers": {
-            "admin": "admin"
+            "admin": "change-me"
           },
           "Authorization": {  // the auth-plugin is used only to generate tokens when sharing a study
             //"WebServiceRootUrl": "http://orthanc-auth-service:8000/",
             "WebServiceTokenCreationBaseUrl": "http://orthanc-auth-service:8000/tokens/",
             "WebServiceUsername": "share-user",
-            "WebServicePassword": "share-password"
+            "WebServicePassword": "change-me"
             //"CheckedLevel": "studies"
           }
         
@@ -87,7 +87,7 @@ services:
           "Authorization": {
             "WebServiceRootUrl": "http://orthanc-auth-service:8000/",
             "WebServiceUsername": "share-user",
-            "WebServicePassword": "share-password",
+            "WebServicePassword": "change-me",
             "StandardConfigurations" : [
               "osimis-web-viewer",
               "stone-webviewer",
@@ -107,8 +107,7 @@ services:
       PUBLIC_LANDING_ROOT: "http://localhost/shares/ui/app/token-landing.html"
       USERS: |
         {
-          "share-user": "share-password",
-          "demo-script-user": "demo-script-password"
+          "share-user": "change-me"
         }
 
   orthanc-db:

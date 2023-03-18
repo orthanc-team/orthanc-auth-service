@@ -6,8 +6,8 @@ version: "3"
 services:
 
   nginx:
-    image: orthancteam/orthanc-nginx:new-api
-    depends_on: [orthanc, orthanc-auth-service, keycloak]
+    image: orthancteam/orthanc-nginx
+    depends_on: [orthanc, orthanc-auth-service, orthanc-for-api, meddream-viewer, keycloak]
     restart: unless-stopped
     ports: ["80:80"]
 # if setting ENABLE_HTTPS: "true" env var, uncomment the following 4 lines and comment the line with 'ports: ["80:80"]'
@@ -20,9 +20,11 @@ services:
       ENABLE_KEYCLOAK: "true"
       ENABLE_ORTHANC_TOKEN_SERVICE: "false"
       ENABLE_HTTPS: "false"
+      ENABLE_MEDDREAM: "true"
+      ENABLE_ORTHANC_FOR_API: "true"
 
   orthanc:
-    image: osimis/orthanc:keycloak-unstable
+    image: osimis/orthanc:master-unstable
     volumes:
       - orthanc-storage:/var/lib/orthanc/db
     depends_on: [orthanc-db]
@@ -37,13 +39,15 @@ services:
           "OrthancExplorer2": {
             "IsDefaultUI": true,
             "UiOptions": {
+              "EnableOpenInMedDreamViewer": true,
+          
               "EnableShares": true,
               "DefaultShareDuration": 0,
               "ShareDurations": [0, 7, 15, 30, 90, 365]
             },
             "Tokens" : {
               "InstantLinksValidity": 3600,
-              "ShareType": "stone-viewer-publication"
+              "ShareType": "meddream-viewer-publication"
             },
             "Keycloak" : {
               "Enable": true,
@@ -78,6 +82,8 @@ services:
         {
           "share-user": "change-me"
         }
+      MEDDREAM_TOKEN_SERVICE_URL: "http://meddream-token-service:8088/v3/generate"
+      PUBLIC_MEDDREAM_ROOT: "http://localhost/meddream/"
 
   orthanc-db:
     image: postgres:14
@@ -98,19 +104,63 @@ services:
       KC_DB_PASSWORD: "keycloak"
       # KC_HOSTNAME_URL: "https://mydomain.com/keycloak"
       # KC_HOSTNAME_ADMIN_URL: "https://mydomain.com/keycloak"
-    # volumes:
-    #  - keycloak-export:/usr/tmp
 
   keycloak-db:
     image: postgres:14
     restart: unless-stopped
     volumes: ["keycloak-db:/var/lib/postgresql/data"]
     environment:
-      POSTGRES_PASSWORD: "keycloak"
+      POSTGRES_PASSWORD: "change-me"
       POSTGRES_USER: "keycloak"
       POSTGRES_DB: "keycloak"
+
+  meddream-token-service:
+    image: orthancteam/meddream-token-service
+    restart: unless-stopped
+
+  meddream-viewer:
+    image: orthancteam/meddream-viewer
+    restart: unless-stopped
+    depends_on:
+      - orthanc-for-meddream
+    environment:
+      integration: "study"
+      TOKEN_SERVICE_ADDRESS: "http://meddream-token-service:8088/v3/validate"
+      ORTHANC_BASE_URL: "http://orthanc-for-api:8042"
+      ORTHANC_USER: "meddream-user"
+      ORTHANC_PWD: "change-me"
+      ORTHANC_MEDDREAM_PYTHON_PLUGIN_ENABLED: "true"
+      MEDDREAM_ADMIN_PASSWORD: "change-me"
+    volumes:
+      - meddream-license:/opt/meddream/license
+
+  # An orthanc dedicated for API accesses and also used by MedDream
+  orthanc-for-api:
+    image: osimis/orthanc:23.2.0
+    volumes:
+      - orthanc-storage:/var/lib/orthanc/db
+      - ./meddream-plugin.py:/scripts/meddream-plugin.py
+    depends_on: [orthanc-db]
+    restart: unless-stopped
+    environment:
+      ORTHANC__NAME: "Orthanc for API"
+      VERBOSE_ENABLED: "true"
+      VERBOSE_STARTUP: "true"
+      ORTHANC__PYTHON_SCRIPT: "/scripts/meddream-plugin.py"
+      ORTHANC__AUTHENTICATION_ENABLED: "true"
+      ORTHANC__POSTGRESQL__HOST: "orthanc-db"
+      ORTHANC_JSON: |
+        {
+          "RegisteredUsers": {
+            "meddream-user": "change-me",
+            "script-user": "change-me",
+            "dicom-web-client-user": "change-me"
+          }
+        }
+
 
 volumes:
   orthanc-storage:
   orthanc-db:
   keycloak-db:
+  meddream-license:

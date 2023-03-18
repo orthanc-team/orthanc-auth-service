@@ -18,21 +18,21 @@ This initial solution for study sharing has been [presented](https://orthanc.tea
 The user permissions handling was not available at that time.
 
 Features:
-- `orthanc-auth-service` to generate & validate tokens + provide user permissions from Keycloak defined roles.
+- Handles user authentication & permissions together with Keycloak
 - Generates publication links for:
   - [Stone Viewer](https://www.orthanc-server.com/static.php?page=stone-web-viewer)
   - [Osimis Viewer](https://book.orthanc-server.com/plugins/osimis-webviewer.html)
   - [MedDream Viewer](https://www.softneta.com/online-dicom-viewer/) (commercial - CE approved)
-- 2 Boilerplates [docker-compose.yml](minimal-setup/docker-compose.yml) to bootstrap a setup:
+- 3 Boilerplates [docker-compose.yml](minimal-setup/docker-compose.yml) to bootstrap a setup:
   - One with [basic authentication](minimal-setup/basic-auth) only to demonstrate study sharing.
   - One with [Keycloak integration](minimal-setup/keycloak) to demonstrate user management and study sharing
+  - One full setup with [Keycloak, MedDream and Orthanc for API](minimal-setup/keycloak) to demonstrate user management, study sharing, MedDream usage and an extra orthanc accessible e.g by DicomWebClient.
 - provides a set of companion docker images to ease deployment:
-  - [orthancteam/orthanc-aut-service](https://hub.docker.com/r/orthancteam/orthanc-auth-service) is the webservice generating and validating tokens.
+  - [orthancteam/orthanc-aut-service](https://hub.docker.com/r/orthancteam/orthanc-auth-service) is the webservice generating and validating tokens.  The web service is also providing user permissions from Keycloak defined roles.
   - [orthancteam/orthanc-nginx](https://hub.docker.com/r/orthancteam/orthanc-nginx)
   - [orthancteam/orthanc-keycloak](https://hub.docker.com/r/orthancteam/orthanc-keycloak)
   - [orthancteam/meddream-token-service](https://hub.docker.com/r/orthancteam/meddream-token-service) is a pre-configured version of the [meddream:token-service](https://hub.docker.com/r/meddream/token-service) image
   - [orthancteam/meddream-viewer](https://hub.docker.com/r/orthancteam/meddream-viewer) is a pre-configured version of the [meddream:orthanc-dicom-viewer](https://hub.docker.com/r/meddream/orthanc-dicom-viewer) image
-- Used in production
 
 
 ![Sharing a study in OE2](./demo-setup/doc/Share-study.gif)

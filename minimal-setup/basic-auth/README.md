@@ -27,7 +27,7 @@ To start the setup, type: `docker compose up`
 
 ## As an admin user
 
-- Open the Orthanc UI at [http://localhost/orthanc/ui/app/](http://localhost/orthanc/ui/app/) (login/pwd: `admin`/`admin`)
+- Open the Orthanc UI at [http://localhost/orthanc/ui/app/](http://localhost/orthanc/ui/app/) (login/pwd: `admin`/`change-me`)
 - upload a dicom file in Orthanc
 - On the uploaded file, click on the `Share` button and then on `Share` in the dialog box and then on `Copy and close`
 - Keep the link in your clipboard.  You may share this link with an external user.
