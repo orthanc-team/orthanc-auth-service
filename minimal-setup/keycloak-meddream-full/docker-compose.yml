@@ -148,6 +148,8 @@ services:
       VERBOSE_STARTUP: "true"
       ORTHANC__PYTHON_SCRIPT: "/scripts/meddream-plugin.py"
       ORTHANC__AUTHENTICATION_ENABLED: "true"
+      DICOM_WEB_PLUGIN_ENABLED: "true"
+      ORTHANC__DICOM_WEB__PUBLIC_ROOT: "/orthanc-api/dicom-web/"
       ORTHANC__POSTGRESQL__HOST: "orthanc-db"
       ORTHANC_JSON: |
         {

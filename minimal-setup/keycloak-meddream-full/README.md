@@ -49,3 +49,22 @@ To start the setup, type: `docker compose up`.  Some containers will restart mul
 
 - Open the Orthanc UI at [http://localhost/orthanc/ui/app/](http://localhost/orthanc/ui/app/) (login/pwd: `doctor`/`change-me`)
 - The doctor user is a restricted user who can browse the whole set of studies but who can not upload/modify/delete them.
+
+## As an external user
+
+- On another Orthanc e.g, the one running everyday on your machine, add a new DicomWeb server:
+  ```
+  {
+      "DicomWeb" : {
+          "Servers" : {
+                "auth-service-demo": {
+                "Url": "http://localhost/orthanc-api/dicom-web/",
+                "Username": "dicom-web-client-user",
+                "Password": "change-me"
+            }
+     }
+  }
+  ```
+- Restart it
+- Browse your local Orthanc instance and, on a study, click `SendTo -> Dicom WEB Servers -> auth-service-demo`
+- Check the study has been received in the demo Orthanc by logging in as the doctor user again
