@@ -66,7 +66,7 @@ services:
     depends_on: [keycloak-db]
     environment:
       KEYCLOAK_ADMIN: "admin"
-      KEYCLOAK_ADMIN_PASSWORD: "admin"
+      KEYCLOAK_ADMIN_PASSWORD: "change-me"
       KC_DB: "postgres"
       KC_DB_URL: "jdbc:postgresql://keycloak-db:5432/keycloak"
       KC_DB_USERNAME: "keycloak"
