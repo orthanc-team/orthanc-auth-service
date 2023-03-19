@@ -1,3 +1,9 @@
+<!--
+SPDX-FileCopyrightText: 2022 - 2023 Orthanc Team SRL <info@orthanc.team>
+
+SPDX-License-Identifier: CC-BY-4.0
+-->
+
 # Purpose
 
 This is a sample setup to demonstrate how to share publication links granting access to a single study.
