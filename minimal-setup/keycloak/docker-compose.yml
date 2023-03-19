@@ -99,8 +99,6 @@ services:
       KC_DB_PASSWORD: "keycloak"
       # KC_HOSTNAME_URL: "https://mydomain.com/keycloak"
       # KC_HOSTNAME_ADMIN_URL: "https://mydomain.com/keycloak"
-    # volumes:
-    #  - keycloak-export:/usr/tmp
 
   keycloak-db:
     image: postgres:14

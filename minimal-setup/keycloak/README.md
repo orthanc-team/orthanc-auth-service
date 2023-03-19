@@ -22,7 +22,7 @@ To start the setup, type: `docker compose up`
 
 ## As an admin user
 
-- Open the Orthanc UI at [http://localhost/orthanc/ui/app/](http://localhost/orthanc/ui/app/) (login/pwd: `orthanc`/`orthanc`)
+- Open the Orthanc UI at [http://localhost/orthanc/ui/app/](http://localhost/orthanc/ui/app/) (login/pwd: `orthanc`/`change-me`)
 - upload a dicom file in Orthanc
 - On the uploaded file, click on the `Share` button and then on `Share` in the dialog box and then on `Copy and close`
 - Keep the link in your clipboard.  You may share this link with an external user.
@@ -36,5 +36,5 @@ To start the setup, type: `docker compose up`
 
 ## As a doctor user
 
-- Open the Orthanc UI at [http://localhost/orthanc/ui/app/](http://localhost/orthanc/ui/app/) (login/pwd: `doctor`/`doctor`)
+- Open the Orthanc UI at [http://localhost/orthanc/ui/app/](http://localhost/orthanc/ui/app/) (login/pwd: `doctor`/`change-me`)
 - The doctor user is a restricted user who can browse the whole set of studies but who can not upload/modify/delete them.
