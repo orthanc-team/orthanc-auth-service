@@ -22,7 +22,7 @@ services:
       ENABLE_HTTPS: "false"
 
   orthanc:
-    image: osimis/orthanc:keycloak-unstable
+    image: osimis/orthanc
     volumes:
       - orthanc-storage:/var/lib/orthanc/db
     depends_on: [orthanc-db]
@@ -60,7 +60,7 @@ services:
         }
 
   orthanc-for-shares:
-    image: osimis/orthanc:keycloak-unstable
+    image: osimis/orthanc
     volumes:
       - orthanc-storage:/var/lib/orthanc/db
     depends_on: [orthanc-db]

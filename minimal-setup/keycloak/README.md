@@ -20,6 +20,14 @@ This demo contains:
 - a `keycloak-db` container to handle the keycloak postgreSQL database.
 - an `orthanc-nginx` container acting as a reverse proxy in front of the other containers.
 
+# Warning
+
+**Disclaimer**: this sample is provided 'as is' without any guarantee.  Don't use it in production unless you perfectly understand every part of it.
+
+Before you use it in production: 
+- make sur to pin the container versions in the `docker-compose.yml` file (e.g, replace `osimis/orthanc` generic name by the latest version available that day e.g `osimis/orthanc:23.3.0`).
+- update all hardcoded passwords and secret keys (search for `change-me`).
+
 # Starting the setup
 
 To start the setup, type: `docker compose up`.  Some containers will restart multiple times while waiting for the Keycloak container to be ready.

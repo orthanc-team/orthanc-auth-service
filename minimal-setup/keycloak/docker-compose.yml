@@ -6,7 +6,7 @@ version: "3"
 services:
 
   nginx:
-    image: orthancteam/orthanc-nginx:new-api
+    image: orthancteam/orthanc-nginx
     depends_on: [orthanc, orthanc-auth-service, keycloak]
     restart: unless-stopped
     ports: ["80:80"]
@@ -22,7 +22,7 @@ services:
       ENABLE_HTTPS: "false"
 
   orthanc:
-    image: osimis/orthanc:keycloak-unstable
+    image: osimis/orthanc
     volumes:
       - orthanc-storage:/var/lib/orthanc/db
     depends_on: [orthanc-db]
@@ -87,7 +87,7 @@ services:
       POSTGRES_HOST_AUTH_METHOD: "trust"
 
   keycloak:
-    image: orthancteam/orthanc-keycloak:new-api
+    image: orthancteam/orthanc-keycloak
     depends_on: [keycloak-db]
     environment:
       KEYCLOAK_ADMIN: "admin"

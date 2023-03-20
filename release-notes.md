@@ -4,10 +4,11 @@ SPDX-FileCopyrightText: 2022 - 2023 Orthanc Team SRL <info@orthanc.team>
 SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
-v 23.x.x
+v 23.3.0
 ========
-- repository renamed from `orthanc-share` to `orthanc-auth-service`
+
 - almost completely rewrote the project.  Make sure to read the documentation and check the minimal setups again.
+- repository renamed from `orthanc-share` to `orthanc-auth-service`
 - replaced orthanc-for-ingest by orthanc-for-api
 
 v 23.1.0
