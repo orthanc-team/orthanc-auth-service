@@ -149,7 +149,7 @@ curl -X PUT http://localhost:8042/auth/tokens/stone-viewer-publication -H 'Conte
       "expiration-date":"2026-07-07T11:00:00+00:00"
     },
     "token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6InRvdG8iLCJyZXNvdXJjZXMiOlt7ImRpY29tX3VpZCI6IjEuMiIsIm9ydGhhbmNfaWQiOm51bGwsInVybCI6bnVsbCwibGV2ZWwiOiJzdHVkeSJ9XSwidHlwZSI6InN0b25lLXZpZXdlci1wdWJsaWNhdGlvbiIsImV4cGlyYXRpb25fZGF0ZSI6IjIwMjYtMTItMzFUMTE6MDA6MDArMDA6MDAifQ.RlB9x56eQSaJNt3t4hDxAHdM7BhBbah5CWWBBZQf7x0",
-    "url":"http://localhost/app/ui/token-landing.html?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6InRvdG8iLCJyZXNvdXJjZXMiOlt7ImRpY29tX3VpZCI6IjEuMiIsIm9ydGhhbmNfaWQiOm51bGwsInVybCI6bnVsbCwibGV2ZWwiOiJzdHVkeSJ9XSwidHlwZSI6InN0b25lLXZpZXdlci1wdWJsaWNhdGlvbiIsImV4cGlyYXRpb25fZGF0ZSI6IjIwMjYtMTItMzFUMTE6MDA6MDArMDA6MDAifQ.RlB9x56eQSaJNt3t4hDxAHdM7BhBbah5CWWBBZQf7x0"
+    "url":"http://localhost/ui/app/token-landing.html?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6InRvdG8iLCJyZXNvdXJjZXMiOlt7ImRpY29tX3VpZCI6IjEuMiIsIm9ydGhhbmNfaWQiOm51bGwsInVybCI6bnVsbCwibGV2ZWwiOiJzdHVkeSJ9XSwidHlwZSI6InN0b25lLXZpZXdlci1wdWJsaWNhdGlvbiIsImV4cGlyYXRpb25fZGF0ZSI6IjIwMjYtMTItMzFUMTE6MDA6MDArMDA6MDAifQ.RlB9x56eQSaJNt3t4hDxAHdM7BhBbah5CWWBBZQf7x0"
   }
 ```
 - once the users clicks on this link, the `token-landing` page will check the token validity and redirect the browser
