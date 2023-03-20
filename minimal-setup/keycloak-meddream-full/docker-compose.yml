@@ -72,6 +72,7 @@ services:
 
   orthanc-auth-service:
     image: orthancteam/orthanc-auth-service:23.3.0
+    depends_on: [keycloak, meddream-token-service]
     restart: unless-stopped
     environment:
       SECRET_KEY: "change-me-I-am-a-secret-key"
@@ -95,6 +96,7 @@ services:
   keycloak:
     image: orthancteam/orthanc-keycloak:23.3.0
     depends_on: [keycloak-db]
+    restart: unless-stopped
     environment:
       KEYCLOAK_ADMIN: "admin"
       KEYCLOAK_ADMIN_PASSWORD: "change-me"
@@ -110,7 +112,7 @@ services:
     restart: unless-stopped
     volumes: ["keycloak-db:/var/lib/postgresql/data"]
     environment:
-      POSTGRES_PASSWORD: "change-me"
+      POSTGRES_PASSWORD: "keycloak"
       POSTGRES_USER: "keycloak"
       POSTGRES_DB: "keycloak"
 
