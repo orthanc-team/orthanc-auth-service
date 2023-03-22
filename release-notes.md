@@ -3,6 +3,10 @@ SPDX-FileCopyrightText: 2022 - 2023 Orthanc Team SRL <info@orthanc.team>
 
 SPDX-License-Identifier: GPL-3.0-or-later
 -->
+v x.x.x
+========
+- nginx config: added a redirect in the orthanc.conf to get the app easily reachable (`http://localhost/` in place of `http://localhost/orthanc/ui/app/`)
+
 
 v 23.3.0
 ========

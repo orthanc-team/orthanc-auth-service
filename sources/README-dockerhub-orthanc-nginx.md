@@ -10,7 +10,7 @@ Web service to run in front of Orthanc to handle sharing of studies & admin inte
 
 | Environment variable (if `true`) | Default value | Description                                                                                                                     | route             | redirected to container             |
 |----------------------------------|:--------------|:--------------------------------------------------------------------------------------------------------------------------------|:------------------|:------------------------------------|
-| ENABLE_ORTHANC                   | true          | Access to the main Orthanc                                                                                                      | `/orthanc/`       | `http://orthanc:8042`               |
+| ENABLE_ORTHANC                   | true          | Access to the main Orthanc                                                                                                      | `/orthanc/` or `/`| `http://orthanc:8042`               |
 | ENABLE_KEYCLOAK                  | false         | Access to Keycloak User Interface                                                                                               | `/keycloak/`      | `http://keycloak:8080`              |
 | ENABLE_ORTHANC_TOKEN_SERVICE     | false         | Access to the `token-service` that generates the shares.  Enable it only if you have secured it with a list of allowed `USERS`  | `/token-service/` | `http://orthanc-token-service:8000` |
 | ENABLE_MEDDREAM                  | false         | Access to MedDream viewer for `meddream-viewer-publication` shares                                                              | `/meddream/`      | `http://meddream:8080`              |
