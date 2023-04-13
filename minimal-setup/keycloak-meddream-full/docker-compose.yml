@@ -124,7 +124,7 @@ services:
     image: orthancteam/meddream-viewer:23.3.0
     restart: unless-stopped
     depends_on:
-      - orthanc-for-meddream
+      - orthanc-for-api
     environment:
       integration: "study"
       TOKEN_SERVICE_ADDRESS: "http://meddream-token-service:8088/v3/validate"
