@@ -19,6 +19,7 @@ class OrthancTokenService:
     secret_key_: str
 
     public_orthanc_root_: Optional[str] = None
+    public_ohif_root_: Optional[str] = None
     server_id_: Optional[str] = None
 
     meddream_token_service_url_: Optional[str] = None
@@ -36,6 +37,11 @@ class OrthancTokenService:
     def _configure_meddream(self, meddream_token_service_url: str, public_meddream_root: str, public_landing_root: str):
         self.meddream_token_service_url_ = meddream_token_service_url
         self.public_meddream_root_ = public_meddream_root
+        self.public_landing_root_ = public_landing_root
+
+    def _configure_ohif(self, public_ohif_root: str, server_id: Optional[str] = None, public_landing_root: Optional[str] = None):
+        self.public_ohif_root_ = public_ohif_root
+        self.server_id_ = server_id
         self.public_landing_root_ = public_landing_root
 
     def _create(self):
@@ -78,6 +84,19 @@ class OrthancTokenService:
             else:
                 return urllib.parse.urljoin(self.public_landing_root_, f"?token={token}")
 
+        elif request.type == TokenType.OHIF_VIEWER_PUBLICATION:
+            if not has_dicom_uids:
+                logging.error("No dicom_uid provided while generating a link to the OHIF viewer")
+                return None
+
+            if skip_landing_page or self.public_landing_root_ is None:
+                public_root = self.public_ohif_root_
+
+                studyIds = ",".join([s.dicom_uid for s in request.resources])
+                return urllib.parse.urljoin(public_root, f"ohif-viewer-redirect/viewer?StudyInstanceUIDs={studyIds}&token={token}")
+            else:
+                return urllib.parse.urljoin(self.public_landing_root_, f"?token={token}")
+
         elif request.type == TokenType.MEDDREAM_INSTANT_LINK:
             if not has_dicom_uids:
                 logging.error("No dicom_uid provided while generating a link to the MedDream Viewer")
@@ -102,6 +121,9 @@ class OrthancTokenService:
         if type in [TokenType.OSIMIS_VIEWER_PUBLICATION, TokenType.STONE_VIEWER_PUBLICATION]:
             if self.public_orthanc_root_ is None:
                 raise SharesException(f"'{type}' are disabled")
+
+        elif type == TokenType.OHIF_VIEWER_PUBLICATION and self.public_ohif_root_ is None:
+            raise SharesException(f"'{type}' are disabled")
 
         elif type == TokenType.MEDDREAM_INSTANT_LINK and self.meddream_token_service_url_ is None:
             raise SharesException(f"'{type}' are disabled")
@@ -131,6 +153,7 @@ class OrthancTokenService:
         if request.type in [
             TokenType.OSIMIS_VIEWER_PUBLICATION,
             TokenType.STONE_VIEWER_PUBLICATION,
+            TokenType.OHIF_VIEWER_PUBLICATION,
             TokenType.DOWNLOAD_INSTANT_LINK,
             TokenType.VIEWER_INSTANT_LINK
         ]:
@@ -218,7 +241,7 @@ class OrthancTokenService:
         # extract the initial share request from the token
         request = self.tokens_manager_.get_request_from_token(token=token)
 
-        if request.type in [TokenType.OSIMIS_VIEWER_PUBLICATION, TokenType.STONE_VIEWER_PUBLICATION]:
+        if request.type in [TokenType.OSIMIS_VIEWER_PUBLICATION, TokenType.STONE_VIEWER_PUBLICATION, TokenType.OHIF_VIEWER_PUBLICATION]:
 
             # check it is valid (this actually only checks the expiration date since we get the ids from the request itself !)
             if not self.is_expired(request):

@@ -79,6 +79,15 @@ jobs:
             org.opencontainers.image.title=orthanc-keycloak
             org.opencontainers.image.vendor=Orthanc Team SRL
 
+      - name: Extract metadata (tags, labels) for Docker (ohif-v3)
+        id: meta-ohif-v3
+        uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
+        with:
+          images: orthancteam/ohif-v3
+          labels: |
+            org.opencontainers.image.title=ohif-v3
+            org.opencontainers.image.vendor=Orthanc Team SRL
+
       - name: Build and push orthanc-nginx Docker image
         uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
         with:
@@ -124,6 +133,15 @@ jobs:
           tags: ${{ steps.meta-orthanc-keycloak.outputs.tags }}
           labels: ${{ steps.meta-orthanc-keycloak.outputs.labels }}
 
+      - name: Build and push ohif-v3 Docker image
+        uses: docker/build-push-action@ad44023a93711e3deb337508980b4b5e9bcdc5dc
+        with:
+          context: sources/ohif/
+          file: sources/ohif/Dockerfile.ohif-v3
+          push: true
+          tags: ${{ steps.meta-ohif-v3.outputs.tags }}
+          labels: ${{ steps.meta-ohif-v3.outputs.labels }}
+
       - name: Docker Hub Description (orthanc-nginx)
         uses: peter-evans/dockerhub-description@v3
         with:
@@ -150,3 +168,12 @@ jobs:
           repository: orthancteam/orthanc-keycloak
           short-description: Web service to run in front of Orthanc to handle users/roles management
           readme-filepath: sources/README-dockerhub-orthanc-keycloak.md
+
+      - name: Docker Hub Description (ohif-v3)
+        uses: peter-evans/dockerhub-description@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          repository: orthancteam/ohif-v3
+          short-description: Web service to run next to Orthanc to host the OHIF viewer
+          readme-filepath: sources/README-dockerhub-ohif-v3.md

@@ -5,8 +5,9 @@ SPDX-License-Identifier: GPL-3.0-or-later
 -->
 v x.x.x
 ========
-- nginx config: added a redirect in the orthanc.conf to get the app easily reachable (`http://localhost/` in place of `http://localhost/orthanc/ui/app/`)
-
+- nginx config: added a redirect in the orthanc.conf to get the app easily reachable (`http://localhost/` instead of `http://localhost/orthanc/ui/app/`)
+- support for `ohif-viewer-publication`
+- now building `orthancteam:ohif-v3` docker image
 
 v 23.3.0
 ========

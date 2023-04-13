@@ -21,4 +21,4 @@ Web service to run in front of Orthanc to handle sharing of studies & admin inte
 
 If `ENABLE_HTTPS` is set to `true`, you must also provide a certificate file in `/etc/nginx/tls/crt.pem` and a private key in `/etc/nginx/tls/key.pem`.
 
-Full documentation and demo setup will be available [here](https://github.com/orthanc-team/orthanc-share/tree/main).
+3 demo setups are available [here](https://github.com/orthanc-team/orthanc-auth-service/tree/main/minimal-setup).

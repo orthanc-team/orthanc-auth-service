@@ -71,7 +71,7 @@ services:
       KC_DB_URL: "jdbc:postgresql://keycloak-db:5432/keycloak"
       KC_DB_USERNAME: "keycloak"
       KC_DB_PASSWORD: "keycloak"
-      # 2 following lines to uncomment (and adapt) if HTTPS is enbaled in nginx
+      # 2 following lines to uncomment (and adapt) if HTTPS is enabled in nginx
       # KC_HOSTNAME_URL: "https://mydomain.com/keycloak"
       # KC_HOSTNAME_ADMIN_URL: "https://mydomain.com/keycloak"
     
