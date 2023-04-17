@@ -3,9 +3,11 @@ SPDX-FileCopyrightText: 2022 - 2023 Orthanc Team SRL <info@orthanc.team>
 
 SPDX-License-Identifier: GPL-3.0-or-later
 -->
-v x.x.x
+v 23.4.0
 ========
 - nginx config: added a redirect in the orthanc.conf to get the app easily reachable (`http://localhost/` in place of `http://localhost/orthanc/ui/app/`)
+- upgraded Meddream base image from 8.0.0 to 8.1.0
+- upgraded Meddream token service base image from 
 
 
 v 23.3.0
