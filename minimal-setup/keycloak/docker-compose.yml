@@ -22,7 +22,7 @@ services:
       ENABLE_HTTPS: "false"
 
   orthanc:
-    image: osimis/orthanc:23.3.0
+    image: osimis/orthanc:23.4.0
     volumes:
       - orthanc-storage:/var/lib/orthanc/db
     depends_on: [orthanc-db]
