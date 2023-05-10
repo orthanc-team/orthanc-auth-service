@@ -50,3 +50,12 @@ To start the setup, type: `docker compose up`.  Some containers will restart mul
 
 - Open the Orthanc UI at [http://localhost/orthanc/ui/app/](http://localhost/orthanc/ui/app/) (login/pwd: `doctor`/`change-me`)
 - The doctor user is a restricted user who can browse the whole set of studies but who can not upload/modify/delete them.
+
+
+# Accessing this demo from a remote client
+
+If you wish to access this demo from a remote computer, you must tell the setup on which domain it is accessible (in this sample: `mydomain.com`).
+Then, you should update these settings:
+- orthanc: ORTHANC_JSON -> OrthancExplorer2 -> Keycloak -> "Url": "http://mydomain.com/keycloak/"
+- keycloak: KC_HOSTNAME_URL: "http://mydomain.com/keycloak"
+- keycloak: KC_HOSTNAME_ADMIN_URL: "http://mydomain.com/keycloak"
