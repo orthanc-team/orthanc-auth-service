@@ -4,7 +4,7 @@ SPDX-FileCopyrightText: 2022 - 2023 Orthanc Team SRL <info@orthanc.team>
 SPDX-License-Identifier: CC0-1.0
 -->
 
-# Orthanc-token-service
+# Orthanc-auth-service
 
 Web service to run next to Orthanc to handle sharing of studies by issuing [JWT](https://jwt.io/) that can then be passed
 in authorization headers that will be checked by the [Authorization plugin](https://book.orthanc-server.com/plugins/authorization.html).
@@ -17,9 +17,10 @@ in authorization headers that will be checked by the [Authorization plugin](http
 |                             |                                        |                                                                                                                                                                     |
 | PUBLIC_ORTHANC_ROOT         | -                                      | The public root URL to Orthanc when using links to access resources. e.g: `http://localhost/orthanc/`                                                               |
 | PUBLIC_LANDING_ROOT         | -                                      | The landing page URL for links.  This page will check the token validity and redirect to e.g. a viewer.  e.g.: `http://localhost/orthanc/ui/app/token-landing.html` |
+| PUBLIC_OHIF_ROOT            | -                                      | The public root URL to OHIF when using links to access resources. e.g: `https://ohif.my.site/`                                                                      |
 | USERS                       | -                                      | Define a list of user/pwd that can access this webservice.                                                                                                          |
 |                             |                                        |                                                                                                                                                                     |
 | MEDDREAM_TOKEN_SERVICE_URL  | -                                      | The URL to the MedDream token service. e.g `http://meddream-token-service:8088/v3/generate`                                                                         |
-| PUBLIC_MEDDREAM_ROOT        | -                                      | The public root URL to access the MedDream viewer. e.g `http://localhost/meddream/`                                                                                                             |
+| PUBLIC_MEDDREAM_ROOT        | -                                      | The public root URL to access the MedDream viewer. e.g `http://localhost/meddream/`                                                                                 |
 
-Full documentation and demo setup will be available [here](https://github.com/orthanc-team/orthanc-share/tree/main).
+3 demo setups are available [here](https://github.com/orthanc-team/orthanc-auth-service/tree/main/minimal-setup).

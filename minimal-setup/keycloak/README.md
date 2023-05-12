@@ -19,6 +19,7 @@ This demo contains:
 - an `orthanc-keycloak` container that handles users and roles.
 - a `keycloak-db` container to handle the keycloak postgreSQL database.
 - an `orthanc-nginx` container acting as a reverse proxy in front of the other containers.
+- an `ohif-v3` container hosting the OHIF viewer
 
 # Warning
 

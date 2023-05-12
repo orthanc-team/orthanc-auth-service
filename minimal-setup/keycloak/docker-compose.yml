@@ -6,7 +6,7 @@ version: "3"
 services:
 
   nginx:
-    image: orthancteam/orthanc-nginx:23.3.0
+    image: orthancteam/orthanc-nginx
     depends_on: [orthanc, orthanc-auth-service, keycloak]
     restart: unless-stopped
     ports: ["80:80"]
@@ -20,6 +20,7 @@ services:
       ENABLE_KEYCLOAK: "true"
       ENABLE_ORTHANC_TOKEN_SERVICE: "false"
       ENABLE_HTTPS: "false"
+      ENABLE_OHIF: "true"
 
   orthanc:
     image: osimis/orthanc:23.4.0
@@ -40,7 +41,9 @@ services:
             "UiOptions": {
               "EnableShares": true,
               "DefaultShareDuration": 0,
-              "ShareDurations": [0, 7, 15, 30, 90, 365]
+              "ShareDurations": [0, 7, 15, 30, 90, 365],
+              "EnableOpenInOhifViewer": true,
+              "OhifViewerPublicRoot": "http://localhost/ohif/"
             },
             "Tokens" : {
               "InstantLinksValidity": 3600,
@@ -68,7 +71,7 @@ services:
         }
 
   orthanc-auth-service:
-    image: orthancteam/orthanc-auth-service:23.3.0
+    image: orthancteam/orthanc-auth-service:ohif
     depends_on: [keycloak]
     restart: unless-stopped
     environment:
@@ -76,6 +79,7 @@ services:
       ENABLE_KEYCLOAK: "true"
       PUBLIC_ORTHANC_ROOT: "http://localhost/orthanc/"
       PUBLIC_LANDING_ROOT: "http://localhost/orthanc/ui/app/token-landing.html"
+      PUBLIC_OHIF_ROOT: "http://localhost/ohif/"
       USERS: |
         {
           "share-user": "change-me"
@@ -88,8 +92,19 @@ services:
     environment:
       POSTGRES_HOST_AUTH_METHOD: "trust"
 
+  ohif:
+    image: orthancteam/ohif-v3:ohif
+    restart: unless-stopped
+    ports: ["81:80"]
+# if setting ENABLE_HTTPS: "true" env var, uncomment the following 4 lines and comment the line with 'ports: ["81:80"]'
+#    ports: ["443:443"]
+#    volumes:
+#      - /.../crt.pem:/etc/nginx/tls/crt.pem
+#      - /.../key.pem:/etc/nginx/tls/key.pem
+
+
   keycloak:
-    image: orthancteam/orthanc-keycloak:23.3.0
+    image: orthancteam/orthanc-keycloak:ohif
     depends_on: [keycloak-db]
     restart: unless-stopped
     environment:

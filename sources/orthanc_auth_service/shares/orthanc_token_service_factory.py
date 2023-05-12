@@ -40,6 +40,29 @@ def create_token_service_from_secrets():
     else:
         logging.warning("PUBLIC_ORTHANC_ROOT is not defined, the generator will not allow 'osimis-viewer-publication' or 'stone-viewer-publication' shares")
 
+    if is_secret_defined("PUBLIC_OHIF_ROOT"):
+        logging.warning("PUBLIC_OHIF_ROOT is defined, configuring generator for standard 'ohif-viewer-publication'")
+        public_ohif_root = get_secret_or_die("PUBLIC_OHIF_ROOT")
+        server_id = None
+
+        if not is_secret_defined("SERVER_ID"):
+            logging.warning("SERVER_ID is not defined.  This is not mandatory")
+        else:
+            server_id = get_secret_or_die("SERVER_ID")
+
+        if not is_secret_defined("PUBLIC_LANDING_ROOT"):
+            logging.warning("PUBLIC_LANDING_ROOT is not defined.  Users won't get a clear error message if their link is invalid or expired")
+        else:
+            public_landing_root = get_secret_or_die("PUBLIC_LANDING_ROOT")
+
+        token_service._configure_ohif(
+            public_ohif_root=public_ohif_root,
+            server_id=server_id,
+            public_landing_root=public_landing_root
+        )
+    else:
+        logging.warning("PUBLIC_OHIF_ROOT is not defined, the generator will not allow 'ohif-viewer-publication'")
+
     if is_secret_defined("MEDDREAM_TOKEN_SERVICE_URL") and is_secret_defined("PUBLIC_MEDDREAM_ROOT"):
         logging.warning("MEDDREAM_TOKEN_SERVICE_URL and PUBLIC_MEDDREAM_ROOT are defined, configuring generator for 'meddream-instant-links' shares")
         meddream_token_service_url = get_secret_or_die("MEDDREAM_TOKEN_SERVICE_URL")

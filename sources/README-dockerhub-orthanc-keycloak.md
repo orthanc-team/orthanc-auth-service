@@ -15,7 +15,7 @@ Override of Keycloak official image to have these elements ready to use:
 
 The `master` realm has an `admin` user with the `admin` password.
 
-Full documentation and demo setup will be available [here](https://github.com/orthanc-team/orthanc-share/tree/main).
+3 demo setups are available [here](https://github.com/orthanc-team/orthanc-auth-service/tree/main/minimal-setup).
 
 ## Disclaimer
 This image is provided as a sample. It shouldn't be use as is!
