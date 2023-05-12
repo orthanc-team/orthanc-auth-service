@@ -43,7 +43,7 @@ services:
               "DefaultShareDuration": 0,
               "ShareDurations": [0, 7, 15, 30, 90, 365],
               "EnableOpenInOhifViewer": true,
-              "OhifViewerPublicRoot": "https://orthanc.lesdentellieres.com/ohif/"
+              "OhifViewerPublicRoot": "http://localhost/ohif/"
             },
             "Tokens" : {
               "InstantLinksValidity": 3600,
