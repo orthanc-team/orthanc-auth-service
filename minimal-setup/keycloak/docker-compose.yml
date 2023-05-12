@@ -6,7 +6,7 @@ version: "3"
 services:
 
   nginx:
-    image: orthancteam/orthanc-nginx:ohif
+    image: orthancteam/orthanc-nginx
     depends_on: [orthanc, orthanc-auth-service, keycloak]
     restart: unless-stopped
     ports: ["80:80"]
@@ -20,6 +20,7 @@ services:
       ENABLE_KEYCLOAK: "true"
       ENABLE_ORTHANC_TOKEN_SERVICE: "false"
       ENABLE_HTTPS: "false"
+      ENABLE_OHIF: "true"
 
   orthanc:
     image: osimis/orthanc:mainline-20230413
@@ -42,11 +43,11 @@ services:
               "DefaultShareDuration": 0,
               "ShareDurations": [0, 7, 15, 30, 90, 365],
               "EnableOpenInOhifViewer": true,
-              "OhifViewerPublicRoot": "http://localhost:81/ohif-viewer-redirect/"
+              "OhifViewerPublicRoot": "http://localhost/ohif/"
             },
             "Tokens" : {
               "InstantLinksValidity": 3600,
-              "ShareType": "ohif-viewer-publication"
+              "ShareType": "stone-viewer-publication"
             },
             "Keycloak" : {
               "Enable": true,
@@ -78,7 +79,7 @@ services:
       ENABLE_KEYCLOAK: "true"
       PUBLIC_ORTHANC_ROOT: "http://localhost/orthanc/"
       PUBLIC_LANDING_ROOT: "http://localhost/orthanc/ui/app/token-landing.html"
-      PUBLIC_OHIF_ROOT: "http://localhost:81/"
+      PUBLIC_OHIF_ROOT: "http://localhost/ohif/"
       USERS: |
         {
           "share-user": "change-me"
