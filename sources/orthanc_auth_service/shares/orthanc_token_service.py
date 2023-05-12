@@ -93,7 +93,7 @@ class OrthancTokenService:
                 public_root = self.public_ohif_root_
 
                 studyIds = ",".join([s.dicom_uid for s in request.resources])
-                return urllib.parse.urljoin(public_root, f"ohif-viewer-redirect/viewer?StudyInstanceUIDs={studyIds}&token={token}")
+                return urllib.parse.urljoin(public_root, f"viewer?StudyInstanceUIDs={studyIds}&token={token}")
             else:
                 return urllib.parse.urljoin(self.public_landing_root_, f"?token={token}")
 
@@ -212,7 +212,7 @@ class OrthancTokenService:
                 response.error_code = DecoderErrorCodes.EXPIRED
                 return response
 
-            # we can not check that the token is valid for the given study, this will be check by the auth plugin once the viewer opens
+            # we can not check that the token is valid for the given study, this will be checked by the auth plugin once the viewer opens
             response.redirect_url = self.redirect_to_viewer(token=token)
             return response
 

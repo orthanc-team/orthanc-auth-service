@@ -12,6 +12,7 @@ enableOrthancForApi="${ENABLE_ORTHANC_FOR_API:-false}"
 enableOrthancForShares="${ENABLE_ORTHANC_FOR_SHARES:-false}"
 enableKeycloak="${ENABLE_KEYCLOAK:-false}"
 enableOrthancTokenService="${ENABLE_ORTHANC_TOKEN_SERVICE:-false}"
+enableOhif="${ENABLE_OHIF:-false}"
 enableHttps="${ENABLE_HTTPS:-false}"
 enableMedDream="${ENABLE_MEDDREAM:-false}"
 
@@ -55,6 +56,11 @@ fi
 if [[ $enableMedDream == "true" ]]; then
   echo "ENABLE_MEDDREAM is true -> enable /meddream/ reverse proxy"
   cp -f /etc/nginx/disabled-reverse-proxies/reverse-proxy.meddream.conf /etc/nginx/enabled-reverse-proxies/
+fi
+
+if [[ $enableOhif == "true" ]]; then
+  echo "ENABLE_OHIF is true -> enable /ohif/ reverse proxy"
+  cp -f /etc/nginx/disabled-reverse-proxies/reverse-proxy.ohif.conf /etc/nginx/enabled-reverse-proxies/
 fi
 
 # call the default nginx entrypoint

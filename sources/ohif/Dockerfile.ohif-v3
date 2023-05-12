@@ -9,8 +9,8 @@ FROM node:16.15.0-slim as builder
 RUN apt-get update && apt-get install -y git
 
 WORKDIR /sources
-# v3-stable branch on 2023.04.13
-RUN git clone https://github.com/OHIF/Viewers.git && cd /sources/Viewers && git checkout 1173e7de6ca06e1e5895e9c649bc6bafac38d902
+# v3-stable branch on 2023.05.11
+RUN git clone https://github.com/OHIF/Viewers.git && cd /sources/Viewers && git checkout 84cb709b44074c7553fabd28bbcd2da4c1bd60d6
 
 WORKDIR /sources/Viewers
 
@@ -20,7 +20,7 @@ ENV QUICK_BUILD true
 # ENV GENERATE_SOURCEMAP=false
 # ENV REACT_APP_CONFIG=config/default.js
 
-RUN yarn run build
+RUN QUICK_BUILD=true PUBLIC_URL=/ohif/ yarn run build
 
 ######################################################
 
@@ -29,16 +29,8 @@ FROM nginx:1.23
 RUN mkdir /etc/nginx/enabled-sites
 RUN mkdir /scripts
 
-ADD reverse-proxy.* /etc/nginx/enabled-sites/
 COPY ohif-static.conf /etc/nginx/enabled-sites/
-ADD ohif-nginx-*.conf /etc/nginx/disabled-conf/
-COPY docker-entrypoint.sh /scripts/
+ADD ohif-nginx-http.conf /etc/nginx/conf.d/default.conf
 
 COPY --from=builder /sources/Viewers/platform/viewer/dist /usr/share/nginx/html/
-COPY ohif-viewer-redirect.html /usr/share/nginx/html/ohif-viewer-redirect/index.html
 COPY default-app-config.js /usr/share/nginx/html/app-config.js
-
-RUN ls -al /etc/nginx/enabled-sites/
-
-ENTRYPOINT ["./scripts/docker-entrypoint.sh"]
-CMD ["nginx", "-g", "daemon off;"]
