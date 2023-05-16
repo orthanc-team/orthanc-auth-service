@@ -4,6 +4,8 @@ SPDX-FileCopyrightText: 2022 - 2023 Orthanc Team SRL <info@orthanc.team>
 SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
+v 23.5.0
+========
 
 - support for `ohif-viewer-publication`
 - now building `orthancteam:ohif-v3` docker image

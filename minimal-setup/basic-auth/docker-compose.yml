@@ -6,7 +6,7 @@ version: "3"
 services:
 
   nginx:
-    image: orthancteam/orthanc-nginx:23.3.0
+    image: orthancteam/orthanc-nginx:23.5.0
     depends_on: [orthanc, orthanc-auth-service, orthanc-for-shares]
     restart: unless-stopped
     ports: ["80:80"]
@@ -22,7 +22,7 @@ services:
       ENABLE_HTTPS: "false"
 
   orthanc:
-    image: osimis/orthanc:23.3.0
+    image: osimis/orthanc:23.4.0
     volumes:
       - orthanc-storage:/var/lib/orthanc/db
     depends_on: [orthanc-db]
@@ -60,7 +60,7 @@ services:
         }
 
   orthanc-for-shares:
-    image: osimis/orthanc:23.3.0
+    image: osimis/orthanc:23.5.0
     volumes:
       - orthanc-storage:/var/lib/orthanc/db
     depends_on: [orthanc-db]
@@ -98,7 +98,7 @@ services:
         }
 
   orthanc-auth-service:
-    image: orthancteam/orthanc-auth-service:23.3.0
+    image: orthancteam/orthanc-auth-service:23.5.0
     restart: unless-stopped
     environment:
       SECRET_KEY: "change-me-I-am-a-secret-key"
