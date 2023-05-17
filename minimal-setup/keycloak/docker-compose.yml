@@ -67,6 +67,10 @@ services:
               "orthanc-explorer-2"
             ],
             "CheckedLevel": "studies"
+          },
+          "DicomWeb": {
+            "Enable": true",
+            "PublicRoot": "/orthanc/dicom-web/"
           }
         }
 
