@@ -96,7 +96,7 @@ services:
             "CheckedLevel": "studies"
           },
           "DicomWeb": {
-            "Enable": true",
+            "Enable": true,
             "PublicRoot": "/orthanc/dicom-web/"
           }        
         }
