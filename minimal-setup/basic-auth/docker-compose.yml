@@ -94,7 +94,11 @@ services:
               "orthanc-explorer-2"    // required for the token-landing page
             ],
             "CheckedLevel": "studies"
-          }
+          },
+          "DicomWeb": {
+            "Enable": true,
+            "PublicRoot": "/orthanc/dicom-web/"
+          }        
         }
 
   orthanc-auth-service:
