@@ -4,10 +4,11 @@ SPDX-FileCopyrightText: 2022 - 2023 Orthanc Team SRL <info@orthanc.team>
 SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
-v 23.x.x
+v 23.6.0
 ========
 
 - bug fix: changed the `large_client_header_buffers` value in nginx to avoid http error 414 (`Request-URI Too Large`) when a huge number of studies are loaded in the viewer
+- enhancement: added Meddream default values for the Meddream viewer to manage the clean up of the cache
 
 v 23.5.0
 ========
