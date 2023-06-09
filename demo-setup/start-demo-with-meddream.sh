@@ -15,4 +15,4 @@ docker build -t orthancteam/meddream-token-service  -f meddream/token-service/Do
 
 popd
 
-COMPOSE_FILE=docker-compose.yml:docker-compose.meddream.yml docker-compose --project-directory ..  up --build
+COMPOSE_FILE=docker-compose.yml:docker-compose.meddream.yml docker compose --project-directory ..  up --build
