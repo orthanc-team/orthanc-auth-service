@@ -8,6 +8,7 @@ v 23.x.x
 ========
 
 - bug fix: changed the `large_client_header_buffers` value in nginx to avoid http error 414 (`Request-URI Too Large`) when a huge number of studies are loaded in the viewer
+- new user permission: `edit-labels`
 
 v 23.5.0
 ========
