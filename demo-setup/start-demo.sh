@@ -14,4 +14,4 @@ docker build -t orthancteam/orthanc-keycloak -f keycloak/Dockerfile.orthanc-keyc
 
 popd
 
-COMPOSE_FILE=docker-compose.yml docker-compose --project-directory ..  up --build
+COMPOSE_FILE=docker-compose.yml docker compose --project-directory ..  up --build
