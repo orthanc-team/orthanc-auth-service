@@ -5,6 +5,7 @@ SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
 - new user permission: `edit-labels`
+- updated OHIF to v3.6.0
 
 v 23.6.0
 ========
