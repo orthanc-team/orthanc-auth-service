@@ -6,7 +6,7 @@ version: "3"
 services:
 
   nginx:
-    image: orthancteam/orthanc-nginx:23.5.0
+    image: orthancteam/orthanc-nginx:23.6.1
     depends_on: [orthanc, orthanc-auth-service, keycloak]
     restart: unless-stopped
     ports: ["80:80"]
@@ -23,7 +23,7 @@ services:
       ENABLE_OHIF: "true"
 
   orthanc:
-    image: osimis/orthanc:23.5.0
+    image: osimis/orthanc:master-unstable
     volumes:
       - orthanc-storage:/var/lib/orthanc/db
     depends_on: [orthanc-db]
@@ -33,6 +33,7 @@ services:
       DICOM_WEB_PLUGIN_ENABLED: "true"
       ORTHANC__POSTGRESQL__HOST: "orthanc-db"
       VERBOSE_ENABLED: "true"
+      VERBOSE_STARTUP: "true"
       ORTHANC_JSON: |
         {
           "Name": "Orthanc",
@@ -75,7 +76,7 @@ services:
         }
 
   orthanc-auth-service:
-    image: orthancteam/orthanc-auth-service:23.5.0
+    image: orthancteam/orthanc-auth-service:23.6.1
     depends_on: [keycloak]
     restart: unless-stopped
     environment:
@@ -97,12 +98,12 @@ services:
       POSTGRES_HOST_AUTH_METHOD: "trust"
 
   ohif:
-    image: orthancteam/ohif-v3:23.5.0
+    image: orthancteam/ohif-v3:23.6.1
     restart: unless-stopped
 
 
   keycloak:
-    image: orthancteam/orthanc-keycloak:23.5.0
+    image: orthancteam/orthanc-keycloak:23.6.1
     depends_on: [keycloak-db]
     restart: unless-stopped
     environment:
