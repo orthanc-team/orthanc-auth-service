@@ -182,49 +182,53 @@ curl -X POST http://localhost:8000/tokens/validate -H 'token: eyJ0eXAiOiJKV1QiLC
   - `PUBLIC_MEDDREAM_ROOT` is the public root url where the MedDream Viewer can be accessed 
 - A script or application requests the `orthanc-auth-service` to generate such a token via the Rest API:
 ```bash
-curl -X PUT http://localhost:8000/tokens/meddream-viewer-publication -H 'Content-Type: application/json' \
-  -d '{"id": "toto",
-       "studies" : [{
-         "dicom-uid": "1.2"
+curl -X PUT http://localhost:8000/tokens/meddream-instant-link -H 'Content-Type: application/json' \
+-d '{"id": "toto",
+       "resources" : [{
+         "dicom-uid": "1.2.276.0.37.1.322.201502.11033927",
+         "level": "study"
        }],
-       "type": "meddream-viewer-publication", 
-       "expiration-date": "2022-07-07T11:00:00Z"}'
+       "type": "meddream-instant-link", 
+       "expiration-date": "2026-12-31T11:00:00Z"}'
 ```
   Allowed values for `type` are `meddream-instant-link` and `meddream-viewer-publication`.  The `expiration-date` is 
   never used for `meddream-instant-link` since the validity is actually configured in the MedDream Token Service.
+  Route has to be adapted to fit the type, for a publication: `curl -X PUT http://localhost:8000/tokens/meddream-viewer-publication...`
 - if generating a `meddream-instant-link`, `orthanc-auth-service` replies with a share with the token and a link to the 
   MedDream viewer that shall be opened directly after (within a few minutes):
 ```json
-  {
-    "request":{
-      "id":"toto",
-      "studies" : [
-        {
-          "dicom-uid": "1.2",
-          "orthanc-id": null
-        }],  
-      "type":"meddream-instant-link",
-      "expiration-date":null
-    },
-    "token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6InRvdG8iLCJkaWNvbV91aWQiOiIxLjIiLCJvcnRoYW5jX2lkIjoiMDE5NWYxM2UtNGFmZTY4MjItOGI0OTRjYzQtNTE2MmM1MGQtMGRhZjY2YWEiLCJ0eXBlIjoib3NpbWlzLXZpZXdlci1wdWJsaWNhdGlvbiIsImV4cGlyYXRpb25fZGF0ZSI6IjIwMjItMDctMDdUMTE6MDA6MDArMDA6MDAifQ.8mzvYXCrjhM8OWPhu5HQJbEtCO9y6XyFqV-Ak1n-9Tw",
-    "url":"http://localhost/meddream/?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6InRvdG8iLCJkaWNvbV91aWQiOiIxLjIiLCJvcnRoYW5jX2lkIjoiMDE5NWYxM2UtNGFmZTY4MjItOGI0OTRjYzQtNTE2MmM1MGQtMGRhZjY2YWEiLCJ0eXBlIjoib3NpbWlzLXZpZXdlci1wdWJsaWNhdGlvbiIsImV4cGlyYXRpb25fZGF0ZSI6IjIwMjItMDctMDdUMTE6MDA6MDArMDA6MDAifQ.8mzvYXCrjhM8OWPhu5HQJbEtCO9y6XyFqV-Ak1n-9Tw"
-  }
+{
+  "request":{
+    "id":"demo-1",
+    "resources":[{
+      "dicom-uid":"1.2.276.0.37.1.322.201502.11033927",
+      "orthanc-id":null,
+      "url":null,
+      "level":"study"
+    }],
+    "type":"meddream-instant-link",
+    "expiration-date":null,
+    "validity-duration":null},
+  "token":"7VwozctM_1wdeYTyhCaSLi_PfVU7sn9ZVDd2h6Ilo7SlhZAinEa-oFFdfzeNN8J9zCWGEGTHsy0hqPishc7eLg-kqgx9N5LqNT5hZl8LTXAxL3zTIw4=",
+  "url":"http://localhost/meddream/?study=1.2.276.0.37.1.322.201502.11033927&token=7VwozctM_1wdeYTyhCaSLi_PfVU7sn9ZVDd2h6Ilo7SlhZAinEa-oFFdfzeNN8J9zCWGEGTHsy0hqPishc7eLg-kqgx9N5LqNT5hZl8LTXAxL3zTIw4="
+}
+
 ```
 - if generating a `meddream-viewer-publication`, `orthanc-auth-service` replies with a share with the token and a link to the `token-landing` page that will, once accessed, generate a new MedDream token that can be used within a few minutes:
 ```json
-  {
-    "request":{
-      "id":"toto",
-      "studies" : [
-        {
-          "dicom-uid": "1.2",
-          "orthanc-id": null
-        }],  
-      "type":"meddream-viewer-publication",
-      "expiration-date":"2022-07-07T11:00:00Z"
-    },
-    "token":"eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6InRvdG8iLCJkaWNvbV91aWQiOiIxLjIiLCJvcnRoYW5jX2lkIjoiMDE5NWYxM2UtNGFmZTY4MjItOGI0OTRjYzQtNTE2MmM1MGQtMGRhZjY2YWEiLCJ0eXBlIjoib3NpbWlzLXZpZXdlci1wdWJsaWNhdGlvbiIsImV4cGlyYXRpb25fZGF0ZSI6IjIwMjItMDctMDdUMTE6MDA6MDArMDA6MDAifQ.8mzvYXCrjhM8OWPhu5HQJbEtCO9y6XyFqV-Ak1n-9Tw",
-    "url":"http://localhost/ui/app/token-landing?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6InRvdG8iLCJkaWNvbV91aWQiOiIxLjIiLCJvcnRoYW5jX2lkIjoiMDE5NWYxM2UtNGFmZTY4MjItOGI0OTRjYzQtNTE2MmM1MGQtMGRhZjY2YWEiLCJ0eXBlIjoib3NpbWlzLXZpZXdlci1wdWJsaWNhdGlvbiIsImV4cGlyYXRpb25fZGF0ZSI6IjIwMjItMDctMDdUMTE6MDA6MDArMDA6MDAifQ.8mzvYXCrjhM8OWPhu5HQJbEtCO9y6XyFqV-Ak1n-9Tw"
-  }
+{
+  "request":{
+    "id":"demo-1",
+    "resources":[{
+      "dicom-uid":"1.2.276.0.37.1.322.201502.11033927",
+      "orthanc-id":null,
+      "url":null,
+      "level":"study"}],
+    "type":"meddream-viewer-publication",
+    "expiration-date":null,
+    "validity-duration":null},
+  "token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImRlbW8tMSIsInJlc291cmNlcyI6W3siZGljb21fdWlkIjoiMS4yLjI3Ni4wLjM3LjEuMzIyLjIwMTUwMi4xMTAzMzkyNyIsIm9ydGhhbmNfaWQiOm51bGwsInVybCI6bnVsbCwibGV2ZWwiOiJzdHVkeSJ9XSwidHlwZSI6Im1lZGRyZWFtLXZpZXdlci1wdWJsaWNhdGlvbiIsImV4cGlyYXRpb25fZGF0ZSI6bnVsbCwidmFsaWRpdHlfZHVyYXRpb24iOm51bGx9.a2189RYDjlPueJ8QkquJylVJCOXDRyCltGcalnkyJQM",
+  "url":"http://localhost/orthanc/ui/app/token-landing.html?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImRlbW8tMSIsInJlc291cmNlcyI6W3siZGljb21fdWlkIjoiMS4yLjI3Ni4wLjM3LjEuMzIyLjIwMTUwMi4xMTAzMzkyNyIsIm9ydGhhbmNfaWQiOm51bGwsInVybCI6bnVsbCwibGV2ZWwiOiJzdHVkeSJ9XSwidHlwZSI6Im1lZGRyZWFtLXZpZXdlci1wdWJsaWNhdGlvbiIsImV4cGlyYXRpb25fZGF0ZSI6bnVsbCwidmFsaWRpdHlfZHVyYXRpb24iOm51bGx9.a2189RYDjlPueJ8QkquJylVJCOXDRyCltGcalnkyJQM"
+}
 ```
 - once the user tries to access the provided url, the `token-landing` page will reply with an HTTP redirect response redirecting the browser to the MedDreamViewer with a new token that is valid for a few minutes only.
