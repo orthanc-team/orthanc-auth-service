@@ -15,3 +15,11 @@ class InvalidTokenException(SharesException):
 
     def __init__(self):
         super().__init__(msg="Invalid token")
+
+
+class ShlinkException(Exception):
+    def __init__(self, msg="Error related to Shlink (URL Shortener)"):
+        self.msg = msg
+
+    def __str__(self):
+        return self.msg

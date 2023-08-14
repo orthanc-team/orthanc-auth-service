@@ -9,7 +9,7 @@ import httpx
 import logging
 from typing import Optional
 from .exceptions import *
-
+from .shlink import Shlink, ShortenURLParameters
 
 # this class generates JWT tokens that can be used by orthanc to access specific resources
 class OrthancTokenService:
@@ -26,6 +26,8 @@ class OrthancTokenService:
     public_meddream_root_: Optional[str] = None
     public_landing_root_: Optional[str] = None
 
+    shlink_: Optional[Shlink] = None
+
     def __init__(self, secret_key: str):
         self.secret_key_ = secret_key
 
@@ -39,10 +41,36 @@ class OrthancTokenService:
         self.public_meddream_root_ = public_meddream_root
         self.public_landing_root_ = public_landing_root
 
-    def _configure_ohif(self, public_ohif_root: str, server_id: Optional[str] = None, public_landing_root: Optional[str] = None):
+    def _configure_ohif(self, public_ohif_root: str, server_id: Optional[str], public_landing_root: Optional[str], ohif_data_source: str):
         self.public_ohif_root_ = public_ohif_root
         self.server_id_ = server_id
         self.public_landing_root_ = public_landing_root
+        self.ohif_data_source_ = ohif_data_source
+
+
+
+    def _configure_shlink(self, shlink_api_key: str, shlink_base_url: str):
+        if not shlink_api_key or not shlink_base_url:
+            logging.error("Incomplete Shlink configuration. Both API key and base URL are required.")
+            return
+
+        self.shlink_ = Shlink(api_key=shlink_api_key, base_url=shlink_base_url)
+
+
+    def _shorten_url_with_shlink(self, long_url: str) -> Optional[str]:
+        if not self.shlink_:
+            logging.error("Shlink is not configured!")
+            return None
+
+        try:
+            shortened_url = self.shlink_.shorten_url(ShortenURLParameters(longUrl=long_url))
+            return shortened_url
+        except Exception as e:
+            logging.error(f"Error shortening URL with Shlink: {str(e)}")
+            return None
+
+
+
 
     def _create(self):
         if not self.tokens_manager_:
@@ -58,6 +86,8 @@ class OrthancTokenService:
         has_dicom_uids = all([s.dicom_uid is not None for s in request.resources])
         has_orthanc_ids = all([s.orthanc_id is not None for s in request.resources])
 
+        url = None
+
         if request.type == TokenType.OSIMIS_VIEWER_PUBLICATION:
             if not has_orthanc_ids:
                 logging.error("No orthanc_id provided while generating a link to the Osimis WebViewer")
@@ -65,11 +95,10 @@ class OrthancTokenService:
 
             if skip_landing_page or self.public_landing_root_ is None:
                 public_root = self.public_orthanc_root_
-
                 studyIds = ",".join([s.orthanc_id for s in request.resources])
-                return urllib.parse.urljoin(public_root, f"osimis-viewer/app/index.html?pickableStudyIds={studyIds}&selectedStudyIds={studyIds}&token={token}")
+                url = urllib.parse.urljoin(public_root, f"osimis-viewer/app/index.html?pickableStudyIds={studyIds}&selectedStudyIds={studyIds}&token={token}")
             else:
-                return urllib.parse.urljoin(self.public_landing_root_, f"?token={token}")
+                url = urllib.parse.urljoin(self.public_landing_root_, f"?token={token}")
 
         elif request.type == TokenType.STONE_VIEWER_PUBLICATION:
             if not has_dicom_uids:
@@ -78,24 +107,33 @@ class OrthancTokenService:
 
             if skip_landing_page or self.public_landing_root_ is None:
                 public_root = self.public_orthanc_root_
-
                 studyIds = ",".join([s.dicom_uid for s in request.resources])
-                return urllib.parse.urljoin(public_root, f"stone-webviewer/index.html?study={studyIds}&selectedStudies={studyIds}&token={token}")
+                url = urllib.parse.urljoin(public_root, f"stone-webviewer/index.html?study={studyIds}&selectedStudies={studyIds}&token={token}")
             else:
-                return urllib.parse.urljoin(self.public_landing_root_, f"?token={token}")
+                url = urllib.parse.urljoin(self.public_landing_root_, f"?token={token}")
 
         elif request.type == TokenType.OHIF_VIEWER_PUBLICATION:
-            if not has_dicom_uids:
-                logging.error("No dicom_uid provided while generating a link to the OHIF viewer")
+            if self.ohif_data_source_ == "dicom-json":
+                if not has_orthanc_ids:
+                    logging.error("No orthanc_id provided while generating a link to the OHIF viewer")
+                    return None
+                studyIds = ",".join([s.orthanc_id for s in request.resources])
+                ohif_url_format = f"viewer?url=../studies/{studyIds}/ohif-dicom-json&token={token}"
+            elif self.ohif_data_source_ == "dicom-web":
+                if not has_dicom_uids:
+                    logging.error("No dicom_uid provided while generating a link to the OHIF viewer")
+                    return None
+                studyIds = ",".join([s.dicom_uid for s in request.resources])
+                ohif_url_format = f"viewer?StudyInstanceUIDs={studyIds}&token={token}"
+            else:
+                logging.error(f"Unsupported OHIF data source: {self.ohif_data_source_}")
                 return None
 
             if skip_landing_page or self.public_landing_root_ is None:
                 public_root = self.public_ohif_root_
-
-                studyIds = ",".join([s.dicom_uid for s in request.resources])
-                return urllib.parse.urljoin(public_root, f"viewer?StudyInstanceUIDs={studyIds}&token={token}")
+                url = urllib.parse.urljoin(public_root, ohif_url_format)
             else:
-                return urllib.parse.urljoin(self.public_landing_root_, f"?token={token}")
+                url = urllib.parse.urljoin(self.public_landing_root_, f"?token={token}")
 
         elif request.type == TokenType.MEDDREAM_INSTANT_LINK:
             if not has_dicom_uids:
@@ -104,18 +142,27 @@ class OrthancTokenService:
 
             studyIds = ",".join([s.dicom_uid for s in request.resources])
             logging.warning("generateUrl meddream instant " + self.public_meddream_root_)
-            return urllib.parse.urljoin(self.public_meddream_root_, f"?study={studyIds}&token={token}")
+            url = urllib.parse.urljoin(self.public_meddream_root_, f"?study={studyIds}&token={token}")
 
         elif request.type == TokenType.MEDDREAM_VIEWER_PUBLICATION:
             logging.warning("generateUrl meddream publication " + self.public_meddream_root_)
-            return urllib.parse.urljoin(self.public_landing_root_, f"?token={token}")
+            url = urllib.parse.urljoin(self.public_landing_root_, f"?token={token}")
 
-        elif request.type in [
-            TokenType.VIEWER_INSTANT_LINK,
-            TokenType.DOWNLOAD_INSTANT_LINK
-            ]:
+        elif request.type in [TokenType.VIEWER_INSTANT_LINK, TokenType.DOWNLOAD_INSTANT_LINK]:
             # no url, the user must build it himself
             return None
+
+        else:
+            # Return None or raise an error for an unknown type, based on your preference
+            return None
+
+        if self.shlink_ and url.startswith(self.public_landing_root_):
+            shortened_url = self._shorten_url_with_shlink(url)
+            if shortened_url:
+                url = shortened_url
+
+        return url
+
 
     def check_token_is_allowed(self, type: TokenType):
         if type in [TokenType.OSIMIS_VIEWER_PUBLICATION, TokenType.STONE_VIEWER_PUBLICATION]:
