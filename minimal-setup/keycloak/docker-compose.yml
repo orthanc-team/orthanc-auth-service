@@ -48,7 +48,7 @@ services:
             },
             "Tokens" : {
               "InstantLinksValidity": 3600,
-              "ShareType": "stone-viewer-publication"
+              "ShareType": "ohif-viewer-publication"
             },
             "Keycloak" : {
               "Enable": true,
@@ -99,6 +99,9 @@ services:
 
   ohif:
     image: orthancteam/ohif-v3:23.6.1
+#  uncomment if you want to customize ohif configuration
+#    volumes:
+#      - ./ohif-app-config.js:/usr/share/nginx/html/app-config.js
     restart: unless-stopped
 
 
