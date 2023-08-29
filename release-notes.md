@@ -8,7 +8,7 @@ v x.x.x
 ========
 
 - nginx: added proxy parameters to handle large headers
-
+- added `OHIF_DATA_SOURCE` env var defaulting to `dicom-web`
 
 v 23.6.1
 ========
