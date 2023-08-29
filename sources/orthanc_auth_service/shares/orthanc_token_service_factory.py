@@ -50,6 +50,15 @@ def create_token_service_from_secrets():
         else:
             server_id = get_secret_or_die("SERVER_ID")
 
+        if not is_secret_defined("OHIF_DATA_SOURCE"):
+            logging.warning("OHIF_DATA_SOURCE is not defined, will default to dicom-web.")
+            ohif_data_source = "dicom-web"
+        else:
+            ohif_data_source = get_secret_or_die("OHIF_DATA_SOURCE")
+            if not ohif_data_source in ["dicom-web", "dicom-json"]:
+                logging.warning("Invalid OHIF_DATA_SOURCE value. It should be either 'dicom-json' or 'dicom-web', defaulting to 'dicom-web'.")
+                ohif_data_source = "dicom-web"
+
         if not is_secret_defined("PUBLIC_LANDING_ROOT"):
             logging.warning("PUBLIC_LANDING_ROOT is not defined.  Users won't get a clear error message if their link is invalid or expired")
         else:
@@ -58,7 +67,8 @@ def create_token_service_from_secrets():
         token_service._configure_ohif(
             public_ohif_root=public_ohif_root,
             server_id=server_id,
-            public_landing_root=public_landing_root
+            public_landing_root=public_landing_root,
+            ohif_data_source=ohif_data_source
         )
     else:
         logging.warning("PUBLIC_OHIF_ROOT is not defined, the generator will not allow 'ohif-viewer-publication'")

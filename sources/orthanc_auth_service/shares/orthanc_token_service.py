@@ -21,6 +21,7 @@ class OrthancTokenService:
     public_orthanc_root_: Optional[str] = None
     public_ohif_root_: Optional[str] = None
     server_id_: Optional[str] = None
+    ohif_data_source_: str = "dicom-web"
 
     meddream_token_service_url_: Optional[str] = None
     public_meddream_root_: Optional[str] = None
@@ -39,10 +40,11 @@ class OrthancTokenService:
         self.public_meddream_root_ = public_meddream_root
         self.public_landing_root_ = public_landing_root
 
-    def _configure_ohif(self, public_ohif_root: str, server_id: Optional[str] = None, public_landing_root: Optional[str] = None):
+    def _configure_ohif(self, public_ohif_root: str, server_id: Optional[str] = None, public_landing_root: Optional[str] = None, ohif_data_source: str = "dicom-web"):
         self.public_ohif_root_ = public_ohif_root
         self.server_id_ = server_id
         self.public_landing_root_ = public_landing_root
+        self.ohif_data_source_ = ohif_data_source
 
     def _create(self):
         if not self.tokens_manager_:
@@ -85,15 +87,27 @@ class OrthancTokenService:
                 return urllib.parse.urljoin(self.public_landing_root_, f"?token={token}")
 
         elif request.type == TokenType.OHIF_VIEWER_PUBLICATION:
-            if not has_dicom_uids:
-                logging.error("No dicom_uid provided while generating a link to the OHIF viewer")
+
+            if self.ohif_data_source_ == "dicom-json":
+                if not has_orthanc_ids:
+                    logging.error("No orthanc_id provided while generating a link to the OHIF viewer in 'dicom-json' data source mode")
+                    return None
+                studyIds = ",".join([s.orthanc_id for s in request.resources])
+                ohif_url_format = f"viewer?url=../studies/{studyIds}/ohif-dicom-json&token={token}"
+            elif self.ohif_data_source_ == "dicom-web":
+                if not has_dicom_uids:
+                    logging.error("No dicom_uid provided while generating a link to the OHIF viewer in 'dicom-web' data source mode")
+                    return None
+                studyIds = ",".join([s.dicom_uid for s in request.resources])
+                ohif_url_format = f"viewer?StudyInstanceUIDs={studyIds}&token={token}"
+            else:
+                logging.error(f"Unsupported OHIF data source: {self.ohif_data_source_}")
                 return None
+
 
             if skip_landing_page or self.public_landing_root_ is None:
                 public_root = self.public_ohif_root_
-
-                studyIds = ",".join([s.dicom_uid for s in request.resources])
-                return urllib.parse.urljoin(public_root, f"viewer?StudyInstanceUIDs={studyIds}&token={token}")
+                return urllib.parse.urljoin(public_root, ohif_url_format)
             else:
                 return urllib.parse.urljoin(self.public_landing_root_, f"?token={token}")
 
