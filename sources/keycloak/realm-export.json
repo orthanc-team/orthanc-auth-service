@@ -1172,7 +1172,7 @@
   },
   "smtpServer" : { },
   "loginTheme" : "orthanc",
-  "accountTheme" : "orthanc",
+  "accountTheme" : "",
   "adminTheme" : "",
   "emailTheme" : "orthanc",
   "eventsEnabled" : false,
