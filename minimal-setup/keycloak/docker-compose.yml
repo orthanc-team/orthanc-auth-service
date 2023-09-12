@@ -23,7 +23,7 @@ services:
       ENABLE_OHIF: "true"
 
   orthanc:
-    image: osimis/orthanc:master-unstable
+    image: osimis/orthanc:current
     volumes:
       - orthanc-storage:/var/lib/orthanc/db
     depends_on: [orthanc-db]
@@ -76,7 +76,7 @@ services:
         }
 
   orthanc-auth-service:
-    image: orthancteam/orthanc-auth-service:23.6.1
+    image: orthancteam/orthanc-auth-service:current
     depends_on: [keycloak]
     restart: unless-stopped
     environment:
@@ -106,7 +106,7 @@ services:
 
 
   keycloak:
-    image: orthancteam/orthanc-keycloak:23.6.1
+    image: orthancteam/orthanc-keycloak:labels-perm
     depends_on: [keycloak-db]
     restart: unless-stopped
     environment:
