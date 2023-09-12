@@ -4,7 +4,8 @@
 
 import os
 import logging
-
+import datetime
+from json import JSONEncoder
 
 # try to read a secret first from a secret file or from an env var.
 # stop execution if not
@@ -29,3 +30,9 @@ def is_secret_defined(name: str) -> bool:
 
     return os.environ.get(name) is not None
 
+
+class DateTimeJSONEncoder(JSONEncoder):
+    # Override the default method
+    def default(self, obj):
+        if isinstance(obj, (datetime.date, datetime.datetime)):
+            return obj.isoformat()

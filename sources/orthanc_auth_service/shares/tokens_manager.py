@@ -9,7 +9,7 @@ from typing import Optional, List
 import logging
 import pytz
 import jwt
-from dateutil import parser
+from .utils.utils import DateTimeJSONEncoder
 
 logging.basicConfig(level=logging.INFO)
 
@@ -98,7 +98,7 @@ class Hs256TokensManager(TokensManager):
         self.server_id_ = server_id
 
     def _encode_token(self, request: TokenCreationRequest) -> str:
-        return jwt.encode(request.dict(), self.secret_key_, algorithm="HS256")
+        return jwt.encode(request.model_dump(), self.secret_key_, algorithm="HS256", json_encoder=DateTimeJSONEncoder)
 
     def _decode_token(self, token: str) -> dict:
         try:
