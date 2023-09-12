@@ -4,20 +4,8 @@
 
 from typing import Optional, List
 from pydantic import BaseModel, Field
-from pydantic.datetime_parse import parse_datetime
 from enum import Enum
 from datetime import datetime
-
-
-class StringDateTime(datetime):
-    @classmethod
-    def __get_validators__(cls):
-        yield parse_datetime
-        yield cls.validate
-
-    @classmethod
-    def validate(cls, v: datetime):
-        return v.isoformat()
 
 
 class Levels(str, Enum):
@@ -67,18 +55,18 @@ class OrthancResource(BaseModel):
     level: Levels
 
     class Config:  # allow creating object from dict (used when deserializing the JWT)
-        allow_population_by_field_name = True
+        populate_by_name = True
 
 
 class TokenCreationRequest(BaseModel):
     id: Optional[str] = None
     resources: List[OrthancResource]
     type: TokenType = Field(default=TokenType.INVALID)
-    expiration_date: Optional[StringDateTime] = Field(alias="expiration-date", default=None)
+    expiration_date: Optional[datetime] = Field(alias="expiration-date", default=None)
     validity_duration: Optional[int] = Field(alias='validity-duration', default=None)            # alternate way to provide an expiration_date, more convenient for instant-links since the duration is relative to the server time, not the client time !
 
     class Config:  # allow creating object from dict (used when deserializing the JWT)
-        allow_population_by_field_name = True
+        populate_by_name = True
 
 
 class TokenCreationResponse(BaseModel):
@@ -95,7 +83,7 @@ class TokenValidationRequest(BaseModel):
     server_id: Optional[str] = Field(alias="server-id", default=None)
     level: Optional[Levels]
     method: Methods
-    uri: Optional[str]
+    uri: Optional[str] = None
 
 
 class TokenValidationResponse(BaseModel):
@@ -139,8 +127,10 @@ class UserPermissions(str, Enum):
 
 class UserProfileResponse(BaseModel):
     name: str
+    authorized_labels: List[str] = Field(alias="authorized-labels", default_factory=list)
     permissions: List[UserPermissions] = Field(default_factory=list)
     validity: int
 
     class Config:
         use_enum_values = True
+        populate_by_name = True

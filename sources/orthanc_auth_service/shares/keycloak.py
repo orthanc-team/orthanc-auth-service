@@ -7,14 +7,14 @@ import logging
 import requests
 import jwt
 import json
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Tuple
 from .models import *
 from .utils.utils import get_secret_or_die, is_secret_defined
 
 
 class Keycloak:
 
-    def __init__(self, public_key, configured_roles):
+    def __init__(self, public_key, configured_roles: Dict[str, Any]):
         self.public_key = public_key
         self.configured_roles = configured_roles
 
@@ -84,33 +84,46 @@ class Keycloak:
 
     def get_user_profile_from_token(self, jwt_token: str) -> UserProfileResponse:
         decoded_token = self.decode_token(jwt_token=jwt_token)
-        response = UserProfileResponse(name="", permissions=[], validity=60)
+        response = UserProfileResponse(name="", permissions=[], validity=60, authorized_labels=[])
 
         response.name = self.get_name_from_decoded_token(decoded_token=decoded_token)
 
         roles = self.get_roles_from_decoded_token(decoded_token=decoded_token)
 
-        response.permissions = self.get_permissions_from_roles(roles)
+        response.permissions, response.authorized_labels = self.get_role_configuration(roles)
 
         return response
 
 
-    def get_permissions_from_roles(self, roles: List[str]) -> List[UserPermissions]:
-        response = []
+    def get_role_configuration(self, roles: List[str]) -> Tuple[List[UserPermissions], List[str], List[str]]:
+        permissions = []
+        authorized_labels = []
+        configured_user_roles = []
 
-        # for each role received from the token sent by Keycloak
-        for role in roles:
-            # search for it in the configured roles
-            configured_role = self.configured_roles.get(role)
-            # if it has been configured:
-            if configured_role is not None:
-                # Let's add the permissions in the response
-                for item in configured_role:
-                    # (if not already there)
-                    if UserPermissions(item) not in response:
-                        response.append(UserPermissions(item))
+        for r in roles:
+            if r in self.configured_roles:
+                configured_user_roles.append(r)
 
-        return response
+        # complain if there are 2 roles for the same user ???  How should we combine the authorized and forbidden labels in this case ???
+        if len(configured_user_roles) > 1:
+            raise ValueError("Unable to handle multiple roles for a single user")
+
+        role = configured_user_roles[0]
+        # search for it in the configured roles
+        configured_role = self.configured_roles.get(role)
+        # if it has been configured:
+        if configured_role is None:
+            raise ValueError(f"Role not found in configuration: {role}")
+
+        for item in configured_role.get('permissions'):
+            # (if not already there)
+            if UserPermissions(item) not in permissions:
+                permissions.append(UserPermissions(item))
+
+        if configured_role.get("authorized_labels"):
+            authorized_labels = configured_role.get("authorized_labels")
+
+        return permissions, authorized_labels
 
 
 def _get_keycloak_public_key(keycloak_uri: str) -> str:
@@ -131,7 +144,21 @@ def _get_keycloak_public_key(keycloak_uri: str) -> str:
 def _get_config_from_file(file_path: str):
     with open(file_path) as f:
         data = json.load(f)
-    return data.get('roles')
+
+    roles = data.get('roles')
+
+    for key, role_def in roles.items():
+        if not role_def.get("authorized_labels"):
+            msg = f'No "authorized_labels" defined for role "{key}".  You should, e.g,  include "authorized_labels" = ["*"] if you want to authorize all labels.")'
+            logging.error(msg)
+            raise ValueError(msg)
+
+        if not role_def.get("permissions"):
+            msg = f'No "permissions" defined for role "{key}".  You should, e.g,  include "permissions" = ["all"] if you want to authorize all permissions.")'
+            logging.error(msg)
+            raise ValueError(msg)
+
+    return roles
 
 
 def create_keycloak_from_secrets():
