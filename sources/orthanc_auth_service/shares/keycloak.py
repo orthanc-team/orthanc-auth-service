@@ -22,9 +22,12 @@ class Keycloak:
         return jwt.decode(jwt=jwt_token, key=self.public_key, audience="account", algorithms=["RS256"])
 
     def get_name_from_decoded_token(self, decoded_token: Dict[str, Any]) -> str:
-        name = decoded_token.get('name')
-        if name is not None:
-            return name
+        if decoded_token.get('name'):
+            return decoded_token.get('name')
+
+        if decoded_token.get("preferred_username"):
+            return decoded_token.get("preferred_username")
+
         return ''
 
     def get_roles_from_decoded_token(self, decoded_token: Dict[str, Any]) -> List[str]:
@@ -84,9 +87,11 @@ class Keycloak:
 
     def get_user_profile_from_token(self, jwt_token: str) -> UserProfileResponse:
         decoded_token = self.decode_token(jwt_token=jwt_token)
-        response = UserProfileResponse(name="", permissions=[], validity=60, authorized_labels=[])
-
-        response.name = self.get_name_from_decoded_token(decoded_token=decoded_token)
+        response = UserProfileResponse(
+            name=self.get_name_from_decoded_token(decoded_token=decoded_token),
+            permissions=[],
+            validity=60,
+            authorized_labels=[])
 
         roles = self.get_roles_from_decoded_token(decoded_token=decoded_token)
 
