@@ -25,12 +25,14 @@ ENV KC_HOSTNAME_ADMIN_URL=http://localhost/keycloak
 ENTRYPOINT ["/opt/keycloak/bin/kc.sh"]
 CMD ["start --optimized --import-realm --proxy edge"]
 
+
 ### To export the realm of a working Keycloak to a json file:
 # - stop the setup
-# - bind a volume to /usr/tmp
+# - bind a volume to /usr/tmp (copose file)
 # - replace the last "CMD" command of current Docker file by the following one:
 #   CMD ["export --file /usr/tmp/realm-export.json --realm orthanc --users realm_file"]
-# - rebuild/start your setup
+# - rebuild the keycloak image (adapt path for files to copy in current file: lines 13 and 20)
+# - start your setup
 # - then keycloak will start, export the realm and exit. From that moment, your realm
 #   (including users, roles, clients,...) will be available in the /usr/tmp/realm-export.json
 
