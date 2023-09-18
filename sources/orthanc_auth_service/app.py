@@ -33,6 +33,15 @@ else:
     security = None
     logging.warning("!!!! HTTP Basic auth is NOT required to connect to the web-service !!!!")
 
+# to show invalid payloads (debug)
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+	exc_str = f'{exc}'.replace('\n', ' ').replace('   ', ' ')
+	logging.error(f"{request}: {exc_str}")
+	content = {'status_code': 10422, 'message': exc_str, 'data': None}
+	return JSONResponse(content=content, status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)
 
 # callback that is used on every request to check the auth-service caller's credentials
 def authorize(credentials: HTTPBasicCredentials = Depends(security)):
@@ -147,28 +156,27 @@ def decode_token(request: TokenDecoderRequest):
 def get_user_profile(user_profile_request: UserProfileRequest):
     logging.info("get user profile: " + user_profile_request.json())
 
+    anonymous_profile = UserProfileResponse(
+                name="Anonymous",
+                permissions=[],
+                authorized_labels=[],
+                validity=60
+            )
     try:
         if keycloak is None:
             logging.warning("Keycloak is not configured, all users are considered anonymous")
-            response = UserProfileResponse(
-                name="Anonymous",
-                permissions=[],
-                validity=60
-            )
+            return anonymous_profile
         elif user_profile_request.token_key is not None:
             response = keycloak.get_user_profile_from_token(user_profile_request.token_value)
         else:
-            response = UserProfileResponse(
-                name="Anonymous",
-                permissions=[],
-                validity=60
-            )
+            return anonymous_profile
 
         return response
     except jwt.exceptions.InvalidAlgorithmError:
-        raise HTTPException(status_code=400, detail=str("Not a user token"))
+        # not a valid user profile, consider it is anonymous
+        return anonymous_profile
     except jwt.exceptions.PyJWTError:
         raise HTTPException(status_code=400, detail=str("Unable to decode token"))
-    except:
-        raise HTTPException(status_code=400, detail=str("Unexpected error"))
+    except Exception as ex:
+        raise HTTPException(status_code=400, detail=str("Unexpected error: " + str(ex)))
 

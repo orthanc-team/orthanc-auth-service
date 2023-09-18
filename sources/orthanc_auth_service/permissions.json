@@ -1,6 +1,16 @@
 {
   "roles" : {
-    "admin": ["all"],
-    "doctor": ["view", "download", "share", "send"]
+    "admin": {
+      "permissions": ["all"],
+      "authorized_labels": ["*"]
+    },
+    "doctor": {
+      "permissions":["view", "download", "share", "send"],
+      "authorized_labels": ["*"]
+    },
+    "students": {
+      "permissions":["view", "download"],
+      "authorized_labels": ["students"]
+    }
   }
 }

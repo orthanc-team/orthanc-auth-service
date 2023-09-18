@@ -6,6 +6,8 @@ SPDX-License-Identifier: GPL-3.0-or-later
 
 v x.x.x
 ========
+BREAKING CHANGES:
+- the format of the permissions.json file has changed to include `permissions` and `authorized_labels`.
 
 - nginx: added proxy parameters to handle large headers
 - added `OHIF_DATA_SOURCE` env var defaulting to `dicom-web`

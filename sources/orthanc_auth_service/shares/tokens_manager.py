@@ -9,7 +9,7 @@ from typing import Optional, List
 import logging
 import pytz
 import jwt
-from dateutil import parser
+from .utils.utils import DateTimeJSONEncoder
 
 logging.basicConfig(level=logging.INFO)
 
@@ -33,10 +33,9 @@ class TokensManager:
     def is_expired(self, request: TokenCreationRequest) -> bool:
         # check expiration date
         if request.expiration_date:
-            expiration_date = parser.parse(request.expiration_date)
             now_utc = pytz.UTC.localize(datetime.now())
 
-            is_valid = now_utc < expiration_date
+            is_valid = now_utc < request.expiration_date
             if not is_valid:
                 logging.warning(f"Token Validation: period is invalid")
             return not is_valid
@@ -54,7 +53,7 @@ class TokensManager:
         try:
             r = self._decode_token(token)
             share_request = TokenCreationRequest(**r)
-        except:
+        except Exception as ex:
             logging.warning(f"Token Validation: failed to decode token")
             return False
 
@@ -99,7 +98,7 @@ class Hs256TokensManager(TokensManager):
         self.server_id_ = server_id
 
     def _encode_token(self, request: TokenCreationRequest) -> str:
-        return jwt.encode(request.dict(), self.secret_key_, algorithm="HS256")
+        return jwt.encode(request.model_dump(), self.secret_key_, algorithm="HS256", json_encoder=DateTimeJSONEncoder)
 
     def _decode_token(self, token: str) -> dict:
         try:
