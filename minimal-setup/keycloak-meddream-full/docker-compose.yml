@@ -79,7 +79,7 @@ services:
     depends_on: [keycloak, meddream-token-service]
     # permissions can be customized in the permissions.json file
     volumes:
-      - ./permissions.json:/orthanc_auth_service/permissions.json
+      - ./permissions.jsonc:/orthanc_auth_service/permissions.json
     restart: unless-stopped
     environment:
       SECRET_KEY: "change-me-I-am-a-secret-key"

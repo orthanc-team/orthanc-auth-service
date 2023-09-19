@@ -79,7 +79,7 @@ services:
     image: orthancteam/orthanc-auth-service:23.9.0
     # permissions can be customized in the permissions.json file
     volumes:
-      - ./permissions.json:/orthanc_auth_service/permissions.json
+      - ./permissions.jsonc:/orthanc_auth_service/permissions.json
     depends_on: [keycloak]
     restart: unless-stopped
     environment:
