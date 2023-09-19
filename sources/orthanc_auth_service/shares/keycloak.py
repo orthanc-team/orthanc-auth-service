@@ -6,7 +6,7 @@ import os
 import logging
 import requests
 import jwt
-import json
+import jsonc
 from typing import Dict, Any, List, Tuple
 from .models import *
 from .utils.utils import get_secret_or_die, is_secret_defined
@@ -148,7 +148,7 @@ def _get_keycloak_public_key(keycloak_uri: str) -> str:
 
 def _get_config_from_file(file_path: str):
     with open(file_path) as f:
-        data = json.load(f)
+        data = jsonc.load(f)
 
     roles = data.get('roles')
 

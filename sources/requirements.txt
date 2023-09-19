@@ -9,6 +9,7 @@ pytz==2022.1
 python-dateutil==2.8.2
 uvicorn[standard]==0.18.2
 pytest
+json-with-comments==1.2.1
 httpx
 # TODO: standardize usage of https or requests
 requests
