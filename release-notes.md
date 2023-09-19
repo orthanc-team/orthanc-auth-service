@@ -4,8 +4,11 @@ SPDX-FileCopyrightText: 2022 - 2023 Orthanc Team SRL <info@orthanc.team>
 SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
-v x.x.x
+v 23.9.0
 ========
+
+- added support of labels permissions (via `authorized_labels` in user roles and user profiles)
+
 BREAKING CHANGES:
 - the format of the permissions.json file has changed to include `permissions` and `authorized_labels`.
 

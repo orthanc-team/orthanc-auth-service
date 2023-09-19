@@ -38,7 +38,7 @@ To start the setup, type: `docker compose up`.  Some containers will restart mul
 
 ## As an admin user
 
-- Open the Orthanc UI at [http://localhost/orthanc/ui/app/](http://localhost/orthanc/ui/app/) (login/pwd: `orthanc`/`change-me`)
+- Open the Orthanc UI at [http://localhost/orthanc/ui/app/](http://localhost/orthanc/ui/app/) (login/pwd: `admin`/`change-me`)
 - upload a dicom file in Orthanc
 - you may click `view the study in MedDream`
 - On the uploaded file, click on the `Share` button and then on `Share` in the dialog box and then on `Copy and close`
