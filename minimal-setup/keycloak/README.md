@@ -35,9 +35,10 @@ To start the setup, type: `docker compose up`.  Some containers will restart mul
 
 ## As an admin user
 
-- Open the Orthanc UI at [http://localhost/orthanc/ui/app/](http://localhost/orthanc/ui/app/) (login/pwd: `orthanc`/`change-me`)
-- upload a dicom file in Orthanc
-- On the uploaded file, click on the `Share` button and then on `Share` in the dialog box and then on `Copy and close`
+- Open the Orthanc UI at [http://localhost/orthanc/ui/app/](http://localhost/orthanc/ui/app/) (login/pwd: `admin`/`change-me`)
+- upload a few dicom studies in Orthanc
+- Add the `external` label to a few of the studies
+- On one of the uploaded studies, click on the `Share` button and then on `Share` in the dialog box and then on `Copy and close`
 - Keep the link in your clipboard.  You may share this link with an external user.
 - Go to `Profile` -> `Logout`
 
@@ -52,11 +53,15 @@ To start the setup, type: `docker compose up`.  Some containers will restart mul
 - Open the Orthanc UI at [http://localhost/orthanc/ui/app/](http://localhost/orthanc/ui/app/) (login/pwd: `doctor`/`change-me`)
 - The doctor user is a restricted user who can browse the whole set of studies but who can not upload/modify/delete them.
 
+## As an external user
+
+- Open the Orthanc UI at [http://localhost/orthanc/ui/app/](http://localhost/orthanc/ui/app/) (login/pwd: `external`/`change-me`)
+- This user can only see the studies that have been tagged with the `external` tag.
 
 # Accessing this demo from a remote client
 
-If you wish to access this demo from a remote computer, you must tell the setup on which domain it is accessible (in this sample: `mydomain.com`).
-Then, you should update these settings:
+If you wish to access this demo from a remote computer, you must configure the domain on which this setup is accessible (in this sample: `mydomain.com`).
+Update these settings:
 - orthanc: ORTHANC_JSON -> OrthancExplorer2 -> Keycloak -> "Url": "http://mydomain.com/keycloak/"
 - keycloak: KC_HOSTNAME_URL: "http://mydomain.com/keycloak"
 - keycloak: KC_HOSTNAME_ADMIN_URL: "http://mydomain.com/keycloak"

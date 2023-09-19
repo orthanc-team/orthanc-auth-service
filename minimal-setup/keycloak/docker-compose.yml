@@ -6,7 +6,7 @@ version: "3"
 services:
 
   nginx:
-    image: orthancteam/orthanc-nginx:23.6.1
+    image: orthancteam/orthanc-nginx:23.9.0
     depends_on: [orthanc, orthanc-auth-service, keycloak]
     restart: unless-stopped
     ports: ["80:80"]
@@ -23,7 +23,7 @@ services:
       ENABLE_OHIF: "true"
 
   orthanc:
-    image: osimis/orthanc:current
+    image: osimis/orthanc:23.9.0
     volumes:
       - orthanc-storage:/var/lib/orthanc/db
     depends_on: [orthanc-db]
@@ -76,7 +76,10 @@ services:
         }
 
   orthanc-auth-service:
-    image: orthancteam/orthanc-auth-service:current
+    image: orthancteam/orthanc-auth-service:23.9.0
+    # permissions can be customized in the permissions.json file
+    volumes:
+      - ./permissions.jsonc:/orthanc_auth_service/permissions.json
     depends_on: [keycloak]
     restart: unless-stopped
     environment:
@@ -98,7 +101,7 @@ services:
       POSTGRES_HOST_AUTH_METHOD: "trust"
 
   ohif:
-    image: orthancteam/ohif-v3:23.6.1
+    image: orthancteam/ohif-v3:23.9.0
 #  uncomment if you want to customize ohif configuration
 #    volumes:
 #      - ./ohif-app-config.js:/usr/share/nginx/html/app-config.js
@@ -106,9 +109,11 @@ services:
 
 
   keycloak:
-    image: orthancteam/orthanc-keycloak:labels-perm
+    image: orthancteam/orthanc-keycloak:23.9.0
     depends_on: [keycloak-db]
     restart: unless-stopped
+#    healthcheck:
+#      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
     environment:
       KEYCLOAK_ADMIN: "admin"
       KEYCLOAK_ADMIN_PASSWORD: "change-me"
