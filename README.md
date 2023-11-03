@@ -23,7 +23,7 @@ Features:
   - [Stone Viewer](https://www.orthanc-server.com/static.php?page=stone-web-viewer)
   - [Osimis Viewer](https://book.orthanc-server.com/plugins/osimis-webviewer.html)
   - [MedDream Viewer](https://www.softneta.com/online-dicom-viewer/) (commercial - CE approved)
-- 3 Boilerplates [docker-compose.yml](minimal-setup/docker-compose.yml) to bootstrap a setup:
+- 3 Boilerplates `docker-compose` setups to bootstrap a setup:
   - One with [basic authentication](minimal-setup/basic-auth) only to demonstrate study sharing.
   - One with [Keycloak integration](minimal-setup/keycloak) to demonstrate user management and study sharing
   - One full setup with [Keycloak, MedDream and Orthanc for API](minimal-setup/keycloak) to demonstrate user management, study sharing, MedDream usage and an extra orthanc accessible e.g by DicomWebClient.
