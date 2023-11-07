@@ -4,10 +4,12 @@ SPDX-FileCopyrightText: 2022 - 2023 Orthanc Team SRL <info@orthanc.team>
 SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
-v 
+v 23.11.0
 ========
 
 - Upgraded OHIF from v3.6.0 to v3.7.0
+- Upgraded Meddream from v8.1.0 to v8.3.0
+- Upgraded Meddream token service from 1.3.7 to 2.1.3
 
 
 v 23.9.0
