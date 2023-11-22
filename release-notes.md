@@ -3,6 +3,12 @@ SPDX-FileCopyrightText: 2022 - 2023 Orthanc Team SRL <info@orthanc.team>
 
 SPDX-License-Identifier: GPL-3.0-or-later
 -->
+v 23.11.1
+========
+
+- Upgraded Keycloak from 21.0.1 to 22.0.3
+- Added Keycloak plugin to bypass 2FA based on the client ip
+
 
 v 23.11.0
 ========
