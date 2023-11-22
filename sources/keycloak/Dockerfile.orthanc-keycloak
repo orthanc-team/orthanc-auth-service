@@ -1,20 +1,23 @@
+#syntax=docker/dockerfile:1
 # SPDX-FileCopyrightText: 2022 - 2023 Orthanc Team SRL <info@orthanc.team>
 #
 # SPDX-License-Identifier: CC0-1.0
 
-FROM quay.io/keycloak/keycloak:21.0.1 as builder
+FROM quay.io/keycloak/keycloak:22.0.3 as builder
 
 WORKDIR /opt/keycloak
 ENV KC_DB=postgres
 ENV KC_HOSTNAME_URL=http://localhost/keycloak
 ENV KC_HOSTNAME_ADMIN_URL=http://localhost/keycloak
 
-RUN mkdir /opt/keycloak/themes/orthanc
+ADD --chown=keycloak --checksum=sha256:650664b4a3be5c07f2c3336292677fbbd92f95edc22a3cfa850d313d5ce5cfcb https://github.com/evosec/keycloak-ipaddress-authenticator/releases/download/22.0.3_1/keycloak-ipaddress-authenticator-22.0.3_1-jar-with-dependencies.jar /opt/keycloak/providers
+
+RUN mkdir themes/orthanc
 ADD keycloak/orthanc-theme /opt/keycloak/themes/orthanc
 
 RUN /opt/keycloak/bin/kc.sh build
 
-FROM quay.io/keycloak/keycloak:21.0.1
+FROM quay.io/keycloak/keycloak:22.0.3
 COPY --from=builder /opt/keycloak/ /opt/keycloak/
 
 COPY keycloak/realm-export.json /opt/keycloak/data/import/
