@@ -44,8 +44,13 @@ if [[ $enableOrthancForShares == "true" ]]; then
 fi
 
 if [[ $enableKeycloak == "true" ]]; then
-  echo "ENABLE_KEYCLOAK is true -> enable /keycloak/ reverse proxy"
-  cp -f /etc/nginx/disabled-reverse-proxies/reverse-proxy.keycloak.conf /etc/nginx/enabled-reverse-proxies/
+  if [[ $enableHttps == "true" ]]; then
+    echo "ENABLE_KEYCLOAK is true and ENABLE_HTTPS is true -> enable /keycloak/ reverse proxy in https version"
+    cp -f /etc/nginx/disabled-reverse-proxies/reverse-proxy.keycloak-https.conf /etc/nginx/enabled-reverse-proxies/
+  else
+    echo "ENABLE_KEYCLOAK is true and ENABLE_HTTPS is false -> enable /keycloak/ reverse proxy in http version"
+    cp -f /etc/nginx/disabled-reverse-proxies/reverse-proxy.keycloak-http.conf /etc/nginx/enabled-reverse-proxies/
+  fi
 fi
 
 if [[ $enableOrthancTokenService == "true" ]]; then
