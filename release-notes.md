@@ -3,6 +3,12 @@ SPDX-FileCopyrightText: 2022 - 2023 Orthanc Team SRL <info@orthanc.team>
 
 SPDX-License-Identifier: GPL-3.0-or-later
 -->
+v 23.12.0
+========
+
+- Modified Nginx docker image to redirect http trafic to https (in case of https configuration)
+
+
 v 23.11.3
 ========
 
