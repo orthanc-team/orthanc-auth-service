@@ -4,6 +4,12 @@ SPDX-FileCopyrightText: 2022 - 2023 Orthanc Team SRL <info@orthanc.team>
 SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
+
+v 23.12.2
+========
+
+- updated the default OHIF configuration in the ohif image.
+
 v 23.12.1
 ========
 - added DOCUMENT_VIEW in meddream params, so that SR are viewable
