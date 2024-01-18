@@ -6,7 +6,7 @@ version: "3"
 services:
 
   nginx:
-    image: orthancteam/orthanc-nginx:23.11.0
+    image: orthancteam/orthanc-nginx:23.12.2
     depends_on: [orthanc, orthanc-auth-service, orthanc-for-shares]
     restart: unless-stopped
     ports: ["80:80"]
@@ -20,6 +20,7 @@ services:
       ENABLE_ORTHANC_FOR_SHARES: "true"
       ENABLE_ORTHANC_TOKEN_SERVICE: "false"
       ENABLE_HTTPS: "false"
+      ENABLE_OHIF: "true"
 
   orthanc:
     image: osimis/orthanc:23.11.0
@@ -39,7 +40,9 @@ services:
             "UiOptions": {
               "EnableShares": true,
               "DefaultShareDuration": 0,
-              "ShareDurations": [0, 7, 15, 30, 90, 365]
+              "ShareDurations": [0, 7, 15, 30, 90, 365],
+              "EnableOpenInOhifViewer3": true,
+              "OhifViewer3PublicRoot": "http://localhost/ohif/"
             },
             "Tokens" : {
               "ShareType": "stone-viewer-publication"
@@ -102,17 +105,25 @@ services:
         }
 
   orthanc-auth-service:
-    image: orthancteam/orthanc-auth-service:23.11.0
+    image: orthancteam/orthanc-auth-service:23.12.2
     restart: unless-stopped
     environment:
       SECRET_KEY: "change-me-I-am-a-secret-key"
       #PERMISSIONS_FILE_PATH: "path_to_the file"
       PUBLIC_ORTHANC_ROOT: "http://localhost/shares/"
       PUBLIC_LANDING_ROOT: "http://localhost/shares/ui/app/token-landing.html"
+      PUBLIC_OHIF_ROOT: "http://localhost/ohif/"
       USERS: |
         {
           "share-user": "change-me"
         }
+
+  ohif:
+    image: orthancteam/ohif-v3:23.11.0
+#  uncomment if you want to customize ohif configuration
+#    volumes:
+#      - ./ohif-app-config.js:/usr/share/nginx/html/app-config.js
+    restart: unless-stopped
 
   orthanc-db:
     image: postgres:14
