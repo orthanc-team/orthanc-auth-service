@@ -12,7 +12,7 @@
 		"export": true,
 		"archive": true,
 		"search": true,
-		"reports": false,
+		"reports": true,
 		"remoteReports": false,
 		"liveShare": false,
 		"hangingProtocols": "V1",
