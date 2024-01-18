@@ -31,7 +31,7 @@
 		"viewToClipboard": "IMAGE",
 		"pngPSToClipboard": "NONE",
 		"showCalculatedFps": true,
-		"viewToDICOM": false,
+		"viewToDICOM": true,
 		"mistMpr3D": true,
 		"clearCache": false,
 		"measurementsPropagation": true,

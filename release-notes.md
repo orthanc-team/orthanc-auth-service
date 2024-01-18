@@ -4,6 +4,11 @@ SPDX-FileCopyrightText: 2022 - 2023 Orthanc Team SRL <info@orthanc.team>
 SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
+v 24.1.0
+========
+
+- modified Meddream Docker image to allow DICOMweb for the connection with Orthanc
+
 
 v 23.12.2
 ========
