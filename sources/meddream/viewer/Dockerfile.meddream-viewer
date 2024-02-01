@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: CC0-1.0
 
-FROM meddream/orthanc-dicom-viewer:8.3.0
+FROM meddream/dicom-viewer:8.3.0
 
 # you must define these environment variables:
 # TOKEN_SERVICE_ADDRESS
@@ -10,6 +10,10 @@ FROM meddream/orthanc-dicom-viewer:8.3.0
 # ORTHANC_USER
 # ORTHANC_PWD
 # ORTHANC_MEDDREAM_PYTHON_PLUGIN_ENABLED
+# MEDDREAM_PACS_CONFIG_TYPE ('Orthanc' or 'Dicomweb')
+# ORTHANC_HOSTNAME
+# ORTHANC_DICOM_PORT
+# ORTHANC_AET
 
 COPY --chown=meddream viewer.application.properties /opt/meddream/application.properties
 COPY --chown=meddream system.json /opt/meddream/sys/settings/system.json

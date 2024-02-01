@@ -31,7 +31,8 @@ if is_basic_auth_enabled:
     logging.warning("HTTP Basic auth is required to connect to the web-service")
 else:
     security = None
-    logging.warning("!!!! HTTP Basic auth is NOT required to connect to the web-service !!!!")
+    logging.error(f"USERS env var is not defined, can not start without it")
+    exit(-1)
 
 # to show invalid payloads (debug)
 from fastapi.exceptions import RequestValidationError

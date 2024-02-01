@@ -6,7 +6,7 @@ version: "3"
 services:
 
   nginx:
-    image: orthancteam/orthanc-nginx:23.11.0
+    image: orthancteam/orthanc-nginx:24.1.0
     depends_on: [orthanc, orthanc-auth-service, orthanc-for-api, meddream-viewer, keycloak]
     restart: unless-stopped
     ports: ["80:80"]
@@ -75,7 +75,7 @@ services:
         }
 
   orthanc-auth-service:
-    image: orthancteam/orthanc-auth-service:23.11.0
+    image: orthancteam/orthanc-auth-service:24.1.0
     depends_on: [keycloak, meddream-token-service]
     # permissions can be customized in the permissions.json file
     volumes:
@@ -101,7 +101,7 @@ services:
       POSTGRES_HOST_AUTH_METHOD: "trust"
 
   keycloak:
-    image: orthancteam/orthanc-keycloak:23.11.0
+    image: orthancteam/orthanc-keycloak:24.1.0
     depends_on: [keycloak-db]
     restart: unless-stopped
     environment:
@@ -124,11 +124,11 @@ services:
       POSTGRES_DB: "keycloak"
 
   meddream-token-service:
-    image: orthancteam/meddream-token-service:23.11.0
+    image: orthancteam/meddream-token-service:24.1.0
     restart: unless-stopped
 
   meddream-viewer:
-    image: orthancteam/meddream-viewer:23.11.0
+    image: orthancteam/meddream-viewer:24.1.0
     restart: unless-stopped
     depends_on:
       - orthanc-for-api
@@ -140,6 +140,11 @@ services:
       ORTHANC_PWD: "change-me"
       ORTHANC_MEDDREAM_PYTHON_PLUGIN_ENABLED: "true"
       MEDDREAM_ADMIN_PASSWORD: "change-me"
+      MEDDREAM_PACS_CONFIG_TYPE: "Dicomweb"
+      #MEDDREAM_PACS_CONFIG_TYPE: "Orthanc"
+      ORTHANC_HOSTNAME: "orthanc-for-api"
+      ORTHANC_DICOM_PORT: 4242
+      ORTHANC_AET: "ORTHANC"
     volumes:
       - meddream-license:/opt/meddream/license
 

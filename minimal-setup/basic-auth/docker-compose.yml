@@ -112,10 +112,18 @@ services:
       #PERMISSIONS_FILE_PATH: "path_to_the file"
       PUBLIC_ORTHANC_ROOT: "http://localhost/shares/"
       PUBLIC_LANDING_ROOT: "http://localhost/shares/ui/app/token-landing.html"
+      PUBLIC_OHIF_ROOT: "http://localhost/ohif/"
       USERS: |
         {
           "share-user": "change-me"
         }
+
+  ohif:
+    image: orthancteam/ohif-v3:23.11.0
+#  uncomment if you want to customize ohif configuration
+#    volumes:
+#      - ./ohif-app-config.js:/usr/share/nginx/html/app-config.js
+    restart: unless-stopped
 
   orthanc-db:
     image: postgres:14
