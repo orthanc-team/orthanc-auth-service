@@ -30,7 +30,7 @@ services:
   # An orthanc dedicated for the MedDream viewer.  It has no access control since it
   # is accessible only from inside the Docker network
   orthanc-for-meddream:
-    image: osimis/orthanc:23.2.0
+    image: orthancteam/orthanc:24.2.0
     volumes:
       - orthanc-storage:/var/lib/orthanc/db
       - ./demo-setup/meddream/meddream-plugin.py:/scripts/meddream-plugin.py

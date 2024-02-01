@@ -24,7 +24,7 @@ services:
 
   # first setup through configuration file and build step
   orthanc:
-    image: osimis/orthanc:keycloak-unstable
+    image: orthancteam/orthanc:24.2.0
     volumes:
       - orthanc-storage:/var/lib/orthanc/db
       - ./demo-setup/orthanc.jsonc:/etc/orthanc/orthanc.json

@@ -23,7 +23,7 @@ services:
       ENABLE_OHIF: "true"
 
   orthanc:
-    image: osimis/orthanc:mainline-2023.11.26
+    image: orthancteam/orthanc:24.2.0
     volumes:
       - orthanc-storage:/var/lib/orthanc/db
     depends_on: [orthanc-db]
