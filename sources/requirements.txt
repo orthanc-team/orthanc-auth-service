@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 pyjwt[crypto]==2.6.0
-fastapi==0.103.0
+fastapi==0.109.1
 jinja2==3.1.2
 pytz==2022.1
 python-dateutil==2.8.2
