@@ -4,6 +4,8 @@ SPDX-FileCopyrightText: 2022 - 2023 Orthanc Team SRL <info@orthanc.team>
 SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
+- added support for Api-keys through a new configuration file `API_KEYS_FILE_PATH`
+
 v 24.1.1
 ========
 
