@@ -120,15 +120,7 @@ def _get_keycloak_public_key(keycloak_uri: str) -> str:
 
 
 
-def create_keycloak_from_secrets(roles_configuration: RolesConfiguration):
-    handle_users_with_keycloak = os.environ.get("ENABLE_KEYCLOAK", "false") == "true"
-
-    if not handle_users_with_keycloak:
-        logging.warning("ENABLE_KEYCLOAK is not set, won't use keycloak and will not handle users")
-        return None
-
-    logging.warning("ENABLE_KEYCLOAK is set, will handle users with Keycloak")
-    keycloak_uri = os.environ.get("KEYCLOAK_URI", "http://keycloak:8080/realms/orthanc/")
+def create_keycloak_from_secrets(keycloak_uri: str, roles_configuration: RolesConfiguration):
 
     try:
         public_key = _get_keycloak_public_key(keycloak_uri)
@@ -138,7 +130,5 @@ def create_keycloak_from_secrets(roles_configuration: RolesConfiguration):
         logging.exception(ex)
         logging.error(f"Unable to reach keycloak (be patient, Keycloak may need more than 1 min to start), exiting...")
         exit(-1)
-
-
 
     return Keycloak(public_key=public_key, roles_configuration=roles_configuration)
