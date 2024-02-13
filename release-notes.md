@@ -4,7 +4,10 @@ SPDX-FileCopyrightText: 2022 - 2024 Orthanc Team SRL <info@orthanc.team>
 SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
-- added support for Api-keys through a new configuration file `API_KEYS_FILE_PATH`
+- added support for Api-keys that can be defined as user custom attributes `api-key`
+  in Keycloak.  This requires the definition of 3 new env vars: `ENABLE_KEYCLOAK_API_KEYS`,
+  `KEYCLOAK_CLIENT_SECRET` and `KECLOAK_ADMIN_URI`.  This also requires you to configure
+  the `admin-cli` client in Keycloak.
 
 v 24.1.1
 ========
