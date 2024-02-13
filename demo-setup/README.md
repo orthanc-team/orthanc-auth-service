@@ -1,5 +1,5 @@
 <!--
-SPDX-FileCopyrightText: 2022 - 2023 Orthanc Team SRL <info@orthanc.team>
+SPDX-FileCopyrightText: 2022 - 2024 Orthanc Team SRL <info@orthanc.team>
 
 SPDX-License-Identifier: CC-BY-4.0
 -->
