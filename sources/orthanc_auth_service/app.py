@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2022 - 2023 Orthanc Team SRL <info@orthanc.team>
+# SPDX-FileCopyrightText: 2022 - 2024 Orthanc Team SRL <info@orthanc.team>
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -15,11 +15,41 @@ import pytz
 from shares.models import *
 from shares.orthanc_token_service_factory import create_token_service_from_secrets
 from shares.keycloak import create_keycloak_from_secrets
+from shares.roles_configuration import RolesConfiguration, create_roles_configuration_from_file
+from shares.api_keys import create_api_keys
+from shares.utils.utils import get_secret_or_die
 
 logging.basicConfig(level=logging.DEBUG)
 
 token_service = create_token_service_from_secrets()
-keycloak = create_keycloak_from_secrets()
+keycloak = None
+api_keys = None
+
+permissions_file_path = os.environ.get("PERMISSIONS_FILE_PATH", "/orthanc_auth_service/permissions.json")
+roles_configuration = create_roles_configuration_from_file(permissions_file_path)
+
+handle_users_with_keycloak = os.environ.get("ENABLE_KEYCLOAK", "false") == "true"
+
+if not handle_users_with_keycloak:
+    logging.warning("ENABLE_KEYCLOAK is not set, won't use keycloak and will not handle users")
+else:
+    logging.warning("ENABLE_KEYCLOAK is set, using keycloak to handle users")
+    keycloak_uri = os.environ.get("KEYCLOAK_URI", "http://keycloak:8080/realms/orthanc/")
+    keycloak = create_keycloak_from_secrets(keycloak_uri=keycloak_uri,
+                                            roles_configuration=roles_configuration)
+
+    enable_api_keys = os.environ.get("ENABLE_KEYCLOAK_API_KEYS", "false") == "true"
+    if not enable_api_keys:
+        logging.warning("ENABLE_KEYCLOAK_API_KEYS is not set, api-keys are disabled")
+    else:
+        logging.warning("ENABLE_KEYCLOAK_API_KEYS is set, using keycloak to handle api-keys")
+        keycloak_client_secret = get_secret_or_die("KEYCLOAK_CLIENT_SECRET")
+        keycloak_admin_uri = os.environ.get("KECLOAK_ADMIN_URI", "http://keycloak:8080/admin/realms/orthanc/")
+        api_keys = create_api_keys(keycloak_uri=keycloak_uri,
+                                   keycloak_admin_uri=keycloak_admin_uri,
+                                   keycloak_client_secret=keycloak_client_secret,
+                                   roles_configuration=roles_configuration)
+
 app = FastAPI()
 
 # check if the service requires basic auth (by checking of some USERS have been defined)
@@ -167,8 +197,13 @@ def get_user_profile(user_profile_request: UserProfileRequest):
         if keycloak is None:
             logging.warning("Keycloak is not configured, all users are considered anonymous")
             return anonymous_profile
+
         elif user_profile_request.token_key is not None:
-            response = keycloak.get_user_profile_from_token(user_profile_request.token_value)
+            if user_profile_request.token_key == "api-key" and api_keys is not None:
+                response = api_keys.get_user_profile_from_api_key(api_key=user_profile_request.token_value)
+            else:
+                response = keycloak.get_user_profile_from_token(user_profile_request.token_value)
+
         else:
             return anonymous_profile
 

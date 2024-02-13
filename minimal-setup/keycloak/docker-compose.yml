@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2022 - 2023 Orthanc Team SRL <info@orthanc.team>
+# SPDX-FileCopyrightText: 2022 - 2024 Orthanc Team SRL <info@orthanc.team>
 #
 # SPDX-License-Identifier: CC0-1.0
 
@@ -67,6 +67,7 @@ services:
               "stone-webviewer",
               "orthanc-explorer-2"
             ],
+            "TokenHttpHeaders" : [ "api-key" ],
             "CheckedLevel": "studies"
           },
           "DicomWeb": {
@@ -76,7 +77,7 @@ services:
         }
 
   orthanc-auth-service:
-    image: orthancteam/orthanc-auth-service:23.12.2
+    image: orthancteam/orthanc-auth-service:api-keys
     # always disable port mapping in production !!!
     # ports: ["8000:8000"]
     # permissions can be customized in the permissions.json file
@@ -87,6 +88,8 @@ services:
     environment:
       SECRET_KEY: "change-me-I-am-a-secret-key"
       ENABLE_KEYCLOAK: "true"
+#      ENABLE_KEYCLOAK_API_KEYS: "true"
+#      KEYCLOAK_CLIENT_SECRET: "change-me-I-am-a-secret-you-get-in-keycloak-admin-ui"
       PUBLIC_ORTHANC_ROOT: "http://localhost/orthanc/"
       PUBLIC_LANDING_ROOT: "http://localhost/orthanc/ui/app/token-landing.html"
       PUBLIC_OHIF_ROOT: "http://localhost/ohif/"
