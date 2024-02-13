@@ -4,15 +4,21 @@ SPDX-FileCopyrightText: 2022 - 2024 Orthanc Team SRL <info@orthanc.team>
 SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
+v 24.2.0
+========
+
 - added support for Api-keys that can be defined as user custom attributes `api-key`
   in Keycloak.  This requires the definition of 3 new env vars: `ENABLE_KEYCLOAK_API_KEYS`,
   `KEYCLOAK_CLIENT_SECRET` and `KECLOAK_ADMIN_URI`.  This also requires you to configure
-  the `admin-cli` client in Keycloak.
+  the `admin-cli` client in Keycloak and add `api-key` in the `TokenHttpHeaders` Orthanc Authorization plugin configuration.
+  Check the readme.md from the minimal-setup/keycloak sample.
+
 
 v 24.1.1
 ========
 
 - made the basic auth mandatory for the auth service
+
 
 v 24.1.0
 ========

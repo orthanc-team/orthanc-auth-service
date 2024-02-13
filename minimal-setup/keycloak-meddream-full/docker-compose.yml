@@ -6,7 +6,7 @@ version: "3"
 services:
 
   nginx:
-    image: orthancteam/orthanc-nginx:24.1.0
+    image: orthancteam/orthanc-nginx:24.2.0
     depends_on: [orthanc, orthanc-auth-service, orthanc-for-api, meddream-viewer, keycloak]
     restart: unless-stopped
     ports: ["80:80"]
@@ -75,7 +75,7 @@ services:
         }
 
   orthanc-auth-service:
-    image: orthancteam/orthanc-auth-service:24.1.0
+    image: orthancteam/orthanc-auth-service:24.2.0
     depends_on: [keycloak, meddream-token-service]
     # permissions can be customized in the permissions.json file
     volumes:
@@ -101,7 +101,7 @@ services:
       POSTGRES_HOST_AUTH_METHOD: "trust"
 
   keycloak:
-    image: orthancteam/orthanc-keycloak:24.1.0
+    image: orthancteam/orthanc-keycloak:24.2.0
     depends_on: [keycloak-db]
     restart: unless-stopped
     environment:
@@ -124,11 +124,11 @@ services:
       POSTGRES_DB: "keycloak"
 
   meddream-token-service:
-    image: orthancteam/meddream-token-service:24.1.0
+    image: orthancteam/meddream-token-service:24.2.0
     restart: unless-stopped
 
   meddream-viewer:
-    image: orthancteam/meddream-viewer:24.1.0
+    image: orthancteam/meddream-viewer:24.2.0
     restart: unless-stopped
     depends_on:
       - orthanc-for-api
