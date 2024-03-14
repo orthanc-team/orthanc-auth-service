@@ -20,10 +20,13 @@ services:
       ENABLE_KEYCLOAK: "true"
       ENABLE_ORTHANC_TOKEN_SERVICE: "false"
       ENABLE_HTTPS: "false"
+# to use OHIF-plugin: you don't need the OHIF reverse proxy
       ENABLE_OHIF: "true"
 
   orthanc:
-    image: orthancteam/orthanc:24.2.0
+# to use OHIF-plugin:  use the master-unstable image
+#    image: orthancteam/orthanc-pre-release:master-unstable
+    image: orthancteam/orthanc:24.3.3
     volumes:
       - orthanc-storage:/var/lib/orthanc/db
     depends_on: [orthanc-db]
@@ -31,6 +34,8 @@ services:
     environment:
       STONE_WEB_VIEWER_PLUGIN_ENABLED: "true"
       DICOM_WEB_PLUGIN_ENABLED: "true"
+      # to use OHIF-plugin:  make sure to have a "OHIF" config and use "dicom-web" source
+#      OHIF_PLUGIN_ENABLED: "true"
       ORTHANC__POSTGRESQL__HOST: "orthanc-db"
       VERBOSE_ENABLED: "true"
       VERBOSE_STARTUP: "true"
@@ -44,6 +49,8 @@ services:
               "DefaultShareDuration": 0,
               "ShareDurations": [0, 7, 15, 30, 90, 365],
               "EnableOpenInOhifViewer3": true,
+              // to use OHIF-plugin:  use http://localhost/orthanc/ohif/
+              //"OhifViewer3PublicRoot": "http://localhost/orthanc/ohif/"
               "OhifViewer3PublicRoot": "http://localhost/ohif/"
             },
             "Tokens" : {
@@ -62,10 +69,12 @@ services:
             "WebServiceRootUrl": "http://orthanc-auth-service:8000/",
             "WebServiceUsername": "share-user",
             "WebServicePassword": "change-me",
+            // to use OHIF-plugin:  make sure to include "ohif" in the list
             "StandardConfigurations" : [
               "osimis-web-viewer",
               "stone-webviewer",
-              "orthanc-explorer-2"
+              "orthanc-explorer-2",
+              "ohif"
             ],
             "TokenHttpHeaders" : [ "api-key" ],
             "CheckedLevel": "studies"
@@ -74,6 +83,11 @@ services:
             "Enable": true,
             "PublicRoot": "/orthanc/dicom-web/"
           }
+          // to use OHIF-plugin:  make sure to have a "OHIF" config and use "dicom-web" source
+          //, "OHIF": {
+          //  "DataSource": "dicom-web",
+          //  "RouterBasename": "/orthanc/ohif/"
+          //}
         }
 
   orthanc-auth-service:
@@ -92,7 +106,9 @@ services:
 #      KEYCLOAK_CLIENT_SECRET: "change-me-I-am-a-secret-you-get-in-keycloak-admin-ui"
       PUBLIC_ORTHANC_ROOT: "http://localhost/orthanc/"
       PUBLIC_LANDING_ROOT: "http://localhost/orthanc/ui/app/token-landing.html"
-      PUBLIC_OHIF_ROOT: "http://localhost/ohif/"
+      # to use OHIF-plugin:  make sure to use http://localhost/orthanc/ohif/
+#      PUBLIC_OHIF_ROOT: "http://localhost/ohif/"
+      PUBLIC_OHIF_ROOT: "http://localhost/orthanc/ohif/"
       USERS: |
         {
           "share-user": "change-me"
@@ -105,6 +121,7 @@ services:
     environment:
       POSTGRES_HOST_AUTH_METHOD: "trust"
 
+# to use OHIF-plugin: you don't need this container
   ohif:
     image: orthancteam/ohif-v3:24.2.0
 #  uncomment if you want to customize ohif configuration
