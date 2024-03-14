@@ -31,7 +31,7 @@ Before you use it in production make sure to update all hardcoded passwords and 
 
 To start the setup, type: `docker compose up`.  Some containers will restart multiple times while waiting for the Keycloak container to be ready.
 
-Note: this setup is using a dedicated container for to serve OHIF.  However,
+Note: this setup is using a dedicated container to serve OHIF.  However,
 since March 2024, the mainline version of the OHIF plugin can be used instead.
 Check for "OHIF-plugin" in the [docker-compose.yml](docker-compose.yml) to replace the OHIF container by the OHIF plugin.
 
