@@ -66,9 +66,9 @@ Check for "OHIF-plugin" in the [docker-compose.yml](docker-compose.yml) to repla
 
 If you wish to access this demo from a remote computer, you must configure the domain on which this setup is accessible (in this sample: `mydomain.com`).
 Update these settings:
-- orthanc: ORTHANC_JSON -> OrthancExplorer2 -> Keycloak -> "Url": "http://mydomain.com/keycloak/"
-- keycloak: KC_HOSTNAME_URL: "http://mydomain.com/keycloak"
-- keycloak: KC_HOSTNAME_ADMIN_URL: "http://mydomain.com/keycloak"
+- orthanc: ORTHANC_JSON -> OrthancExplorer2 -> Keycloak -> "Url": "https://mydomain.com/keycloak/"
+- keycloak: KC_HOSTNAME_URL: "https://mydomain.com/keycloak"
+- keycloak: KC_HOSTNAME_ADMIN_URL: "https://mydomain.com/keycloak"
 
 # Enabling API keys
 
