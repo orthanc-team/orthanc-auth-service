@@ -35,7 +35,11 @@
 		"mistMpr3D": true,
 		"clearCache": false,
 		"measurementsPropagation": true,
-		"digitalSubtraction": "NONE"
+		"overlay":true,
+		"digitalSubtraction": "NONE",
+		"returnMinMaxPerFrame":true,
+		"cad":true,
+		"summaryThumbnailsForSopClasses":[]
 	},
 	"blackListedSopClasses": [],
 	"forwardPacs": [
@@ -90,7 +94,8 @@
 			"MR",
 			"PT"
 		],
-		"sopClass": []
+		"sopClass": [],
+		"ignoreMissingSliceThickness":false
 	},
 	"notificationsConfig": {
 		"autoCloseAfterSec": 10
@@ -103,6 +108,17 @@
 	"segmentationConfig": {
 		"smartPaintPreloadOptions": "wait-for-toolbar",
 		"messagingLevel": "minimal"
+	},
+    "instancesProgressivePreloadConfig": {
+		"preloadCount":10,
+		"supportedModalities": [
+			"CT",
+			"MR",
+			"PT",
+			"NM"
+		],
+		"supportedSOPClasses":[],
+		"enableSeriesManualPreload":true
 	},
 	"dontAutoOpenTheseAnnotations": [],
 	"windowPosition": []
