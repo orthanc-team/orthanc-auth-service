@@ -20,6 +20,10 @@ window.config = {
   showCPUFallbackMessage: true,
   showLoadingIndicator: true,
   strictZSpacingForVolumeViewport: true,
+  investigationalUseDialog: {
+    option: 'configure',
+    days: 180
+  },
   maxNumRequests: {
     interaction: 100,
     thumbnail: 75,

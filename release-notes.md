@@ -9,6 +9,7 @@ v 24.5.0
 ========
 
 - Upgraded OHIF from v3.7.0 to v3.8.0
+- in OHIF default configuration, show the "investigational use" warning every 180 days.
 - Upgraded Meddream from v8.3.0 to v8.4.0
 - in MedDream, set `preloadSeries=ON` by default
 
