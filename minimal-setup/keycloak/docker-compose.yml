@@ -26,7 +26,7 @@ services:
   orthanc:
 # to use OHIF-plugin:  use the master-unstable image
 #    image: orthancteam/orthanc-pre-release:master-unstable
-    image: orthancteam/orthanc:24.3.3
+    image: orthancteam/orthanc:24.5.0
     volumes:
       - orthanc-storage:/var/lib/orthanc/db
     depends_on: [orthanc-db]
@@ -37,6 +37,7 @@ services:
       # to use OHIF-plugin:  make sure to have a "OHIF" config and use "dicom-web" source
 #      OHIF_PLUGIN_ENABLED: "true"
       ORTHANC__POSTGRESQL__HOST: "orthanc-db"
+      ORTHANC__POSTGRESQL__TRANSACTION_MODE: "ReadCommitted"
       VERBOSE_ENABLED: "true"
       VERBOSE_STARTUP: "true"
       ORTHANC_JSON: |
