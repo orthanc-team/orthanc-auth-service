@@ -24,7 +24,7 @@ services:
       ENABLE_ORTHANC_FOR_API: "true"
 
   orthanc:
-    image: orthancteam/orthanc:24.2.0
+    image: orthancteam/orthanc:24.5.0
     volumes:
       - orthanc-storage:/var/lib/orthanc/db
     depends_on: [orthanc-db]
@@ -33,6 +33,7 @@ services:
       STONE_WEB_VIEWER_PLUGIN_ENABLED: "true"
       DICOM_WEB_PLUGIN_ENABLED: "true"
       ORTHANC__POSTGRESQL__HOST: "orthanc-db"
+      ORTHANC__POSTGRESQL__TRANSACTION_MODE: "ReadCommitted"
       ORTHANC_JSON: |
         {
           "Name": "Orthanc",
@@ -150,7 +151,7 @@ services:
 
   # An orthanc dedicated for API accesses and also used by MedDream
   orthanc-for-api:
-    image: orthancteam/orthanc:24.2.0
+    image: orthancteam/orthanc:24.5.0
     volumes:
       - orthanc-storage:/var/lib/orthanc/db
       - ./meddream-plugin.py:/scripts/meddream-plugin.py
@@ -165,6 +166,7 @@ services:
       DICOM_WEB_PLUGIN_ENABLED: "true"
       ORTHANC__DICOM_WEB__PUBLIC_ROOT: "/orthanc-api/dicom-web/"
       ORTHANC__POSTGRESQL__HOST: "orthanc-db"
+      ORTHANC__POSTGRESQL__TRANSACTION_MODE: "ReadCommitted"
       ORTHANC_JSON: |
         {
           "RegisteredUsers": {
