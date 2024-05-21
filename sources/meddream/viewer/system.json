@@ -26,7 +26,7 @@
 			"PT",
 			"NM"
 		],
-		"preloadSeries": "ON",
+		"preloadSeries": "OFF",
 		"boundingBoxAnnotations": true,
 		"viewToClipboard": "IMAGE",
 		"pngPSToClipboard": "NONE",
