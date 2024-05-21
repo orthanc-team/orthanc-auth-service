@@ -84,7 +84,7 @@ class ApiKeys:
 
             return response
         else:
-            logging.error("Failed to fetch/search users from api-key from keycloak: " + str(keycloak_response))
+            logging.error("Failed to fetch/search users from api-key from keycloak: " + str(keycloak_user_response.status_code))
             return None
 
 def create_api_keys(keycloak_uri: str, keycloak_admin_uri: str, keycloak_client_secret: str, roles_configuration: RolesConfiguration):
@@ -92,7 +92,7 @@ def create_api_keys(keycloak_uri: str, keycloak_admin_uri: str, keycloak_client_
         #validate that we can connect to keycloak and retrieve users list
         keycloak_users_url = urljoin(keycloak_admin_uri, "users")
         headers = {
-           'Authorization': 'Bearer ' + _get_keycloak_access_token(keycloak_uri, keycloak_client_secret),
+            'Authorization': 'Bearer ' + _get_keycloak_access_token(keycloak_uri, keycloak_client_secret),
             'Content-Type': 'application/json'
         }
         response = requests.get(keycloak_users_url, headers=headers)
