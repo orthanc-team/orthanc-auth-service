@@ -4,6 +4,11 @@ SPDX-FileCopyrightText: 2022 - 2024 Orthanc Team SRL <info@orthanc.team>
 SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
+Pending changes
+===============
+
+- Remove "Bearer " prefix from token when decoding user profile if present.
+
 
 v 24.5.1
 ========
