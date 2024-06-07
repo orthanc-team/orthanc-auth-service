@@ -15,18 +15,18 @@ import pytz
 from shares.models import *
 from shares.orthanc_token_service_factory import create_token_service_from_secrets
 from shares.keycloak import create_keycloak_from_secrets
-from shares.roles_configuration import RolesConfiguration, create_roles_configuration_from_file
-from shares.api_keys import create_api_keys
+from shares.roles_configuration import RolesConfiguration
+from shares.keycloak_admin import KeycloakAdmin
 from shares.utils.utils import get_secret_or_die
 
 logging.basicConfig(level=logging.DEBUG)
 
 token_service = create_token_service_from_secrets()
-keycloak = None
-api_keys = None
+keycloak_std_client = None
+keycloak_admin_client = None
 
 permissions_file_path = os.environ.get("PERMISSIONS_FILE_PATH", "/orthanc_auth_service/permissions.json")
-roles_configuration = create_roles_configuration_from_file(permissions_file_path)
+roles_configuration = RolesConfiguration(permissions_file_path=permissions_file_path)
 
 handle_users_with_keycloak = os.environ.get("ENABLE_KEYCLOAK", "false") == "true"
 
@@ -35,8 +35,8 @@ if not handle_users_with_keycloak:
 else:
     logging.warning("ENABLE_KEYCLOAK is set, using keycloak to handle users")
     keycloak_uri = os.environ.get("KEYCLOAK_URI", "http://keycloak:8080/realms/orthanc/")
-    keycloak = create_keycloak_from_secrets(keycloak_uri=keycloak_uri,
-                                            roles_configuration=roles_configuration)
+    keycloak_std_client = create_keycloak_from_secrets(keycloak_uri=keycloak_uri,
+                                                       roles_configuration=roles_configuration)
 
     enable_api_keys = os.environ.get("ENABLE_KEYCLOAK_API_KEYS", "false") == "true"
     if not enable_api_keys:
@@ -45,10 +45,10 @@ else:
         logging.warning("ENABLE_KEYCLOAK_API_KEYS is set, using keycloak to handle api-keys")
         keycloak_client_secret = get_secret_or_die("KEYCLOAK_CLIENT_SECRET")
         keycloak_admin_uri = os.environ.get("KECLOAK_ADMIN_URI", "http://keycloak:8080/admin/realms/orthanc/")
-        api_keys = create_api_keys(keycloak_uri=keycloak_uri,
-                                   keycloak_admin_uri=keycloak_admin_uri,
-                                   keycloak_client_secret=keycloak_client_secret,
-                                   roles_configuration=roles_configuration)
+        keycloak_admin_client = KeycloakAdmin(keycloak_uri=keycloak_uri,
+                                              keycloak_admin_uri=keycloak_admin_uri,
+                                              keycloak_client_secret=keycloak_client_secret,
+                                              roles_configuration=roles_configuration)
 
 app = FastAPI()
 
@@ -63,6 +63,18 @@ else:
     security = None
     logging.error(f"USERS env var is not defined, can not start without it")
     exit(-1)
+
+def ingest_keycloak_roles(roles_config: RolesConfigurationModel):
+    # add the keycloak roles that are not yet listed in the roles_config
+
+    if keycloak_admin_client:
+        all_keycloak_roles = keycloak_admin_client.get_all_roles()
+
+        for keycloak_role in all_keycloak_roles:
+            if keycloak_role not in roles_config.roles:
+                roles_configuration.get_configured_roles().roles[keycloak_role] = RolePermissions()
+
+
 
 # to show invalid payloads (debug)
 from fastapi.exceptions import RequestValidationError
@@ -194,15 +206,15 @@ def get_user_profile(user_profile_request: UserProfileRequest):
                 validity=60
             )
     try:
-        if keycloak is None:
+        if keycloak_std_client is None:
             logging.warning("Keycloak is not configured, all users are considered anonymous")
             return anonymous_profile
 
         elif user_profile_request.token_key is not None:
-            if user_profile_request.token_key == "api-key" and api_keys is not None:
-                response = api_keys.get_user_profile_from_api_key(api_key=user_profile_request.token_value)
+            if user_profile_request.token_key == "api-key" and keycloak_admin_client is not None:
+                response = keycloak_admin_client.get_user_profile_from_api_key(api_key=user_profile_request.token_value)
             else:
-                response = keycloak.get_user_profile_from_token(user_profile_request.token_value)
+                response = keycloak_std_client.get_user_profile_from_token(user_profile_request.token_value)
 
         else:
             return anonymous_profile
@@ -216,3 +228,19 @@ def get_user_profile(user_profile_request: UserProfileRequest):
     except Exception as ex:
         raise HTTPException(status_code=400, detail=str("Unexpected error: " + str(ex)))
 
+
+@app.get("/settings/roles", dependencies=basic_auth_dependencies)
+def get_settings_roles():
+    logging.info("get settings roles ")
+
+    roles_config = roles_configuration.get_configured_roles()
+    ingest_keycloak_roles(roles_config)
+    return roles_config
+
+
+@app.post("/settings/roles", dependencies=basic_auth_dependencies)
+def set_settings_roles(roles_config_request: RolesConfigurationModel):
+    logging.info("set settings roles ")
+
+    ingest_keycloak_roles(roles_config_request)
+    roles_configuration.update_configured_roles(roles_config_request)

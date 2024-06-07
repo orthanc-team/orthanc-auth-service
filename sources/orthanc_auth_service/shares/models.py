@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-from typing import Optional, List
+from typing import Optional, List, Dict
 from pydantic import BaseModel, Field
 from enum import Enum
 from datetime import datetime
@@ -125,12 +125,25 @@ class UserPermissions(str, Enum):
     SHARE = 'share'
 
 
-class UserProfileResponse(BaseModel):
-    name: str
+class RolePermissions(BaseModel):
     authorized_labels: List[str] = Field(alias="authorized-labels", default_factory=list)
     permissions: List[UserPermissions] = Field(default_factory=list)
+
+    class Config:
+        use_enum_values = True
+        populate_by_name = True  # allow creating object from dict (used when deserializing the permission file)
+
+
+class UserProfileResponse(RolePermissions):
+    name: str
+    # authorized_labels: List[str] = Field(alias="authorized-labels", default_factory=list)
+    # permissions: List[UserPermissions] = Field(default_factory=list)
     validity: int
 
     class Config:
         use_enum_values = True
         populate_by_name = True
+
+class RolesConfigurationModel(BaseModel):
+    roles: Dict[str, RolePermissions]                                                # role/permissions mapping
+    allowed_labels: List[str] = Field(alias="allowed-labels", default_factory=list)  # if empty, everyone can create additionnal labels, if not, they can only add/remove the listed labels

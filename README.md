@@ -232,3 +232,17 @@ curl -X PUT http://localhost:8000/tokens/meddream-instant-link -H 'Content-Type:
 }
 ```
 - once the user tries to access the provided url, the `token-landing` page will reply with an HTTP redirect response redirecting the browser to the MedDreamViewer with a new token that is valid for a few minutes only.
+
+
+## updating settings (internals) ?
+
+Specific users with the right permissions can read/update the permissions configuration directly from OE2, through the `authorization-plugin` that forwards
+the call to the `orthanc-auth-service`
+
+```bash
+curl -u share-user:change-me http://localhost:8000/settings/roles
+```
+
+```bash
+curl -u share-user:change-me -H "Content-Type: application/json" http://localhost:8000/settings/roles -d '{"roles":{"admin-role":{"authorized-labels":["*"],"permissions":["all"]},"doctor-role":{"authorized-labels":["*"],"permissions":["view","download","share","send"]},"external-role":{"authorized-labels":["external"],"permissions":["view","download"]}},"allowed-labels":[]}'
+```
