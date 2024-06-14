@@ -238,7 +238,7 @@ def get_settings_roles():
     return roles_config
 
 
-@app.post("/settings/roles", dependencies=basic_auth_dependencies)
+@app.put("/settings/roles", dependencies=basic_auth_dependencies)
 def set_settings_roles(roles_config_request: RolesConfigurationModel):
     logging.info("set settings roles ")
 

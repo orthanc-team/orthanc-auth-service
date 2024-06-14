@@ -96,7 +96,9 @@ class Keycloak:
 
         roles = self.get_roles_from_decoded_token(decoded_token=decoded_token)
 
-        response.permissions, response.authorized_labels = self.roles_configuration.get_role_configuration(roles)
+        role_config = self.roles_configuration.get_role_configuration(roles)
+        response.permissions = role_config.permissions
+        response.authorized_labels = role_config.authorized_labels
 
         return response
 

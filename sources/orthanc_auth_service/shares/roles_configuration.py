@@ -32,7 +32,7 @@ class RolesConfiguration:
             logging.error(f"Unable to get roles and permissions from configuration file ({self._permissions_file_path}), exiting...")
             exit(-1)
 
-    def get_configured_roles(self):
+    def get_configured_roles(self) -> RolesConfigurationModel:
         return self._configured_roles
 
     def update_configured_roles(self, new_configuration: RolesConfigurationModel):

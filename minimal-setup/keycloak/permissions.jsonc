@@ -3,7 +3,7 @@
 {
   "roles" : {
     "admin-role": {
-      "permissions": ["all"],
+      "permissions": ["all", "admin-permissions"],
       "authorized_labels": ["*"]
     },
     "doctor-role": {

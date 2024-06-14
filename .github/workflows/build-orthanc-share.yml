@@ -18,7 +18,7 @@ jobs:
     steps:
 
       - name: checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: REUSE Compliance Check
         uses: fsfe/reuse-action@v1
@@ -29,14 +29,14 @@ jobs:
           ./sources/tests/run-tests.sh
 
       - name: Log in to Docker Hub
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Extract metadata (tags, labels) for Docker (orthanc-nginx)
         id: meta-orthanc-nginx
-        uses: docker/metadata-action@v4
+        uses: docker/metadata-action@v5
         with:
           images: orthancteam/orthanc-nginx
           labels: |
@@ -45,7 +45,7 @@ jobs:
 
       - name: Extract metadata (tags, labels) for Docker (orthanc-auth-service)
         id: meta-orthanc-auth-service
-        uses: docker/metadata-action@v4
+        uses: docker/metadata-action@v5
         with:
           images: orthancteam/orthanc-auth-service
           labels: |
@@ -54,7 +54,7 @@ jobs:
 
       - name: Extract metadata (tags, labels) for Docker (meddream-viewer)
         id: meta-meddream-viewer
-        uses: docker/metadata-action@v4
+        uses: docker/metadata-action@v5
         with:
           images: orthancteam/meddream-viewer
           labels: |
@@ -63,7 +63,7 @@ jobs:
 
       - name: Extract metadata (tags, labels) for Docker (meddream-token-service)
         id: meta-meddream-token-service
-        uses: docker/metadata-action@v4
+        uses: docker/metadata-action@v5
         with:
           images: orthancteam/meddream-token-service
           labels: |
@@ -72,7 +72,7 @@ jobs:
 
       - name: Extract metadata (tags, labels) for Docker (orthanc-keycloak)
         id: meta-orthanc-keycloak
-        uses: docker/metadata-action@v4
+        uses: docker/metadata-action@v5
         with:
           images: orthancteam/orthanc-keycloak
           labels: |
@@ -81,7 +81,7 @@ jobs:
 
       - name: Extract metadata (tags, labels) for Docker (ohif-v3)
         id: meta-ohif-v3
-        uses: docker/metadata-action@v4
+        uses: docker/metadata-action@v5
         with:
           images: orthancteam/ohif-v3
           labels: |
@@ -89,7 +89,7 @@ jobs:
             org.opencontainers.image.vendor=Orthanc Team SRL
 
       - name: Build and push orthanc-nginx Docker image
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         with:
           context: sources/
           file: sources/nginx/Dockerfile.orthanc-nginx
@@ -98,7 +98,7 @@ jobs:
           labels: ${{ steps.meta-orthanc-nginx.outputs.labels }}
 
       - name: Build and push orthanc-auth-service Docker image
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         with:
           context: sources/
           file: sources/Dockerfile.orthanc-auth-service
@@ -107,7 +107,7 @@ jobs:
           labels: ${{ steps.meta-orthanc-auth-service.outputs.labels }}
 
       - name: Build and push meddream-viewer Docker image
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         with:
           context: sources/meddream/viewer
           file: sources/meddream/viewer/Dockerfile.meddream-viewer
@@ -116,7 +116,7 @@ jobs:
           labels: ${{ steps.meta-meddream-viewer.outputs.labels }}
 
       - name: Build and push meddream-token-service Docker image
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         with:
           context: sources/meddream/token-service
           file: sources/meddream/token-service/Dockerfile.meddream-token-service
@@ -125,7 +125,7 @@ jobs:
           labels: ${{ steps.meta-meddream-token-service.outputs.labels }}
 
       - name: Build and push orthanc-keycloak Docker image
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         with:
           context: sources/
           file: sources/keycloak/Dockerfile.orthanc-keycloak
@@ -134,7 +134,7 @@ jobs:
           labels: ${{ steps.meta-orthanc-keycloak.outputs.labels }}
 
       - name: Build and push ohif-v3 Docker image
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@v5
         with:
           context: sources/ohif/
           file: sources/ohif/Dockerfile.ohif-v3

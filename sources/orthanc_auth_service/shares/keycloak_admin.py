@@ -112,30 +112,3 @@ class KeycloakAdmin:
 
     def update_roles_configuration(self, roles_configuration: RolesConfiguration):
         self._roles_configuration = roles_configuration
-
-
-    # def get_all_roles(self) -> List[str]:
-
-# def create_api_keys(keycloak_uri: str, keycloak_admin_uri: str, keycloak_client_secret: str, roles_configuration: RolesConfiguration):
-#     try:
-#         #validate that we can connect to keycloak and retrieve users list
-#         keycloak_users_url = urljoin(keycloak_admin_uri, "users")
-#         headers = {
-#             'Authorization': 'Bearer ' + _get_keycloak_access_token(keycloak_uri, keycloak_client_secret),
-#             'Content-Type': 'application/json'
-#         }
-#         response = requests.get(keycloak_users_url, headers=headers)
-#         if response.status_code != 200:
-#             logging.error(f"Unable to retrieve users list from keycloak to validate client connection " + str(response) + ", exiting...")
-#             exit(-1)
-#
-#         return KeycloakAdmin(keycloak_uri=keycloak_uri,
-#                              keycloak_admin_uri=keycloak_admin_uri,
-#                              keycloak_client_secret=keycloak_client_secret,
-#                              roles_configuration=roles_configuration)
-#
-#     except Exception as ex:
-#         logging.exception(ex)
-#         logging.error(f"Unable to validate client connection with keycloak, exiting...")
-#         exit(-1)
-#
