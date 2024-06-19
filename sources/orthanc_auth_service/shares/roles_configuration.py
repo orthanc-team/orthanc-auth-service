@@ -40,7 +40,7 @@ class RolesConfiguration:
 
         logging.warning(f"Writing the new roles and permissions to configuration file ({self._permissions_file_path})")
         with open(self._permissions_file_path, "wt") as f:
-            f.write(self._configured_roles.model_dump_json(indent=2))
+            f.write(self._configured_roles.model_dump_json(indent=2, by_alias=True))
 
     def get_role_configuration(self, user_roles: List[str]) -> RolePermissions:
         configured_user_roles = []

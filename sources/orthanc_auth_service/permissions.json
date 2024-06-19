@@ -1,15 +1,26 @@
 {
   "roles": {
     "admin-role": {
-      "authorized_labels": [
+      "authorized-labels": [
         "*"
       ],
       "permissions": [
-        "all"
+        "anonymize",
+        "delete",
+        "download",
+        "modify",
+        "send",
+        "share",
+        "view",
+        "settings",
+        "edit-labels",
+        "admin-permissions",
+        "upload",
+        "q-r-remote-modalities"
       ]
     },
     "doctor-role": {
-      "authorized_labels": [
+      "authorized-labels": [
         "*"
       ],
       "permissions": [
@@ -20,7 +31,7 @@
       ]
     },
     "external-role": {
-      "authorized_labels": [
+      "authorized-labels": [
         "external"
       ],
       "permissions": [
@@ -29,5 +40,5 @@
       ]
     }
   },
-  "allowed_labels": []
+  "allowed-labels": []
 }
