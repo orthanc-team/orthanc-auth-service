@@ -26,7 +26,7 @@ services:
   orthanc:
 # to use OHIF-plugin:  use the master-unstable image
 #    image: orthancteam/orthanc-pre-release:master-unstable
-    image: orthancteam/orthanc:24.5.1
+    image: orthancteam/orthanc:24.6.2
     volumes:
       - orthanc-storage:/var/lib/orthanc/db
     depends_on: [orthanc-db]
