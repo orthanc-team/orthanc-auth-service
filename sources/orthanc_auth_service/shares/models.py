@@ -147,4 +147,4 @@ class UserProfileResponse(RolePermissions):
 
 class RolesConfigurationModel(BaseModel):
     roles: Dict[str, RolePermissions]                                                # role/permissions mapping
-    allowed_labels: List[str] = Field(alias="allowed-labels", default_factory=list)  # if empty, everyone can create additionnal labels, if not, they can only add/remove the listed labels
+    available_labels: List[str] = Field(alias="available-labels", default_factory=list)  # if empty, everyone can create additionnal labels, if not, they can only add/remove the listed labels

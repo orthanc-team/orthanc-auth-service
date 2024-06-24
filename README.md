@@ -244,5 +244,5 @@ curl -u share-user:change-me http://localhost:8000/settings/roles
 ```
 
 ```bash
-curl -u share-user:change-me -H "Content-Type: application/json" http://localhost:8000/settings/roles -d '{"roles":{"admin-role":{"authorized-labels":["*"],"permissions":["all"]},"doctor-role":{"authorized-labels":["*"],"permissions":["view","download","share","send"]},"external-role":{"authorized-labels":["external"],"permissions":["view","download"]}},"allowed-labels":[]}'
+curl -u share-user:change-me -H "Content-Type: application/json" http://localhost:8000/settings/roles -d '{"roles":{"admin-role":{"authorized-labels":["*"],"permissions":["all"]},"doctor-role":{"authorized-labels":["*"],"permissions":["view","download","share","send"]},"external-role":{"authorized-labels":["external"],"permissions":["view","download"]}},"available-labels":[]}'
 ```
