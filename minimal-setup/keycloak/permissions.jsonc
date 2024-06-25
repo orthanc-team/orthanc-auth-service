@@ -1,18 +1,36 @@
 // "SPDX-FileCopyrightText: 2022 - 2024 Orthanc Team SRL <info@orthanc.team>"
 // SPDX-License-Identifier: CC0-1.0
 {
-  "roles" : {
+  "roles": {
     "admin-role": {
-      "permissions": ["all", "admin-permissions"],
-      "authorized_labels": ["*"]
+      "authorized-labels": [
+        "*"
+      ],
+      "permissions": [
+        "all",
+        "admin-permissions"
+      ]
     },
     "doctor-role": {
-      "permissions":["view", "download", "share", "send"],
-      "authorized_labels": ["*"]
+      "authorized-labels": [
+        "*"
+      ],
+      "permissions": [
+        "view",
+        "download",
+        "share",
+        "send"
+      ]
     },
     "external-role": {
-      "permissions":["view", "download"],
-      "authorized_labels": ["external"]
+      "authorized-labels": [
+        "external"
+      ],
+      "permissions": [
+        "view",
+        "download"
+      ]
     }
-  }
+  },
+  "available-labels": []
 }

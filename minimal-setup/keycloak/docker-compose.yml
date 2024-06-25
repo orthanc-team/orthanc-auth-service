@@ -6,7 +6,7 @@ version: "3"
 services:
 
   nginx:
-    image: orthancteam/orthanc-nginx:24.5.1
+    image: orthancteam/orthanc-nginx:permissions-ui
     depends_on: [orthanc, orthanc-auth-service, keycloak]
     restart: unless-stopped
     ports: ["80:80"]
@@ -25,8 +25,8 @@ services:
 
   orthanc:
 # to use OHIF-plugin:  use the master-unstable image
-#    image: orthancteam/orthanc-pre-release:master-unstable
-    image: orthancteam/orthanc:24.5.1
+    image: orthancteam/orthanc-pre-release:permissions-ui
+#    image: orthancteam/orthanc:24.5.1
     volumes:
       - orthanc-storage:/var/lib/orthanc/db
     depends_on: [orthanc-db]
@@ -92,7 +92,7 @@ services:
         }
 
   orthanc-auth-service:
-    image: orthancteam/orthanc-auth-service:24.5.1
+    image: orthancteam/orthanc-auth-service:permissions-ui
     # always disable port mapping in production !!!
     # ports: ["8000:8000"]
     # permissions can be customized in the permissions.json file
@@ -132,7 +132,7 @@ services:
 
 
   keycloak:
-    image: orthancteam/orthanc-keycloak:24.5.1
+    image: orthancteam/orthanc-keycloak:permissions-ui
     depends_on: [keycloak-db]
     restart: unless-stopped
 #    healthcheck:
