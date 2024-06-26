@@ -6,7 +6,7 @@ FROM jonasal/nginx-certbot
 
 RUN mkdir /etc/nginx/enabled-reverse-proxies
 RUN mkdir /scripts-ot
-ADD nginx/nginx-common.conf /etc/nginx/includes
+ADD nginx/nginx-common.conf /etc/nginx/includes/
 
 ADD nginx/reverse-proxy.* /etc/nginx/disabled-reverse-proxies/
 
