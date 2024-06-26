@@ -10,7 +10,7 @@ ADD nginx/nginx-common.conf /etc/nginx/includes
 
 ADD nginx/reverse-proxy.* /etc/nginx/disabled-reverse-proxies/
 
-ADD nginx/orthanc-nginx-*.conf /etc/nginx/disabled-conf/
+ADD nginx/orthanc-nginx-http*.conf /etc/nginx/disabled-conf/
 
 COPY nginx/docker-entrypoint.sh /scripts/
 COPY nginx/copy-conf-files.sh /scripts/
