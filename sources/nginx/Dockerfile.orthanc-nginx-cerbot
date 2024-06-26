@@ -6,13 +6,16 @@ FROM jonasal/nginx-certbot
 
 RUN mkdir /etc/nginx/enabled-reverse-proxies
 RUN mkdir /scripts-ot
+ADD nginx/nginx-common.conf /etc/nginx/includes
 
 ADD nginx/reverse-proxy.* /etc/nginx/disabled-reverse-proxies/
 
 ADD nginx/orthanc-nginx-https-certbot.conf /etc/nginx/user_conf.d/
 
+COPY nginx/docker-entrypoint-certbot.sh /scripts-ot/
 COPY nginx/copy-conf-files.sh /scripts-ot/
 
 RUN ls -al /etc/nginx/disabled-reverse-proxies/
 
-CMD ["/bin/bash", "-c", "/scripts-ot/copy-conf-files.sh && /scripts/start_nginx_certbot.sh" ]
+ENTRYPOINT ["./scripts-ot/docker-entrypoint-certbot.sh"]
+

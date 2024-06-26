@@ -13,6 +13,7 @@ ADD nginx/reverse-proxy.* /etc/nginx/disabled-reverse-proxies/
 ADD nginx/orthanc-nginx-*.conf /etc/nginx/disabled-conf/
 
 COPY nginx/docker-entrypoint.sh /scripts/
+COPY nginx/copy-conf-files.sh /scripts/
 
 RUN ls -al /etc/nginx/disabled-reverse-proxies/
 

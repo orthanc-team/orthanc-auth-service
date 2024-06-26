@@ -4,8 +4,20 @@
 #
 # SPDX-License-Identifier: CC0-1.0
 
-# set -o xtrace
+## configuration files management
+
+# first (and only) arg should be a boolean:
+# 'true' --> https
+# 'false'--> http
+
 set -o errexit
+
+# get https
+if [ "$1" == true ]; then
+  https=true
+else
+  https=false
+fi
 
 enableOrthanc="${ENABLE_ORTHANC:-false}"
 enableOrthancForApi="${ENABLE_ORTHANC_FOR_API:-false}"
@@ -33,8 +45,13 @@ if [[ $enableOrthancForShares == "true" ]]; then
 fi
 
 if [[ $enableKeycloak == "true" ]]; then
-  echo "ENABLE_KEYCLOAK is true -> enable /keycloak/ reverse proxy"
-  cp -f /etc/nginx/disabled-reverse-proxies/reverse-proxy.keycloak-https.conf /etc/nginx/enabled-reverse-proxies/
+  if [[ $https == "true" ]]; then
+    echo "ENABLE_KEYCLOAK is true and ENABLE_HTTPS is true -> enable /keycloak/ reverse proxy in https version"
+    cp -f /etc/nginx/disabled-reverse-proxies/reverse-proxy.keycloak-https.conf /etc/nginx/enabled-reverse-proxies/
+  else
+    echo "ENABLE_KEYCLOAK is true and ENABLE_HTTPS is false -> enable /keycloak/ reverse proxy in http version"
+    cp -f /etc/nginx/disabled-reverse-proxies/reverse-proxy.keycloak-http.conf /etc/nginx/enabled-reverse-proxies/
+  fi
 fi
 
 if [[ $enableOrthancTokenService == "true" ]]; then
