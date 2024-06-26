@@ -9,7 +9,7 @@ set -o errexit
 
 # configuration files management (true for https)
 
-./scripts/copy-conf-files.sh true
+./scripts-ot/copy-conf-files.sh true
 
 # domain name management
 
