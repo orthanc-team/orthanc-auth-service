@@ -19,7 +19,7 @@ if [ -z "${DOMAIN_NAME}" ]; then
 fi
 domainName="${DOMAIN_NAME}"
 
-sed -i "s/domain-name-placeholder/${domainName}/g" /etc/nginx/enabled-reverse-proxies/orthanc-nginx-https-certbot.conf
+sed -i "s/domain-name-placeholder/${domainName}/g" /etc/nginx/user_conf.d/orthanc-nginx-certbot.conf
 
 # run ngix-certbot original entrypoint
 ./scripts/start_nginx_certbot.sh
