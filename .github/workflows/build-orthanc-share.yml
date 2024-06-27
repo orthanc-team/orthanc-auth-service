@@ -43,6 +43,15 @@ jobs:
             org.opencontainers.image.title=orthanc-nginx
             org.opencontainers.image.vendor=Orthanc Team SRL
 
+      - name: Extract metadata (tags, labels) for Docker (orthanc-nginx-certbot)
+        id: meta-orthanc-nginx-certbot
+        uses: docker/metadata-action@v4
+        with:
+          images: orthancteam/orthanc-nginx-certbot
+          labels: |
+            org.opencontainers.image.title=orthanc-nginx-certbot
+            org.opencontainers.image.vendor=Orthanc Team SRL
+
       - name: Extract metadata (tags, labels) for Docker (orthanc-auth-service)
         id: meta-orthanc-auth-service
         uses: docker/metadata-action@v5
@@ -97,6 +106,15 @@ jobs:
           tags: ${{ steps.meta-orthanc-nginx.outputs.tags }}
           labels: ${{ steps.meta-orthanc-nginx.outputs.labels }}
 
+      - name: Build and push orthanc-nginx-certbot Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: sources/
+          file: sources/nginx/Dockerfile.orthanc-nginx-certbot
+          push: true
+          tags: ${{ steps.meta-orthanc-nginx-certbot.outputs.tags }}
+          labels: ${{ steps.meta-orthanc-nginx-certbot.outputs.labels }}
+
       - name: Build and push orthanc-auth-service Docker image
         uses: docker/build-push-action@v5
         with:
@@ -150,6 +168,15 @@ jobs:
           repository: orthancteam/orthanc-nginx
           short-description: Web service to run in front of Orthanc to handle sharing of studies & admin access
           readme-filepath: sources/README-dockerhub-orthanc-nginx.md
+
+      - name: Docker Hub Description (orthanc-nginx-certbot)
+        uses: peter-evans/dockerhub-description@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          repository: orthancteam/orthanc-nginx-certbot
+          short-description: Web service to run in front of Orthanc to handle sharing of studies & admin access (including certbot)
+          readme-filepath: sources/README-dockerhub-orthanc-nginx-certbot.md
 
       - name: Docker Hub Description (orthanc-auth-service)
         uses: peter-evans/dockerhub-description@v3

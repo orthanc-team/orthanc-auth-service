@@ -21,7 +21,7 @@ Features:
 - Handles user authentication & permissions together with Keycloak
 - Generates publication links for:
   - [Stone Viewer](https://www.orthanc-server.com/static.php?page=stone-web-viewer)
-  - [Osimis Viewer](https://book.orthanc-server.com/plugins/osimis-webviewer.html)
+  - [OHIF Viewer](https://ohif.org/)
   - [MedDream Viewer](https://www.softneta.com/online-dicom-viewer/) (commercial - CE approved)
 - 3 Boilerplates `docker-compose` setups to bootstrap a setup:
   - One with [basic authentication](minimal-setup/basic-auth) only to demonstrate study sharing.

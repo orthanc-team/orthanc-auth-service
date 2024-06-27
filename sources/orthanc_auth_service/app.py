@@ -214,8 +214,10 @@ def get_user_profile(user_profile_request: UserProfileRequest):
             if user_profile_request.token_key == "api-key" and keycloak_admin_client is not None:
                 response = keycloak_admin_client.get_user_profile_from_api_key(api_key=user_profile_request.token_value)
             else:
-                response = keycloak_std_client.get_user_profile_from_token(user_profile_request.token_value)
-
+        		token = user_profile_request.token_value
+	            if token.startswith("Bearer "):
+	                token = token.replace("Bearer ", "")
+                    response = keycloak_std_client.get_user_profile_from_token(token)
         else:
             return anonymous_profile
 

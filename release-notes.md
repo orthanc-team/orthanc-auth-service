@@ -5,6 +5,7 @@ SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
 - Upgraded OHIF from v3.7.0 to 6c9a4d9758a72f0aca7c941dc676df0ec12b973f to fix PDF
+- Remove "Bearer " prefix from token when decoding user profile if present.
 
 
 v 24.5.1
