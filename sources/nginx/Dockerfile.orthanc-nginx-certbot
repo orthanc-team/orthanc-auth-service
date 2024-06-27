@@ -2,21 +2,20 @@
 #
 # SPDX-License-Identifier: CC0-1.0
 
-FROM nginx:1.23
+FROM jonasal/nginx-certbot
 
 RUN mkdir /etc/nginx/enabled-reverse-proxies
-RUN mkdir /scripts
+RUN mkdir /scripts-ot
 ADD nginx/nginx-common.conf /etc/nginx/includes/
 
 ADD nginx/reverse-proxy.* /etc/nginx/disabled-reverse-proxies/
 
-ADD nginx/orthanc-nginx-http*.conf /etc/nginx/disabled-conf/
+ADD nginx/orthanc-nginx-certbot.conf /etc/nginx/user_conf.d/
 
-COPY nginx/docker-entrypoint.sh /scripts/
-COPY nginx/copy-conf-files.sh /scripts/
+COPY nginx/docker-entrypoint-certbot.sh /scripts-ot/
+COPY nginx/copy-conf-files.sh /scripts-ot/
 
 RUN ls -al /etc/nginx/disabled-reverse-proxies/
 
-ENTRYPOINT ["./scripts/docker-entrypoint.sh"]
-CMD ["nginx", "-g", "daemon off;"]
+ENTRYPOINT ["./scripts-ot/docker-entrypoint-certbot.sh"]
 
