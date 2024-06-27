@@ -4,7 +4,10 @@ SPDX-FileCopyrightText: 2022 - 2024 Orthanc Team SRL <info@orthanc.team>
 SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
-- Upgraded OHIF from v3.7.0 to 6c9a4d9758a72f0aca7c941dc676df0ec12b973f to fix PDF
+- added a new route `/settings/roles` (GET/PUT) in the auth-service to allow reading/editing
+  the permissions and authorized-labels for each role.  Also introduced a new `available-labels`
+  field in the permission.json.
+- Upgraded OHIF from v3.7.0 to v3.9.0-beta.50 to hopefully fix PDF
 - Remove "Bearer " prefix from token when decoding user profile if present.
 
 
@@ -15,6 +18,7 @@ v 24.5.1
 - in OHIF default configuration, show the "investigational use" warning every 180 days.
 - Upgraded Meddream from v8.3.0 to v8.4.0
 - demo setups now use "ReadCommitted" Transaction mode
+
 
 v 24.2.0
 ========
