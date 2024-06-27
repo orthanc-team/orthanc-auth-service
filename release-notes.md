@@ -4,11 +4,15 @@ SPDX-FileCopyrightText: 2022 - 2024 Orthanc Team SRL <info@orthanc.team>
 SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
+v 24.6.0
+========
+
 - added a new route `/settings/roles` (GET/PUT) in the auth-service to allow reading/editing
   the permissions and authorized-labels for each role.  Also introduced a new `available-labels`
   field in the permission.json.
 - Upgraded OHIF from v3.7.0 to v3.9.0-beta.50 to hopefully fix PDF
-- Remove "Bearer " prefix from token when decoding user profile if present.
+- Remove "Bearer" prefix from token when decoding user profile if present.
+- Added a new Nginx Docker image including Certbot
 
 
 v 24.5.1
