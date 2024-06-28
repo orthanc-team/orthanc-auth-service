@@ -197,7 +197,7 @@ def decode_token(request: TokenDecoderRequest):
 
 @app.post("/user/get-profile", dependencies=basic_auth_dependencies)  # this is a POST and not a GET because we want to same kind of payload as for other routes
 def get_user_profile(user_profile_request: UserProfileRequest):
-    logging.info("get user profile: " + user_profile_request.json())
+    logging.info(f"get user profile from token '{user_profile_request.token_key}'")
 
     anonymous_profile = UserProfileResponse(
                 name="Anonymous",
@@ -226,8 +226,11 @@ def get_user_profile(user_profile_request: UserProfileRequest):
         # not a valid user profile, consider it is anonymous
         return anonymous_profile
     except jwt.exceptions.PyJWTError:
-        raise HTTPException(status_code=400, detail=str("Unable to decode token"))
+        logging.error("Unable to decode JWT token - this might happen if trying to decode a basic auth token instead of a JWT - returning anonymous profile")
+        return anonymous_profile
+
     except Exception as ex:
+        logging.error("Unexpected error: " + str(ex))
         raise HTTPException(status_code=400, detail=str("Unexpected error: " + str(ex)))
 
 

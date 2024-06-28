@@ -4,6 +4,10 @@ SPDX-FileCopyrightText: 2022 - 2024 Orthanc Team SRL <info@orthanc.team>
 SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
+- when requesting a user-profile with e.g. a basic auth token, the auth-service now
+  returns the Anonymous profile instead of a 400 such that the auth-plugin can cache
+  the response.
+
 v 24.6.0
 ========
 
