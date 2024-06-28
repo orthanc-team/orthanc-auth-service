@@ -63,7 +63,7 @@ class KeycloakAdmin:
                     return None
 
                 # retrieve the roles for this user
-                keycloak_role_url = urljoin(self._keycloak_admin_uri, f"users/{user['id']}/role-mappings")
+                keycloak_role_url = urljoin(self._keycloak_admin_uri, f"users/{user['id']}/role-mappings/realm/composite")
                 keycloak_role_response = requests.get(keycloak_role_url, headers=headers)
                 if keycloak_role_response.status_code != 200:
                     logging.error("Unable to retrieve roles for user")
@@ -72,8 +72,8 @@ class KeycloakAdmin:
                 # keep only the roles that we have defined ourselves
                 user_roles = []
                 resp_roles = keycloak_role_response.json()
-                for resp_role in resp_roles['realmMappings']:
-                    if resp_role['name'] in self._roles_configuration.get_all_roles():
+                for resp_role in resp_roles:
+                    if resp_role['name'] in self.get_all_roles():
                         user_roles.append(resp_role['name'])
 
                 profile_from_config = self._roles_configuration.get_role_configuration(user_roles)

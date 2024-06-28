@@ -6,7 +6,7 @@ version: "3"
 services:
 
   nginx:
-    image: orthancteam/orthanc-nginx:24.5.1
+    image: orthancteam/orthanc-nginx:24.6.1
     depends_on: [orthanc, orthanc-auth-service, orthanc-for-shares]
     restart: unless-stopped
     ports: ["80:80"]
@@ -107,7 +107,7 @@ services:
         }
 
   orthanc-auth-service:
-    image: orthancteam/orthanc-auth-service:24.5.1
+    image: orthancteam/orthanc-auth-service:24.6.1
     restart: unless-stopped
     environment:
       SECRET_KEY: "change-me-I-am-a-secret-key"
@@ -121,7 +121,7 @@ services:
         }
 
   ohif:
-    image: orthancteam/ohif-v3:24.5.1
+    image: orthancteam/ohif-v3:24.6.1
 #  uncomment if you want to customize ohif configuration
 #    volumes:
 #      - ./ohif-app-config.js:/usr/share/nginx/html/app-config.js

@@ -4,13 +4,12 @@ SPDX-FileCopyrightText: 2022 - 2024 Orthanc Team SRL <info@orthanc.team>
 SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
+v 24.6.1
+========
+
 - when requesting a user-profile with e.g. a basic auth token, the auth-service now
   returns the Anonymous profile instead of a 400 such that the auth-plugin can cache
   the response.
-
-v 24.6.0
-========
-
 - added a new route `/settings/roles` (GET/PUT) in the auth-service to allow reading/editing
   the permissions and authorized-labels for each role.  Also introduced a new `available-labels`
   field in the permission.json.
