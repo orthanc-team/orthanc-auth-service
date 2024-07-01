@@ -39,16 +39,23 @@ else:
                                                        roles_configuration=roles_configuration)
 
     enable_api_keys = os.environ.get("ENABLE_KEYCLOAK_API_KEYS", "false") == "true"
+    needKeycloakAdmin = False
     if not enable_api_keys:
         logging.warning("ENABLE_KEYCLOAK_API_KEYS is not set, api-keys are disabled")
     else:
         logging.warning("ENABLE_KEYCLOAK_API_KEYS is set, using keycloak to handle api-keys")
+        needKeycloakAdmin = True
+
+    if needKeycloakAdmin or os.environ.get("KEYCLOAK_CLIENT_SECRET") is not None:
         keycloak_client_secret = get_secret_or_die("KEYCLOAK_CLIENT_SECRET")
         keycloak_admin_uri = os.environ.get("KECLOAK_ADMIN_URI", "http://keycloak:8080/admin/realms/orthanc/")
         keycloak_admin_client = KeycloakAdmin(keycloak_uri=keycloak_uri,
                                               keycloak_admin_uri=keycloak_admin_uri,
                                               keycloak_client_secret=keycloak_client_secret,
                                               roles_configuration=roles_configuration)
+
+    if keycloak_admin_client is None:
+        logging.warning("KECLOAK_ADMIN_URI and/or KEYCLOAK_CLIENT_SECRET is not set, you won't be able to access settings/roles API routes")
 
 app = FastAPI()
 
@@ -73,7 +80,9 @@ def ingest_keycloak_roles(roles_config: RolesConfigurationModel):
         for keycloak_role in all_keycloak_roles:
             if keycloak_role not in roles_config.roles:
                 roles_configuration.get_configured_roles().roles[keycloak_role] = RolePermissions()
-
+    else:
+        logging.error(f"No Keycloack admin client defined, you probably should define KEYCLOAK_CLIENT_SECRET")
+        raise HTTPException(status_code=404, detail="No Keycloack admin client defined, you probably should define KEYCLOAK_CLIENT_SECRET")
 
 
 # to show invalid payloads (debug)
