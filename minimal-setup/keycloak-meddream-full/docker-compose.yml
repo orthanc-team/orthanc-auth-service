@@ -6,7 +6,7 @@ version: "3"
 services:
 
   nginx:
-    image: orthancteam/orthanc-nginx:24.6.1
+    image: orthancteam/orthanc-nginx:24.7.1
     depends_on: [orthanc, orthanc-auth-service, orthanc-for-api, meddream-viewer, keycloak]
     restart: unless-stopped
     ports: ["80:80"]
@@ -24,7 +24,7 @@ services:
       ENABLE_ORTHANC_FOR_API: "true"
 
   orthanc:
-    image: orthancteam/orthanc:24.6.2
+    image: orthancteam/orthanc:24.7.1
     volumes:
       - orthanc-storage:/var/lib/orthanc/db
     depends_on: [orthanc-db]
@@ -76,7 +76,7 @@ services:
         }
 
   orthanc-auth-service:
-    image: orthancteam/orthanc-auth-service:24.6.1
+    image: orthancteam/orthanc-auth-service:24.7.1
     depends_on: [keycloak, meddream-token-service]
     # permissions can be customized in the permissions.json file
     volumes:
@@ -85,6 +85,8 @@ services:
     environment:
       SECRET_KEY: "change-me-I-am-a-secret-key"
       ENABLE_KEYCLOAK: "true"
+#      # to enable the permissions edition UI in OE2, you need to provide a KEYCLOAK_CLIENT_SECRET
+#      KEYCLOAK_CLIENT_SECRET: "change-me-I-am-a-secret-you-get-in-keycloak-admin-ui"
       PUBLIC_ORTHANC_ROOT: "http://localhost/orthanc/"
       PUBLIC_LANDING_ROOT: "http://localhost/orthanc/ui/app/token-landing.html"
       USERS: |
@@ -102,7 +104,7 @@ services:
       POSTGRES_HOST_AUTH_METHOD: "trust"
 
   keycloak:
-    image: orthancteam/orthanc-keycloak:24.6.1
+    image: orthancteam/orthanc-keycloak:24.7.1
     depends_on: [keycloak-db]
     restart: unless-stopped
     environment:
@@ -125,11 +127,11 @@ services:
       POSTGRES_DB: "keycloak"
 
   meddream-token-service:
-    image: orthancteam/meddream-token-service:24.6.1
+    image: orthancteam/meddream-token-service:24.7.1
     restart: unless-stopped
 
   meddream-viewer:
-    image: orthancteam/meddream-viewer:24.6.1
+    image: orthancteam/meddream-viewer:24.7.1
     restart: unless-stopped
     depends_on:
       - orthanc-for-api
@@ -151,7 +153,7 @@ services:
 
   # An orthanc dedicated for API accesses and also used by MedDream
   orthanc-for-api:
-    image: orthancteam/orthanc:24.6.2
+    image: orthancteam/orthanc:24.7.1
     volumes:
       - orthanc-storage:/var/lib/orthanc/db
       - ./meddream-plugin.py:/scripts/meddream-plugin.py

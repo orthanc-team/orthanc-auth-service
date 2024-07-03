@@ -4,7 +4,9 @@ SPDX-FileCopyrightText: 2022 - 2024 Orthanc Team SRL <info@orthanc.team>
 SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
-v 24.6.1
+- fix: read KEYCLOAK_CLIENT_SECRET from secrets or environment variable
+
+v 24.7.1
 ========
 
 - when requesting a user-profile with e.g. a basic auth token, the auth-service now
