@@ -46,7 +46,7 @@ else:
         logging.warning("ENABLE_KEYCLOAK_API_KEYS is set, using keycloak to handle api-keys")
         needKeycloakAdmin = True
 
-    if needKeycloakAdmin or is_secret_defined("KEYCLOAK_CLIENT_SECRET") is not None:
+    if needKeycloakAdmin or is_secret_defined("KEYCLOAK_CLIENT_SECRET"):
         keycloak_client_secret = get_secret_or_die("KEYCLOAK_CLIENT_SECRET")
         keycloak_admin_uri = os.environ.get("KECLOAK_ADMIN_URI", "http://keycloak:8080/admin/realms/orthanc/")
         keycloak_admin_client = KeycloakAdmin(keycloak_uri=keycloak_uri,
