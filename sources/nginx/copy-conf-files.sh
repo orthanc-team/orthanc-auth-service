@@ -27,6 +27,10 @@ enableOrthancTokenService="${ENABLE_ORTHANC_TOKEN_SERVICE:-false}"
 enableOhif="${ENABLE_OHIF:-false}"
 enableMedDream="${ENABLE_MEDDREAM:-false}"
 
+# manage proxy_read_timeout value
+proxy_read_timeout="${PROXY_READ_TIMEOUT:-60}"
+sed -i "s/proxy_read_timeout_placeholder/${proxy_read_timeout}s/g" /etc/nginx/includes/nginx-common.conf
+
 ls -al /etc/nginx/disabled-reverse-proxies/
 
 if [[ $enableOrthanc == "true" ]]; then

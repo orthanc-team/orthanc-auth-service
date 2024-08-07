@@ -17,7 +17,12 @@ Web service to run in front of Orthanc to handle sharing of studies & admin inte
 | ENABLE_ORTHANC_FOR_API           | false         | Access to Orthanc for api (e.g. for DicomWeb clients or scripts)                                                                | `/orthanc-api/`   | `http://orthanc-for-api:8042`       |
 | ENABLE_ORTHANC_FOR_SHARES        | false         | Access to Orthanc for shares (publication links).  This is required only if you are not using keycloak and are enabling shares. | `/shares/`        | `http://orthanc-for-shares:8042`    |
 | ENABLE_OHIF                      | false         | Access to OHIF viewer                                                                                                           | `/ohif/`          | `http://ohif:80`                    |
-| ENABLE_HTTPS                     | false         | Enables HTTPS                                                                                                                   | NA                | NA                                  |
+
+
+| Environment variable       | Default value            | Description                                                                                                     |
+|----------------------------|:-------------------------|:----------------------------------------------------------------------------------------------------------------|
+| ENABLE_HTTPS               | false                    | Enables HTTPS                                                                                                   |
+| PROXY_READ_TIMEOUT         | 60                       | Nginx `proxy_read_timeout` variable (s)                                                                         |
 
 If `ENABLE_HTTPS` is set to `true`, you must also provide a certificate file in `/etc/nginx/tls/crt.pem` and a private key in `/etc/nginx/tls/key.pem`.
 
