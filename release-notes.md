@@ -4,6 +4,9 @@ SPDX-FileCopyrightText: 2022 - 2024 Orthanc Team SRL <info@orthanc.team>
 SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
+v 24.7.2
+========
+- added `PROXY_READ_TIMEOUT` env var for nginx
 - fix: read KEYCLOAK_CLIENT_SECRET from secrets or environment variable
 
 v 24.7.1
