@@ -6,7 +6,7 @@ version: "3"
 services:
 
   nginx:
-    image: orthancteam/orthanc-nginx:24.6.1
+    image: orthancteam/orthanc-nginx:24.7.1
     depends_on: [orthanc, orthanc-auth-service, keycloak]
     restart: unless-stopped
     ports: ["80:80"]
@@ -24,8 +24,7 @@ services:
       ENABLE_OHIF: "true"
 
   orthanc:
-# to use OHIF-plugin:  use the master-unstable image
-    image: orthancteam/orthanc-pre-release:master-unstable
+    image: orthancteam/orthanc:24.7.1
     volumes:
       - orthanc-storage:/var/lib/orthanc/db
     depends_on: [orthanc-db]
@@ -91,7 +90,7 @@ services:
         }
 
   orthanc-auth-service:
-    image: orthancteam/orthanc-auth-service:24.6.1
+    image: orthancteam/orthanc-auth-service:24.7.1
     # always disable port mapping in production !!!
     # ports: ["8000:8000"]
     # permissions can be customized in the permissions.json file
@@ -103,7 +102,9 @@ services:
       SECRET_KEY: "change-me-I-am-a-secret-key"
       ENABLE_KEYCLOAK: "true"
 #      ENABLE_KEYCLOAK_API_KEYS: "true"
+#      # to enable the permissions edition UI in OE2, you need to provide a KEYCLOAK_CLIENT_SECRET
 #      KEYCLOAK_CLIENT_SECRET: "change-me-I-am-a-secret-you-get-in-keycloak-admin-ui"
+      KEYCLOAK_CLIENT_SECRET: "TxOYLTicpl1iZIO0XgWzSE0jzmA40mb5"
       PUBLIC_ORTHANC_ROOT: "http://localhost/orthanc/"
       PUBLIC_LANDING_ROOT: "http://localhost/orthanc/ui/app/token-landing.html"
       # to use OHIF-plugin:  make sure to use http://localhost/orthanc/ohif/
@@ -123,7 +124,7 @@ services:
 
 # to use OHIF-plugin: you don't need this container
   ohif:
-    image: orthancteam/ohif-v3:24.6.1
+    image: orthancteam/ohif-v3:24.7.1
 #  uncomment if you want to customize ohif configuration
 #    volumes:
 #      - ./ohif-app-config.js:/usr/share/nginx/html/app-config.js
@@ -131,7 +132,7 @@ services:
 
 
   keycloak:
-    image: orthancteam/orthanc-keycloak:24.6.1
+    image: orthancteam/orthanc-keycloak:24.7.1
     depends_on: [keycloak-db]
     restart: unless-stopped
 #    healthcheck:

@@ -17,7 +17,7 @@ from shares.orthanc_token_service_factory import create_token_service_from_secre
 from shares.keycloak import create_keycloak_from_secrets
 from shares.roles_configuration import RolesConfiguration
 from shares.keycloak_admin import KeycloakAdmin
-from shares.utils.utils import get_secret_or_die
+from shares.utils.utils import get_secret_or_die, is_secret_defined
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -46,7 +46,7 @@ else:
         logging.warning("ENABLE_KEYCLOAK_API_KEYS is set, using keycloak to handle api-keys")
         needKeycloakAdmin = True
 
-    if needKeycloakAdmin or os.environ.get("KEYCLOAK_CLIENT_SECRET") is not None:
+    if needKeycloakAdmin or is_secret_defined("KEYCLOAK_CLIENT_SECRET"):
         keycloak_client_secret = get_secret_or_die("KEYCLOAK_CLIENT_SECRET")
         keycloak_admin_uri = os.environ.get("KECLOAK_ADMIN_URI", "http://keycloak:8080/admin/realms/orthanc/")
         keycloak_admin_client = KeycloakAdmin(keycloak_uri=keycloak_uri,
