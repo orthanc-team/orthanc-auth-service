@@ -48,14 +48,14 @@ else:
 
     if needKeycloakAdmin or is_secret_defined("KEYCLOAK_CLIENT_SECRET"):
         keycloak_client_secret = get_secret_or_die("KEYCLOAK_CLIENT_SECRET")
-        keycloak_admin_uri = os.environ.get("KECLOAK_ADMIN_URI", "http://keycloak:8080/admin/realms/orthanc/")
+        keycloak_admin_uri = os.environ.get("KEYCLOAK_ADMIN_URI", "http://keycloak:8080/admin/realms/orthanc/")
         keycloak_admin_client = KeycloakAdmin(keycloak_uri=keycloak_uri,
                                               keycloak_admin_uri=keycloak_admin_uri,
                                               keycloak_client_secret=keycloak_client_secret,
                                               roles_configuration=roles_configuration)
 
     if keycloak_admin_client is None:
-        logging.warning("KECLOAK_ADMIN_URI and/or KEYCLOAK_CLIENT_SECRET is not set, you won't be able to access settings/roles API routes")
+        logging.warning("KEYCLOAK_ADMIN_URI and/or KEYCLOAK_CLIENT_SECRET is not set, you won't be able to access settings/roles API routes")
 
 app = FastAPI()
 
