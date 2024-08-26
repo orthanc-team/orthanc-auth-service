@@ -1,5 +1,3 @@
-// "SPDX-FileCopyrightText: 2022 - 2024 Orthanc Team SRL <info@orthanc.team>"
-// SPDX-License-Identifier: CC0-1.0
 {
   "roles": {
     "admin-role": {
@@ -42,5 +40,25 @@
       ]
     }
   },
-  "available-labels": []
+  "available-labels": [
+    "125",
+    "48",
+    "Label1",
+    "Label2",
+    "Label3",
+    "Label4",
+    "Label5",
+    "Label6",
+    "Label7",
+    "Label8",
+    "Label9",
+    "a",
+    "external",
+    "lt",
+    "tests-ohif",
+    "trotro",
+    "trt",
+    "tutu",
+    "wsi"
+  ]
 }
