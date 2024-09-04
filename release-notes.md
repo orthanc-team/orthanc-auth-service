@@ -7,7 +7,8 @@ SPDX-License-Identifier: GPL-3.0-or-later
 Pending changes
 ===============
 
-- fixed typo in `KEYCLOAK_ADMIN_URI` that was not read correctly.
+- Fixed typo in `KEYCLOAK_ADMIN_URI` that was not read correctly.
+- Fixed special characters that were not allowed in API keys.
 
 
 v 24.7.2

@@ -13,8 +13,7 @@ from .models import *
 from .utils.utils import get_secret_or_die, is_secret_defined
 from .roles_configuration import RolesConfiguration
 import requests
-from urllib.parse import urljoin
-
+from urllib.parse import urljoin, urlencode
 
 class KeycloakAdmin:
 
@@ -38,7 +37,10 @@ class KeycloakAdmin:
         return access_token
 
     def get_user_profile_from_api_key(self, api_key: str) -> Optional[UserProfileResponse]:
-        keycloak_users_url = urljoin(self._keycloak_admin_uri, f"users?q=api-key:{api_key}")
+        query = {
+            "q": f"api-key:{api_key}"
+        }
+        keycloak_users_url = urljoin(self._keycloak_admin_uri, f"users?{urlencode(query)}")
         headers = {
             'Authorization': 'Bearer ' + self._get_keycloak_access_token(),
             'Content-Type': 'application/json'
