@@ -1,0 +1,27 @@
+# SPDX-FileCopyrightText: 2022 - 2024 Orthanc Team SRL <info@orthanc.team>
+#
+# SPDX-License-Identifier: CC0-1.0
+
+version: "3"
+services:
+
+  openldap-server:
+    image: osixia/openldap
+    ports:
+      - 389:389
+      - 636:636
+    environment:
+      LDAP_ORGANISATION: "MyOrg"
+      LDAP_DOMAIN: "myorg.com"
+      LDAP_ADMIN_PASSWORD: "change-me"
+      LDAP_SEED_INTERNAL_LDIF_PATH: "/home/ldif"
+    volumes:
+      - ./ldif:/home/ldif
+
+  phpldapadmin:
+    image: osixia/phpldapadmin
+    ports:
+      - 6443:80
+    environment:
+      PHPLDAPADMIN_HTTPS: "false"
+      PHPLDAPADMIN_LDAP_HOSTS: "openldap-server"
