@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: 2022 - 2024 Orthanc Team SRL <info@orthanc.team>
+#
+# SPDX-License-Identifier: CC0-1.0
 # What is it about?
 
 This is a tiny setup to quickly spin up an LDAP server to perform some tests (with Keycloak).

@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2022 - 2024 Orthanc Team SRL <info@orthanc.team>
+#
+# SPDX-License-Identifier: CC0-1.0
+
 # LDIF Export for dc=myorg,dc=com
 # Server: openldap-server (openldap-server)
 # Search Scope: sub
