@@ -16,7 +16,7 @@ services:
       LDAP_ADMIN_PASSWORD: "change-me"
       LDAP_SEED_INTERNAL_LDIF_PATH: "/home/ldif"
     volumes:
-      - ./ldif:/home/ldif
+      - ../openldap/ldif:/home/ldif
 
   phpldapadmin:
     image: osixia/phpldapadmin
