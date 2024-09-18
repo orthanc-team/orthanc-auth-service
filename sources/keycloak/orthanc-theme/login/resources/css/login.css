@@ -18,7 +18,7 @@
 
 .login-pf body {
     background: none;
-    background-color: #449cd6;
+    background: linear-gradient(to bottom, #2e353d, #7e8d9e); /* Gradient from gray to white */
     background-repeat: no-repeat;
     background-position: center center;
     background-attachment: fixed;
