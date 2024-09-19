@@ -132,11 +132,9 @@ services:
 
 
   keycloak:
-    image: orthancteam/orthanc-keycloak:24.7.1
+    image: orthancteam/orthanc-keycloak:24.9.0
     depends_on: [keycloak-db]
     restart: unless-stopped
-#    healthcheck:
-#      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
     environment:
       KEYCLOAK_ADMIN: "admin"
       KEYCLOAK_ADMIN_PASSWORD: "change-me"

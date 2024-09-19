@@ -4,11 +4,18 @@ SPDX-FileCopyrightText: 2022 - 2024 Orthanc Team SRL <info@orthanc.team>
 SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
-Pending changes
+v 24.9.0
 ===============
 
 - Fixed typo in `KEYCLOAK_ADMIN_URI` that was not read correctly.
 - Fixed special characters that were not allowed in API keys.
+- Upgraded Keycloak from 22.0.5 to 25.0.5
+- enabled brut force detection by default in orthanc Keycloak realm
+
+BREAKING CHANGES:
+- Keycloak Docker image env var `KC_HOSTNAME_URL` is replaced by `KC_HOSTNAME`
+- Keycloak Docker image env var `KC_HOSTNAME_ADMIN_URL` is removed (no longer needed)
+
 
 
 v 24.7.2
