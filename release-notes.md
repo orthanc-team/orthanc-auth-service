@@ -17,12 +17,12 @@ BREAKING CHANGES:
 - Keycloak Docker image env var `KC_HOSTNAME_ADMIN_URL` is removed (no longer needed)
 
 
-
 v 24.7.2
 ========
 
 - added `PROXY_READ_TIMEOUT` env var for nginx
 - fix: read KEYCLOAK_CLIENT_SECRET from secrets or environment variable
+
 
 v 24.7.1
 ========
