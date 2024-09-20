@@ -80,6 +80,13 @@ def ingest_keycloak_roles(roles_config: RolesConfigurationModel):
         for keycloak_role in all_keycloak_roles:
             if keycloak_role not in roles_config.roles:
                 roles_configuration.get_configured_roles().roles[keycloak_role] = RolePermissions()
+
+        # keep only the roles that are defined in Keycloak:
+        roles_to_remove_from_json = set(roles_configuration.get_configured_roles().roles.keys()).difference(set(all_keycloak_roles))
+        for role in roles_to_remove_from_json:
+            logging.info(f"Role was configured but does not exist in Keycloak: {role}")
+            del roles_configuration.get_configured_roles().roles[role]
+
     else:
         logging.error(f"No Keycloack admin client defined, you probably should define KEYCLOAK_CLIENT_SECRET")
         raise HTTPException(status_code=404, detail="No Keycloack admin client defined, you probably should define KEYCLOAK_CLIENT_SECRET")
