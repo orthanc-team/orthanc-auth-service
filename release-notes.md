@@ -7,9 +7,20 @@ SPDX-License-Identifier: GPL-3.0-or-later
 Pending changes
 ===============
 
+- Fixed roles removed from Keycloak that were still being listed in `/settings/roles`
+
+
+v 24.9.0
+========
+
 - Fixed typo in `KEYCLOAK_ADMIN_URI` that was not read correctly.
 - Fixed special characters that were not allowed in API keys.
-- Fixed roles removed from Keycloak that were still being listed in /settings/roles
+- Upgraded Keycloak from 22.0.5 to 25.0.5
+- enabled brut force detection by default in orthanc Keycloak realm
+
+BREAKING CHANGES:
+- Keycloak Docker image env var `KC_HOSTNAME_URL` is replaced by `KC_HOSTNAME`
+- Keycloak Docker image env var `KC_HOSTNAME_ADMIN_URL` is removed (no longer needed)
 
 
 v 24.7.2
@@ -17,6 +28,7 @@ v 24.7.2
 
 - added `PROXY_READ_TIMEOUT` env var for nginx
 - fix: read KEYCLOAK_CLIENT_SECRET from secrets or environment variable
+
 
 v 24.7.1
 ========

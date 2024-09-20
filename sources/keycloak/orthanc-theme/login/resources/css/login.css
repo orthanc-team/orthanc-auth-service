@@ -10,8 +10,18 @@
     background: none;
 }
 
+/* .login-pf body {
+    background: url("../img/keycloak-bg.png") no-repeat center center fixed;
+    background-size: cover;
+    height: 100%;
+} */
+
 .login-pf body {
-    background: url("../img/orthanc-bg.png") no-repeat center center fixed;
+    background: none;
+    background: linear-gradient(to bottom, #2e353d, #7e8d9e); /* Gradient from gray to white */
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-attachment: fixed;
     background-size: cover;
     height: 100%;
 }
@@ -29,7 +39,6 @@ p.instruction {
 }
 
 .pf-c-button.pf-m-control {
-    border: solid var(--pf-global--BorderWidth--sm);
     border-color: rgba(230, 230, 230, 0.5);
 }
 
@@ -59,7 +68,17 @@ h1#kc-page-title {
     font-size: var(--pf-global--FontSize--sm);
 }
 
-a#kc-current-locale-link::after {
+#kc-locale-dropdown button {
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    color: var(--pf-global--Color--200);
+    text-align: right;
+    font-size: var(--pf-global--FontSize--sm);
+}
+
+button#kc-current-locale-link::after {
     content: "\2c5";
     margin-left: var(--pf-global--spacer--xs)
 }
@@ -191,6 +210,13 @@ div.kc-logo-text span {
     margin-bottom: 20px;
 }
 
+#kc-registration-terms-text {
+    max-height: 100px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    margin: 5px;
+}
+
 #kc-registration {
     margin-bottom: 0;
 }
@@ -266,6 +292,10 @@ ul#kc-totp-supported-apps {
     margin-top: 20px;
 }
 
+.kc-social-links li {
+    width: 100%;
+}
+
 .kc-social-provider-logo {
     font-size: 23px;
     width: 30px;
@@ -277,6 +307,10 @@ ul#kc-totp-supported-apps {
     color: var(--pf-global--Color--200);
 }
 
+.kc-social-gray h2 {
+    font-size: 1em;
+}
+
 .kc-social-item {
     margin-bottom: var(--pf-global--spacer--sm);
     font-size: 15px;
@@ -285,7 +319,6 @@ ul#kc-totp-supported-apps {
 
 .kc-social-provider-name {
     position: relative;
-    top: 3px;
 }
 
 .kc-social-icon-text {
@@ -469,6 +502,12 @@ ul#kc-totp-supported-apps {
     padding-top: 1rem;
     padding-bottom: 1rem;
     cursor: pointer;
+    text-align: left;
+    align-items: unset;
+    background-color: unset;
+    border-right: unset;
+    border-bottom: unset;
+    border-left: unset;
 }
 
 .select-auth-box-parent:hover{
@@ -605,5 +644,9 @@ ul#kc-totp-supported-apps {
 .kc-recovery-codes-confirmation {
     align-items: baseline;
     margin-bottom: 16px;
+}
+
+#certificate_subjectDN {
+    overflow-wrap: break-word
 }
 /* End Recovery codes */
