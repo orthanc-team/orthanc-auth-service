@@ -18,11 +18,14 @@ FROM quay.io/keycloak/keycloak:25.0.5
 COPY --from=builder /opt/keycloak/ /opt/keycloak/
 
 COPY keycloak/realm-export.json /opt/keycloak/data/import/
+COPY keycloak/regenerate-client-secret.sh /opt/keycloak/bin/
+COPY keycloak/entrypoint.sh /opt/keycloak/bin/
 
 ENV KC_HOSTNAME=http://localhost/keycloak
 
-ENTRYPOINT ["/opt/keycloak/bin/kc.sh"]
-CMD ["start", "--optimized", "--import-realm", "--http-enabled", "true", "--proxy-headers", "xforwarded"]
+#ENTRYPOINT ["/opt/keycloak/bin/kc.sh"]
+#CMD ["start", "--optimized", "--import-realm", "--http-enabled", "true", "--proxy-headers", "xforwarded"]
+ENTRYPOINT ["/opt/keycloak/bin/entrypoint.sh"]
 
 # to play with UI/themes/css:
 #CMD ["start", "--optimized", "--import-realm", "--http-enabled", "true", "--spi-theme-static-max-age=-1", "--spi-theme-cache-themes=false", "--spi-theme-cache-templates=false"]
@@ -35,9 +38,11 @@ CMD ["start", "--optimized", "--import-realm", "--http-enabled", "true", "--prox
 # - bind a volume to /usr/tmp (copose file)
 # - replace the last "CMD" command of current Docker file by the following one:
 #   CMD ["export --file /usr/tmp/realm-export.json --realm orthanc"]
-# - rebuild the keycloak image (adapt path for files to copy in current file: lines 13 and 20)
+# - rebuild the keycloak image from the folder 'sources' with this command:
+#   `docker build --file keycloak/Dockerfile.orthanc-keycloak --tag kc-temp .`
 # - start your setup
 # - then keycloak will start, export the realm and exit. From that moment, your realm
 #   (including users, roles, clients,...) will be available in the /usr/tmp/realm-export.json
+# - don't forget to restore compose and current file
 
 

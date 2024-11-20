@@ -128,7 +128,7 @@ services:
     restart: unless-stopped
 
   orthanc-db:
-    image: postgres:14
+    image: postgres:15
     restart: unless-stopped
     volumes: ["orthanc-db:/var/lib/postgresql/data"]
     environment:

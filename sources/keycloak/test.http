@@ -1,0 +1,92 @@
+# Just a few testing stuff, but I don't want to trash them
+@baseUrlKc = http://localhost/keycloak
+@baseUrlOrthanc = http://localhost/orthanc
+
+
+@admin-cli-uid = 74a99b9d-221a-4dd1-9ba4-ec4f249c3e0a
+@admin-cli-secret= mlav1BfrxT0jDH61LbAt7Y5jOizNlRvS
+@service-account-id = 993274db-e4f4-465d-8e3e-52e665541ff7
+@role-id = f1360e68-78d5-4df1-a7f9-de0db0de8eb7
+@client-mapping-id = 34c7489b-ad3c-4483-a523-e578c1c6dc45
+
+## roles needed
+## - view-users --> to keep
+## - manage-clients --> to delete
+## - manage-users --> to delete
+
+### Version
+GET  {{baseUrlOrthanc}}/system
+
+### Get Labels
+GET  {{baseUrlOrthanc}}/tools/labels
+api-key:forwarder-api-key
+
+### Check KC connectivity
+GET  {{baseUrlKc}}
+
+
+### Get Token
+# @name getToken
+POST {{baseUrlKc}}/realms/orthanc/protocol/openid-connect/token HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=client_credentials
+&client_id=admin-cli
+&client_secret={{admin-cli-secret}}
+&
+
+
+### Get Users
+GET {{baseUrlKc}}/admin/realms/orthanc/users
+Authorization: Bearer {{getToken.response.body.access_token}}
+
+### Get Client UUID
+GET {{baseUrlKc}}/admin/realms/orthanc/clients?clientId=admin-cli
+Authorization: Bearer {{getToken.response.body.access_token}}
+
+# ### Get Client Secret
+# # @name admin-cli-secret
+# GET {{baseUrlKc}}/admin/realms/orthanc/clients/{{admin-cli-uid}}/client-secret
+# Authorization: Bearer {{getToken.response.body.access_token}}
+
+
+### Change Client Secret
+POST {{baseUrlKc}}/admin/realms/orthanc/clients/{{admin-cli-uid}}/client-secret
+Authorization: Bearer {{getToken.response.body.access_token}}
+
+### Get service account user
+GET {{baseUrlKc}}/admin/realms/orthanc/clients/{{admin-cli-uid}}/service-account-user
+Authorization: Bearer {{getToken.response.body.access_token}}
+
+### Get roles linked to this sercice account user --> client-mapping-id has to be fetch from the answer
+GET {{baseUrlKc}}/admin/realms/orthanc/users/{{service-account-id}}/role-mappings
+Authorization: Bearer {{getToken.response.body.access_token}}
+
+### Get roles --> role-id can be fetch from the answer (and also from he previous one)
+GET {{baseUrlKc}}/admin/realms/orthanc/users/{{service-account-id}}/role-mappings/clients/{{client-mapping-id}}
+Authorization: Bearer {{getToken.response.body.access_token}}
+
+
+### Delete 'manage-clients' role for this client
+DELETE {{baseUrlKc}}/admin/realms/orthanc/users/{{service-account-id}}/role-mappings/clients/{{client-mapping-id}}
+Authorization: Bearer {{getToken.response.body.access_token}}
+Content-Type: application/json
+
+[
+    {
+        "id": "f1360e68-78d5-4df1-a7f9-de0db0de8eb7",
+        "name": "manage-clients"
+    }
+]
+
+### Delete 'manage-users' role for this client
+DELETE {{baseUrlKc}}/admin/realms/orthanc/users/{{service-account-id}}/role-mappings/clients/{{client-mapping-id}}
+Authorization: Bearer {{getToken.response.body.access_token}}
+Content-Type: application/json
+
+[
+    {
+        "id": "098dc91c-18f2-4b22-a522-cf5ed10315a5",
+        "name": "manage-users"
+    }
+]

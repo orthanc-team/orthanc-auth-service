@@ -24,7 +24,8 @@ services:
       ENABLE_OHIF: "true"
 
   orthanc:
-    image: orthancteam/orthanc:24.8.3
+    #image: orthancteam/orthanc:24.8.3
+    image: orthancteam/orthanc-pre-release:master-unstable
     volumes:
       - orthanc-storage:/var/lib/orthanc/db
     depends_on: [orthanc-db]
@@ -90,7 +91,7 @@ services:
         }
 
   orthanc-auth-service:
-    image: orthancteam/orthanc-auth-service:24.9.0
+    image: orthancteam/orthanc-auth-service:main
     # always disable port mapping in production !!!
     # ports: ["8000:8000"]
     # permissions can be customized in the permissions.json file
@@ -104,7 +105,7 @@ services:
 #      ENABLE_KEYCLOAK_API_KEYS: "true"
 #      # to enable the permissions edition UI in OE2, you need to provide a KEYCLOAK_CLIENT_SECRET
 #      KEYCLOAK_CLIENT_SECRET: "change-me-I-am-a-secret-you-get-in-keycloak-admin-ui"
-      KEYCLOAK_CLIENT_SECRET: "TxOYLTicpl1iZIO0XgWzSE0jzmA40mb5"
+      KEYCLOAK_CLIENT_SECRET: "BW4jmAQXmnegXXDXKy7SPuStxSoPSG7M"
       PUBLIC_ORTHANC_ROOT: "http://localhost/orthanc/"
       PUBLIC_LANDING_ROOT: "http://localhost/orthanc/ui/app/token-landing.html"
       # to use OHIF-plugin:  make sure to use http://localhost/orthanc/ohif/
@@ -143,6 +144,8 @@ services:
       KC_DB_USERNAME: "keycloak"
       KC_DB_PASSWORD: "keycloak"
       # KC_HOSTNAME: "https://mydomain.com/keycloak"
+    # volumes:
+    #   - /home/bc/tmp:/usr/tmp
 
   keycloak-db:
     image: postgres:14
