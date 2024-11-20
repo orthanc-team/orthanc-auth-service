@@ -1,4 +1,8 @@
 #!/bin/bash
+# SPDX-FileCopyrightText: 2022 - 2024 Orthanc Team SRL <info@orthanc.team>
+#
+# SPDX-License-Identifier: CC0-1.0
+
 
 # let's begin 2 tasks:
 # the first task waits the Keycloak readyness to generate and print the Keycloak client secret
