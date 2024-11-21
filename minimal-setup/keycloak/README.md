@@ -72,7 +72,13 @@ Update these settings:
 
 # Enabling API keys
 
-If you wish to enable support for api-keys authentication, you should log in the Keycloak admin console and:
+If you wish to enable support for api-keys authentication (which is mandatory for permissions management from UI),
+you have to get the `KEYCLOAK_CLIENT_SECRET` value from the Keycloak logs (displayed only during the very first boot) and
+put it into the `docker-compose.yml` file (`orthanc-auth-service` container). Then, restart the Docker setup: `docker compose up -d`.
+
+Here is the old version of this:
+<strike>
+You should log in the Keycloak admin console and:
 - in http://localhost/keycloak/admin/master/console/ (login/pwd: `admin`/`change-me`), left panel: Clients
 - In the `orthanc` realm
 - select `admin-cli`
@@ -83,22 +89,22 @@ If you wish to enable support for api-keys authentication, you should log in the
 - `Service accounts roles` tab --> `Assign role` button
 - **select `Filter by clients` in the combo box** and `view-users` in the search filter
 - check `realm-management view-users` and click `Assign`
+</strike>
 
-Then, you should add an API-key to a user.  Still in the Keycloak admin area:
+Then, you can add an API-key to a user.  Still in the Keycloak admin area:
 - In the `orthanc` realm
 - Open `Users` and select the `external` user
 - In the `Attributes` tab, click `Add an attribute` and enter:
 - `api-key` as the Key and `api-key-for-external-user-that-should-be-a-long-random-string` as the Value.
 - Click `Save`
 
-Then, in the `docker-compose.yml` uncomment the 2 lines related to these 2 env var:
-- `ENABLE_KEYCLOAK_API_KEYS`
-- `KEYCLOAK_CLIENT_SECRET`
+Then, in the `docker-compose.yml` uncomment this line:
+- `ENABLE_KEYCLOAK_API_KEYS: "true"`
 - make sure that the Orthanc Authorization plugin contains this line:
   `"TokenHttpHeaders" : [ "api-key" ],`
 
 And restart the Docker setup:
-- `docker compose up`
+- `docker compose up -d`
 
 Then, in a terminal, type this command to access the API with an api-key.
 

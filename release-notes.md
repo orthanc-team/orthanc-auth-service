@@ -4,6 +4,12 @@ SPDX-FileCopyrightText: 2022 - 2024 Orthanc Team SRL <info@orthanc.team>
 SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
+v 24.11.0
+========
+
+- Improved Keycloak image to automate its initial configuration.
+
+
 v 24.9.1
 ========
 
