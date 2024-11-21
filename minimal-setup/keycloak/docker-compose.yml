@@ -24,7 +24,7 @@ services:
       ENABLE_OHIF: "true"
 
   orthanc:
-    #image: orthancteam/orthanc:24.10.3
+    image: orthancteam/orthanc:24.10.3
     volumes:
       - orthanc-storage:/var/lib/orthanc/db
     depends_on: [orthanc-db]
