@@ -4,6 +4,11 @@ SPDX-FileCopyrightText: 2022 - 2024 Orthanc Team SRL <info@orthanc.team>
 SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
+v x.x.x
+========
+
+- Upgraded OHIF from v3.9.0-beta.56 to v3.9.2
+
 v 24.11.0
 ========
 
