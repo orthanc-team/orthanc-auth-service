@@ -32,6 +32,18 @@
 
 cd /opt/keycloak/bin/
 
+# exit if test mode
+if [[ ${SKIP_CLIENT_SECRET_UPDATE_FOR_TESTS} == true ]]; then
+    echo -e "\n##################################################################################################################"
+    echo -e "WARNING ! WARNING ! WARNING ! WARNING !"
+    echo -e "Client Secret value is kept to default value!"
+    echo -e "This is a major security issue!"
+    echo -e "This mode should be used only for unit testing!"
+    echo -e "If you read this, you should probably restart your setup withtout the SKIP_CLIENT_SECRET_UPDATE_FOR_TESTS env var"
+    echo -e "##################################################################################################################\n"
+    exit 0
+fi 
+
 # wait till Keycloak is ready
 
 READY=0

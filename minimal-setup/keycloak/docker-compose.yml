@@ -132,7 +132,7 @@ services:
 
 
   keycloak:
-    image: orthancteam/orthanc-keycloak:24.11.0
+    image: orthancteam/orthanc-keycloak:24.12.0
     depends_on: [keycloak-db]
     restart: unless-stopped
     environment:
