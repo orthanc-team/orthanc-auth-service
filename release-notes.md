@@ -8,6 +8,12 @@ v x.x.x
 ========
 
 - Upgraded OHIF from v3.9.0-beta.56 to v3.9.2
+- Upgraded Keycloak from 25.0.5 to 26.0.7
+
+BREAKING CHANGES:
+- Keycloak Docker image env var `KEYCLOAK_ADMIN` is replaced by `KC_BOOTSTRAP_ADMIN_USERNAME`
+- Keycloak Docker image env var `KEYCLOAK_ADMIN_PASSWORD` is replace by `KC_BOOTSTRAP_ADMIN_PASSWORD`
+
 
 v 24.11.0
 ========

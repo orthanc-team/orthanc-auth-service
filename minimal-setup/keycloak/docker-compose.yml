@@ -104,7 +104,7 @@ services:
 #      ENABLE_KEYCLOAK_API_KEYS: "true"
 #      # to enable the permissions edition UI in OE2, you need to provide a KEYCLOAK_CLIENT_SECRET
 #      KEYCLOAK_CLIENT_SECRET: "change-me-I-am-a-secret-you-get-in-keycloak-logs"
-      KEYCLOAK_CLIENT_SECRET: "BW4jmAQXmnegXXDXKy7SPuStxSoPSG7M"
+      KEYCLOAK_CLIENT_SECRET: "qU5qhuToGyKHY4xKcUob5BUePwNBfSoH"
       PUBLIC_ORTHANC_ROOT: "http://localhost/orthanc/"
       PUBLIC_LANDING_ROOT: "http://localhost/orthanc/ui/app/token-landing.html"
       # to use OHIF-plugin:  make sure to use http://localhost/orthanc/ohif/
@@ -136,8 +136,10 @@ services:
     depends_on: [keycloak-db]
     restart: unless-stopped
     environment:
-      KEYCLOAK_ADMIN: "admin"
-      KEYCLOAK_ADMIN_PASSWORD: "change-me"
+      #KEYCLOAK_ADMIN: "admin"
+      #KEYCLOAK_ADMIN_PASSWORD: "change-me"
+      KC_BOOTSTRAP_ADMIN_USERNAME: "admin"
+      KC_BOOTSTRAP_ADMIN_PASSWORD: "change-me"
       KC_DB: "postgres"
       KC_DB_URL: "jdbc:postgresql://keycloak-db:5432/keycloak"
       KC_DB_USERNAME: "keycloak"
