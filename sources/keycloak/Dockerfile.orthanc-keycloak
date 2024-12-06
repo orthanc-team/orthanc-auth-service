@@ -8,6 +8,7 @@ FROM quay.io/keycloak/keycloak:26.0.7 AS builder
 WORKDIR /opt/keycloak
 ENV KC_DB=postgres
 ENV KC_HOSTNAME_=http://localhost/keycloak
+ENV KC_HEALTH_ENABLED=true
 
 RUN mkdir themes/orthanc
 ADD keycloak/orthanc-theme /opt/keycloak/themes/orthanc
