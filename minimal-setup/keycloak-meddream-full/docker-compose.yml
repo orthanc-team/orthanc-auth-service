@@ -24,7 +24,7 @@ services:
       ENABLE_ORTHANC_FOR_API: "true"
 
   orthanc:
-    image: orthancteam/orthanc:24.10.1
+    image: orthancteam/orthanc:24.12.0
     volumes:
       - orthanc-storage:/var/lib/orthanc/db
     depends_on: [orthanc-db]
@@ -152,7 +152,7 @@ services:
 
   # An orthanc dedicated for API accesses and also used by MedDream
   orthanc-for-api:
-    image: orthancteam/orthanc:24.10.1
+    image: orthancteam/orthanc:24.12.0
     volumes:
       - orthanc-storage:/var/lib/orthanc/db
       - ./meddream-plugin.py:/scripts/meddream-plugin.py

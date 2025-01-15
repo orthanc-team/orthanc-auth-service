@@ -4,6 +4,12 @@ SPDX-FileCopyrightText: 2022 - 2024 Orthanc Team SRL <info@orthanc.team>
 SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
+v 25.1.0
+========
+
+- Updated OHIF image with new default value for `bulkDataUri` to fix loading of PDF (https://github.com/OHIF/Viewers/issues/4256)
+
+
 v 24.12.1
 ========
 

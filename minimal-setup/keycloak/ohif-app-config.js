@@ -53,7 +53,10 @@ window.config = {
         supportsWildcard: true,
         staticWado: true,
         singlepart: 'bulkdata',
-        acceptHeader: [ 'multipart/related; type=application/octet-stream; transfer-syntax=*']
+        acceptHeader: [ 'multipart/related; type=application/octet-stream; transfer-syntax=*'],
+        bulkDataURI: {  // to remove once 3.9.2+ is released (https://github.com/OHIF/Viewers/issues/4256)
+          enabled: true
+        }
       },
     }],
   httpErrorHandler: error => {
