@@ -6,7 +6,7 @@ version: "3"
 services:
 
   nginx:
-    image: orthancteam/orthanc-nginx:24.11.0
+    image: orthancteam/orthanc-nginx:25.1.0
     depends_on: [orthanc, orthanc-auth-service, keycloak]
     restart: unless-stopped
     ports: ["80:80"]
@@ -90,7 +90,7 @@ services:
         }
 
   orthanc-auth-service:
-    image: orthancteam/orthanc-auth-service:24.11.0
+    image: orthancteam/orthanc-auth-service:25.1.0
     # always disable port mapping in production !!!
     # ports: ["8000:8000"]
     # permissions can be customized in the permissions.json file
@@ -124,7 +124,7 @@ services:
 
 # to use OHIF-plugin: you don't need this container
   ohif:
-    image: orthancteam/ohif-v3:24.9.0
+    image: orthancteam/ohif-v3:25.1.0
 #  uncomment if you want to customize ohif configuration
 #    volumes:
 #      - ./ohif-app-config.js:/usr/share/nginx/html/app-config.js
@@ -132,7 +132,7 @@ services:
 
 
   keycloak:
-    image: orthancteam/orthanc-keycloak:24.12.0
+    image: orthancteam/orthanc-keycloak:25.1.0
     depends_on: [keycloak-db]
     restart: unless-stopped
     environment:
