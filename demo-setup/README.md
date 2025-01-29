@@ -30,7 +30,7 @@ To start the setup, type: `./start-demo.sh`
 
 ## Using the UI
 
-- Orthanc UI with full admin access is accessible at [http://localhost/orthanc/ui/app/](http://localhost/orthanc/ui/app/).  Login/pwd = `orthanc/orthanc`
+- Orthanc UI with full admin access is accessible at [http://localhost/orthanc/ui/app/](http://localhost/orthanc/ui/app/).  Login/pwd = `admin/change-me`
 - follow the instructions in this video to share a study
 
 ![Sharing a study in OE2](doc/Share-study.gif)
