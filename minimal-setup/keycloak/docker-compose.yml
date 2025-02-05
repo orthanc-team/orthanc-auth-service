@@ -24,7 +24,7 @@ services:
       ENABLE_OHIF: "true"
 
   orthanc:
-    image: orthancteam/orthanc:24.12.0
+    image: orthancteam/orthanc:25.1.1
     volumes:
       - orthanc-storage:/var/lib/orthanc/db
     depends_on: [orthanc-db]
@@ -92,7 +92,7 @@ services:
   orthanc-auth-service:
     image: orthancteam/orthanc-auth-service:25.1.0
     # always disable port mapping in production !!!
-    # ports: ["8000:8000"]
+    ports: ["8000:8000"]
     # permissions can be customized in the permissions.json file
     volumes:
       - ./permissions.jsonc:/orthanc_auth_service/permissions.json

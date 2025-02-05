@@ -8,6 +8,7 @@ SPDX-License-Identifier: CC-BY-4.0
 
 This is a sample setup to demonstrate how to share publication links granting access to a single study.
 This setup uses Orthanc basic authentication to authenticate admin users.
+This setup **does not implement labels based access control** like the [Keycloak setup](../keycloak/README.md). 
 
 # Description
 

@@ -6,7 +6,8 @@ SPDX-License-Identifier: CC-BY-4.0
 
 # Purpose
 
-This is a sample setup to demonstrate how to share publication links granting access to a single study.
+This is a sample setup to demonstrate how to implement label based access control 
+and sharing of publication links granting access to a single study.
 This setup uses Keycloak to authenticate users.
 
 # Description
