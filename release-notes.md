@@ -4,6 +4,13 @@ SPDX-FileCopyrightText: 2022 - 2025 Orthanc Team SRL <info@orthanc.team>
 SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
+
+v 25.2.0
+========
+
+- Upgraded Nginx to `1.27.4` and Nginx-Certbot to `5.4.1` (support of Infomaniak DNS-01 Certbot authenticator)
+
+
 v 25.1.0
 ========
 
