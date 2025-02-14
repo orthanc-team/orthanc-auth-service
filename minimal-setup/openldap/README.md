@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2022 - 2024 Orthanc Team SRL <info@orthanc.team>
+# SPDX-FileCopyrightText: 2022 - 2025 Orthanc Team SRL <info@orthanc.team>
 #
 # SPDX-License-Identifier: CC0-1.0
 # What is it about?
