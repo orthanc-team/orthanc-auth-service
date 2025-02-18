@@ -9,6 +9,7 @@ v 25.2.0
 ========
 
 - Upgraded Nginx to `1.27.4` and Nginx-Certbot to `5.4.1` (support of Infomaniak DNS-01 Certbot authenticator)
+- Added `ENABLE_CLIENT_CERTIFICATE_VERIFICATION` to Nginx and Nginx-Cerbot Docker images.
 
 
 v 25.1.0
