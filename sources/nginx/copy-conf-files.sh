@@ -31,6 +31,14 @@ enableMedDream="${ENABLE_MEDDREAM:-false}"
 proxy_read_timeout="${PROXY_READ_TIMEOUT:-60}"
 sed -i "s/proxy_read_timeout_placeholder/${proxy_read_timeout}s/g" /etc/nginx/includes/nginx-common.conf
 
+# manage client cert verification
+client_cert_verification="${ENABLE_CLIENT_CERTIFICATE_VERIFICATION:-false}"
+if [[ $client_cert_verification == "true" && $https == "true" ]]; then
+  echo "ENABLE_CLIENT_CERTIFICATE_VERIFICATION is true -> enable client certificate verification (root CA should be /etc/nginx/ssl/ca.crt!)"
+  cp -f /etc/nginx/disabled-conf/orthanc-nginx-https-client-cert.conf /etc/nginx/user_conf.d/
+fi
+
+
 ls -al /etc/nginx/disabled-reverse-proxies/
 
 if [[ $enableOrthanc == "true" ]]; then

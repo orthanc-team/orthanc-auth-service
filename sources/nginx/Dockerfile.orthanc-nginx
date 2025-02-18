@@ -6,6 +6,7 @@ FROM nginx:1.27.4
 
 RUN mkdir /etc/nginx/enabled-reverse-proxies
 RUN mkdir /scripts
+RUN mkdir /etc/nginx/user_conf.d
 ADD nginx/nginx-common.conf /etc/nginx/includes/
 
 ADD nginx/reverse-proxy.* /etc/nginx/disabled-reverse-proxies/
