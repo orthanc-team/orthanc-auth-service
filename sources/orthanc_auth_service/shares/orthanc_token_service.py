@@ -111,6 +111,20 @@ class OrthancTokenService:
             else:
                 return urllib.parse.urljoin(self.public_landing_root_, f"?token={token}")
 
+        elif request.type == TokenType.VOLVIEW_VIEWER_PUBLICATION:
+
+            if not has_orthanc_ids:
+                logging.error("No orthanc_id provided while generating a link to the VolView viewer")
+                return None
+            study_ids_url = ",".join(["../studies/"+s.orthanc_id+"/archive" for s in request.resources])
+            volview_url_format = f"volview/index.html?names=[archive.zip]&urls={study_ids_url}&token={token}"
+
+            if skip_landing_page or self.public_landing_root_ is None:
+                public_root = self.public_orthanc_root_
+                return urllib.parse.urljoin(public_root, volview_url_format)
+            else:
+                return urllib.parse.urljoin(self.public_landing_root_, f"?token={token}")
+
         elif request.type == TokenType.MEDDREAM_INSTANT_LINK:
             if not has_dicom_uids:
                 logging.error("No dicom_uid provided while generating a link to the MedDream Viewer")
@@ -132,7 +146,7 @@ class OrthancTokenService:
             return None
 
     def check_token_is_allowed(self, type: TokenType):
-        if type in [TokenType.OSIMIS_VIEWER_PUBLICATION, TokenType.STONE_VIEWER_PUBLICATION]:
+        if type in [TokenType.OSIMIS_VIEWER_PUBLICATION, TokenType.STONE_VIEWER_PUBLICATION, TokenType.VOLVIEW_VIEWER_PUBLICATION]:
             if self.public_orthanc_root_ is None:
                 raise SharesException(f"'{type}' are disabled")
 
@@ -169,7 +183,8 @@ class OrthancTokenService:
             TokenType.STONE_VIEWER_PUBLICATION,
             TokenType.OHIF_VIEWER_PUBLICATION,
             TokenType.DOWNLOAD_INSTANT_LINK,
-            TokenType.VIEWER_INSTANT_LINK
+            TokenType.VIEWER_INSTANT_LINK,
+            TokenType.VOLVIEW_VIEWER_PUBLICATION
         ]:
             token = self.tokens_manager_.generate_token(request=request)
 
@@ -255,7 +270,7 @@ class OrthancTokenService:
         # extract the initial share request from the token
         request = self.tokens_manager_.get_request_from_token(token=token)
 
-        if request.type in [TokenType.OSIMIS_VIEWER_PUBLICATION, TokenType.STONE_VIEWER_PUBLICATION, TokenType.OHIF_VIEWER_PUBLICATION]:
+        if request.type in [TokenType.OSIMIS_VIEWER_PUBLICATION, TokenType.STONE_VIEWER_PUBLICATION, TokenType.OHIF_VIEWER_PUBLICATION, TokenType.VOLVIEW_VIEWER_PUBLICATION]:
 
             # check it is valid (this actually only checks the expiration date since we get the ids from the request itself !)
             if not self.is_expired(request):

@@ -35,6 +35,7 @@ class TokenType(str, Enum):
     MEDDREAM_VIEWER_PUBLICATION = 'meddream-viewer-publication'  # a link to open the MedDream viewer valid for a long period
     STONE_VIEWER_PUBLICATION = 'stone-viewer-publication'  # a link to open the Stone viewer valid for a long period
     OHIF_VIEWER_PUBLICATION = 'ohif-viewer-publication'  # a link to open the OHIF viewer valid for a long period
+    VOLVIEW_VIEWER_PUBLICATION = 'volview-viewer-publication'  # a link to open the VolView viewer valid for a long period
 
     MEDDREAM_INSTANT_LINK = 'meddream-instant-link'  # a direct link to MedDream viewer that is valid only a few minutes to open the viewer directly
 
