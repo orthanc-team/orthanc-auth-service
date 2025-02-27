@@ -63,7 +63,7 @@ while [ $READY -eq 0 ]; do
     # If 'Invalid' is part of the response, the secret is already regenerated, so exit
     echo "$RESPONSE" | grep -q "Invalid"
     if [ $? -eq 0 ]; then
-        echo "### Access denied with the default secret, probably already regenerated. Exiting script..."
+        echo "### Access denied with the default secret, probably already regenerated."
         exit 0
     else
         echo "### Keycloak is ready, script authenticated..."
