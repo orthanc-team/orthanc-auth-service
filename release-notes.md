@@ -4,6 +4,14 @@ SPDX-FileCopyrightText: 2022 - 2025 Orthanc Team SRL <info@orthanc.team>
 SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
+v 25.3.0
+========
+
+BREAKING CHANGE:
+- Nginx(-Cerbot) Docker image: replaced `ENABLE_CLIENT_CERTIFICATE_VERIFICATION` by `ENABLE_CLIENT_CERTIFICATE`
+  `/orthanc-cert` is now the only route protected by a client cert.
+
+
 v 25.2.1
 ========
 
