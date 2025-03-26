@@ -12,8 +12,6 @@ ADD nginx/reverse-proxy.* /etc/nginx/disabled-reverse-proxies/
 
 ADD nginx/orthanc-nginx-certbot.conf /etc/nginx/user_conf.d/
 
-ADD nginx/orthanc-nginx-https-client-cert.conf /etc/nginx/disabled-conf/
-
 COPY nginx/docker-entrypoint-certbot.sh /scripts-ot/
 COPY nginx/copy-conf-files.sh /scripts-ot/
 
