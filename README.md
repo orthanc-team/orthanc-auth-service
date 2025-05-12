@@ -127,12 +127,12 @@ curl -X PUT http://localhost:8000/tokens/stone-viewer-publication -H 'Content-Ty
 curl -X PUT http://localhost:8042/auth/tokens/stone-viewer-publication -H 'Content-Type: application/json' \
   -d '{"ID": "toto",
        "Resources" : [{
-         "DicomUid": "1.2",
-         "OrthancId": "",
-         "Level": "study"
+         "dicom-uid": "1.2",
+         "orthanc-id": "",
+         "level": "study"
        }],
-       "Type": "stone-viewer-publication", 
-       "ExpirationDate": "2026-12-31T11:00:00Z"}'
+       "type": "stone-viewer-publication", 
+       "expiration-date": "2026-12-31T11:00:00Z"}'
 ```
 
 
