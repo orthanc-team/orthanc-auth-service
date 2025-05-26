@@ -229,9 +229,12 @@ class OrthancTokenService:
 
     def decode_token(self, token: str) -> TokenDecoderResponse:
         try:
+            if token.startswith("Bearer "):
+                token = token.replace("Bearer ", "")
+
             logging.info("Decode token: " + token)
 
-            response = TokenDecoderResponse()
+            response = TokenDecoderResponse(resources=[])
 
             # try to decode the token to get the token_creation_request
             token_creation_request = TokenCreationRequest(**self.tokens_manager_._decode_token(token))  # this will raise if the token can not be decoded
@@ -243,6 +246,8 @@ class OrthancTokenService:
 
             # we can not check that the token is valid for the given study, this will be checked by the auth plugin once the viewer opens
             response.redirect_url = self.redirect_to_viewer(token=token)
+            response.resources = token_creation_request.resources
+
             return response
 
         except InvalidTokenException as ex:

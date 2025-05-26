@@ -101,7 +101,7 @@ class TokenDecoderResponse(BaseModel):
     token_type: Optional[TokenType] = Field(alias="token-type", default=None)
     error_code: Optional[DecoderErrorCodes] = Field(alias="error-code", default=None)
     redirect_url: Optional[str] = Field(alias="redirect-url", default=None)
-
+    resources: List[OrthancResource]
 
 class UserProfileRequest(BaseModel):
     token_key: Optional[str] = Field(alias="token-key", default=None)

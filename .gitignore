@@ -5,3 +5,4 @@
 .idea/
 .venv/
 *.py[cod]
+.vscode/

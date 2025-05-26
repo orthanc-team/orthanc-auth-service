@@ -4,6 +4,9 @@ SPDX-FileCopyrightText: 2022 - 2025 Orthanc Team SRL <info@orthanc.team>
 SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
+- Auth-service now returns a new field `resources` in the `/tokens/decode` route.
+  This is required for the last changes of the authorization plugin (v 0.9.2+)
+
 v 25.5.0
 ========
 
