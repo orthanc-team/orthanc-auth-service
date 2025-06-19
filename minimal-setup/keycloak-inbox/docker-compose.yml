@@ -24,7 +24,7 @@ services:
       ENABLE_OHIF: "true"
 
   orthanc:
-    image: orthancteam/orthanc:25.6.4
+    image: orthancteam/orthanc-pre-release:inbox-unstable
     volumes:
       - orthanc-storage:/var/lib/orthanc/db
       - ./inbox-plugin.py:/scripts/inbox-plugin.py
