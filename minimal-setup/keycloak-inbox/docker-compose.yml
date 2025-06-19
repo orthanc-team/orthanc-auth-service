@@ -27,6 +27,7 @@ services:
     image: orthancteam/orthanc:25.6.4
     volumes:
       - orthanc-storage:/var/lib/orthanc/db
+      - ./inbox-plugin.py:/scripts/inbox-plugin.py
     depends_on: [orthanc-db]
     restart: unless-stopped
     environment:
@@ -61,6 +62,21 @@ services:
               "Url": "http://localhost/keycloak/",
               "Realm": "orthanc",
               "ClientId": "orthanc"
+            },
+            "Inbox": {
+              "Enable": true,
+              // set the following option to false if you don't wan't to offer access to an inbox to anonymous users
+              "EnableAnonymousAccess": true,
+              "CommitUrl": "../../plugins/inbox/commit",
+              "FormValidationUrl": "../../plugins/inbox/validate-form",
+              "FormFields": [{
+                "Type" : "text",
+                "Title": "Subject ID",
+                "Id": "SubjectId",
+                "Mandatory": true,
+                "Placeholder": "ex: SUB-253"
+                }
+              ]
             }
           },
           "AuthenticationEnabled": false,     // because it is handled by the authorization plugin
@@ -76,8 +92,13 @@ services:
               "ohif"
             ],
             "TokenHttpHeaders" : [ "api-key" ],
-            "CheckedLevel": "studies"
+            "CheckedLevel": "studies",
+            // comment this out if you don't wan't to offer access to an inbox to anonymous users
+            "ExtraPermissions": [
+              ["post", "^/plugins/inbox-commit$", "upload"]
+            ]
           },
+          "PythonScript": "/scripts/inbox-plugin.py",
           "DicomWeb": {
             "Enable": true,
             "PublicRoot": "/orthanc/dicom-web/"
@@ -90,12 +111,13 @@ services:
         }
 
   orthanc-auth-service:
-    image: orthancteam/orthanc-auth-service:2025.05.27
+    image: orthancteam/orthanc-auth-service:inbox
     # always disable this port mapping in production !!!
     ports: ["8000:8000"]
     # permissions can be customized in the permissions.json file
     volumes:
       - ./permissions.jsonc:/orthanc_auth_service/permissions.json
+      - ./anonymous-profile.jsonc:/orthanc_auth_service/anonymous-profile.json
     depends_on: [keycloak]
     restart: unless-stopped
     environment:
