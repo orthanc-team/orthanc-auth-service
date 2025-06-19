@@ -26,7 +26,7 @@ keycloak_std_client = None
 keycloak_admin_client = None
 
 permissions_file_path = os.environ.get("PERMISSIONS_FILE_PATH", "/orthanc_auth_service/permissions.json")
-anonymous_profile_file_path = os.environ.get("ANONYMOUS_PROFILE_FILE_PATH", "/orthanc_auth_service/anonymous-permissions.json")
+anonymous_profile_file_path = os.environ.get("ANONYMOUS_PROFILE_FILE_PATH", "/orthanc_auth_service/anonymous-profile.json")
 roles_configuration = RolesConfiguration(permissions_file_path=permissions_file_path, anonymous_profile_file_path=anonymous_profile_file_path)
 
 handle_users_with_keycloak = os.environ.get("ENABLE_KEYCLOAK", "false") == "true"

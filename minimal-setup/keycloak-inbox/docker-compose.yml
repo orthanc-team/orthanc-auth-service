@@ -126,11 +126,12 @@ services:
 #      ENABLE_KEYCLOAK_API_KEYS: "true"
 #      # to enable the permissions edition UI in OE2, you need to provide a KEYCLOAK_CLIENT_SECRET
 #      KEYCLOAK_CLIENT_SECRET: "change-me-I-am-a-secret-you-get-in-keycloak-logs"
-      KEYCLOAK_CLIENT_SECRET: "5KYfmCll8quvQtlZtUO2vXdsDjA8fR0O"
+      KEYCLOAK_CLIENT_SECRET: "MrfV6Oujc7LLAxjtNedgfFQMD4bY2Ma2"
       PUBLIC_ORTHANC_ROOT: "http://localhost/orthanc/"
       PUBLIC_LANDING_ROOT: "http://localhost/orthanc/ui/app/token-landing.html"
       # to use OHIF-plugin:  make sure to use http://localhost/orthanc/ohif/
       PUBLIC_OHIF_ROOT: "http://localhost/ohif/"
+      ANONYMOUS_PROFILE_FILE_PATH: "/orthanc_auth_service/anonymous-profile.json"
 #      PUBLIC_OHIF_ROOT: "http://localhost/orthanc/ohif/"
       USERS: |
         {
