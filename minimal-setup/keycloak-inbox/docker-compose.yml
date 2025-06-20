@@ -67,8 +67,8 @@ services:
               "Enable": true,
               // set the following option to false if you don't wan't to offer access to an inbox to anonymous users
               "EnableAnonymousAccess": true,
-              "CommitUrl": "../../plugins/inbox/commit",
-              "FormValidationUrl": "../../plugins/inbox/validate-form",
+              "CommitUrl": "plugins/inbox/commit",
+              "FormValidationUrl": "plugins/inbox/validate-form",
               "FormFields": [{
                 "Type" : "text",
                 "Title": "Subject ID",
@@ -95,7 +95,7 @@ services:
             "CheckedLevel": "studies",
             // comment this out if you don't wan't to offer access to an inbox to anonymous users
             "ExtraPermissions": [
-              ["post", "^/plugins/inbox-commit$", "upload"]
+              ["post", "^/plugins/inbox/commit$", "upload"]
             ]
           },
           "PythonScript": "/scripts/inbox-plugin.py",
