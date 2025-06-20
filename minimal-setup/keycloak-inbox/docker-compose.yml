@@ -93,9 +93,8 @@ services:
             ],
             "TokenHttpHeaders" : [ "api-key" ],
             "CheckedLevel": "studies",
-            // comment this out if you don't wan't to offer access to an inbox to anonymous users
             "ExtraPermissions": [
-              ["post", "^/plugins/inbox/commit$", "upload"]
+              ["post", "^/plugins/inbox/commit$", "upload|all"]
             ]
           },
           "PythonScript": "/scripts/inbox-plugin.py",
