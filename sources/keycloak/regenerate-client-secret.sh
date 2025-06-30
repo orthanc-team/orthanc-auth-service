@@ -28,6 +28,9 @@
 # the json answers, but this will be done only if really needed (feel
 # the pain as one says).
 
+# The secret value in the script has to be adapted as soon as the Docker
+# image is rebuilt.
+
 ##########################################################################
 
 cd /opt/keycloak/bin/
@@ -50,7 +53,7 @@ READY=0
 
 while [ $READY -eq 0 ]; do
     # Try to authenticate and capture response
-    RESPONSE=$(./kcadm.sh config credentials --server http://localhost:8080 --realm orthanc --client admin-cli --secret NPtsEUenl6nw8gJmM886TbvzuGPzvgt9 2>&1)
+    RESPONSE=$(./kcadm.sh config credentials --server http://localhost:8080 --realm orthanc --client admin-cli --secret THPRqk7LVRVxsxcNnOos3cjtLDfIfh0C 2>&1)
     
     # Wait till Keycloak is ready
     echo "$RESPONSE" | grep -q "Connection refused"
