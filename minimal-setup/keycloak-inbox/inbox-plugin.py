@@ -10,6 +10,7 @@ import time
 import threading
 import typing
 import datetime
+import base64
 
 # This plugin adds API routes to perform custom actions after an upload in the inbox.
 
@@ -93,7 +94,7 @@ def on_post_validate_form(output, uri, **request):
     subject_id = form_fields['SubjectId']
     if not subject_id:
         mark_invalid_field(result, 'SubjectId', "The Subject Id is mandatory")
-    elif not re.match('SUB\-[0-9]*3', subject_id):
+    elif not re.match('SUB\-[0-9]{3}', subject_id):
         mark_invalid_field(result, 'SubjectId', "Invalid format, expecting something like 'SUB-253'")
     else:
         mark_valid_field(result, 'SubjectId')
@@ -104,11 +105,21 @@ def on_post_validate_form(output, uri, **request):
     else:
         mark_valid_field(result, 'VisitId')
 
-    site_id = form_fields['SiteId']
+    site_id = form_fields.get('SiteId')
     if not site_id:
         mark_invalid_field(result, 'SiteId', "Select a site ID")
     else:
         mark_valid_field(result, 'SiteId')
+
+    pdf_form = form_fields['PdfForm']
+    if not pdf_form:
+        mark_invalid_field(result, 'PdfForm', "Provide a PDF file")
+    else:
+        if pdf_form.startswith('data:application/pdf;base64,'):
+            mark_valid_field(result, 'PdfForm')
+        else:
+            mark_invalid_field(result, 'PdfForm', "Make sure to upload a PDF file")
+
 
     output.AnswerBuffer(json.dumps(result), 'application/json')
 
@@ -175,6 +186,7 @@ def on_post_inbox_commit(output, uri, **request):
     uploaded_studies_ids = payload["OrthancStudiesIds"]
     form_fields = payload["FormFields"]
     subject_id = form_fields['SubjectId']
+    pdf_form = form_fields['PdfForm']
 
     orthanc.LogInfo(f"INBOX: committing upload for {subject_id}")
 
@@ -249,6 +261,20 @@ def on_post_inbox_commit(output, uri, **request):
         # label the anonymized study
         if anonymized_study_id:
             orthanc.RestApiPut(f"/studies/{anonymized_study_id}/labels/processed", "")
+
+        # attach the PDF as a new DICOM series
+        # anonymized_study = json.loads(orthanc.RestApiGet(f"/studies/{anonymized_study_id}"))
+        # anonymized_study_tags = anonymized_study['MainDicomTags']
+        # anonymized_patient_tags = anonymized_study['PatientMainDicomTags']
+        orthanc.RestApiPost("/tools/create-dicom",
+                            json.dumps({
+                                'Parent': anonymized_study_id,
+                                'Tags': { 
+                                    'SOPClassUID': '1.2.840.10008.5.1.4.1.1.104.1',
+                                    'SeriesDescription': 'PDF Form'
+                                },
+                                'Content' : pdf_form
+                            }))
 
         # delete the original study
         orthanc.RestApiDelete(f"/studies/{study_id}")
