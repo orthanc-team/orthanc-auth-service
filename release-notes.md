@@ -7,12 +7,12 @@ v 25.x.x
 ========
 - `orthanc-nginx-certbot` Docker image: upgrade base image (`jonasal/nginx-certbot`) from `5.4.1` to `6.0.0`.
   Behind the scene, this is an upgrade of Certbot from `2.11.0` to `4.1.1`.
+- The auth-service can now return `groups` in the User Profile if Keycloack provides the field.
 
 
 v 25.6.0
 ========
 
-- The auth-service can now return `groups` in the User Profile if Keycloack provides the field.
 - New "ANONYMOUS_PROFILE_FILE_PATH" to define the anonymous profile (name & permissions).
 - Auth-service now returns a new field `resources` in the `/tokens/decode` route.
   This is required for the last changes of the authorization plugin (v 0.9.3)
