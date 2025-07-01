@@ -27,6 +27,7 @@ services:
     image: orthancteam/orthanc:25.6.4
     volumes:
       - orthanc-storage:/var/lib/orthanc/db
+      - ./download-as-jpeg.py:/scripts/plugin.py
     depends_on: [orthanc-db]
     restart: unless-stopped
     environment:
@@ -50,11 +51,38 @@ services:
               "EnableOpenInOhifViewer3": true,
               // to use OHIF-plugin:  use http://localhost/orthanc/ohif/
               //"OhifViewer3PublicRoot": "http://localhost/orthanc/ohif/"
-              "OhifViewer3PublicRoot": "http://localhost/ohif/"
+              "OhifViewer3PublicRoot": "http://localhost/ohif/",
+              "CustomButtons": {
+                "study": [
+                  {
+                    "HttpMethod": "GET",
+                    "Id": "get-jpeg-archive",
+                    "Tooltip": "Get JPG Archive",
+                    "Target": "_self",
+                    "Icon": "bi bi-filetype-jpg",
+                    "Url": "../../studies/{UUID}/download-as-jpeg-archive?token={study-resource-token/download-instant-link}&preview-level=instance" 
+                  }
+                ]
+              }
             },
             "Tokens" : {
               "InstantLinksValidity": 3600,
-              "ShareType": "ohif-viewer-publication"
+              "ShareType": "ohif-viewer-publication",
+              "LandingOptions" : [
+                {
+                  "Type" : "open-viewer-button"
+                },
+                {
+                  "Type" : "download-study"
+                },
+                {
+                  "Type": "custom",
+                  "Id": "get-jpeg-archive",
+                  "Icon": "bi bi-filetype-jpg",
+                  "Title": "Download study as jpeg Archive",
+                  "Url": "../../studies/{UUID}/download-as-jpeg-archive?preview-level=instance&filename={StudyInstanceUID}.zip"
+                }
+              ]
             },
             "Keycloak" : {
               "Enable": true,
@@ -81,12 +109,8 @@ services:
           "DicomWeb": {
             "Enable": true,
             "PublicRoot": "/orthanc/dicom-web/"
-          }
-          // to use OHIF-plugin:  make sure to have a "OHIF" config and use "dicom-web" source
-          //, "OHIF": {
-          //  "DataSource": "dicom-web",
-          //  "RouterBasename": "/orthanc/ohif/"
-          //}
+          },
+          "PythonScript": "/scripts/plugin.py"
         }
 
   orthanc-auth-service:

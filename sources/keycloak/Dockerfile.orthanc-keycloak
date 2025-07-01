@@ -3,7 +3,7 @@
 #
 # SPDX-License-Identifier: CC0-1.0
 
-FROM quay.io/keycloak/keycloak:26.0.7 AS builder
+FROM quay.io/keycloak/keycloak:26.2.5 AS builder
 
 WORKDIR /opt/keycloak
 ENV KC_DB=postgres
@@ -15,7 +15,7 @@ ADD keycloak/orthanc-theme /opt/keycloak/themes/orthanc
 
 RUN /opt/keycloak/bin/kc.sh build
 
-FROM quay.io/keycloak/keycloak:26.0.7
+FROM quay.io/keycloak/keycloak:26.2.5
 COPY --from=builder /opt/keycloak/ /opt/keycloak/
 
 COPY keycloak/realm-export.json /opt/keycloak/data/import/

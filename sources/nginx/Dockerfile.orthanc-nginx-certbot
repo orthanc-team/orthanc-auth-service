@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: CC0-1.0
 
-FROM jonasal/nginx-certbot:5.4.1
+FROM jonasal/nginx-certbot:6.0.0
 
 RUN mkdir /etc/nginx/enabled-reverse-proxies
 RUN mkdir /scripts-ot
