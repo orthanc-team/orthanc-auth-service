@@ -67,14 +67,22 @@ services:
               "Enable": true,
               // set the following option to false if you don't wan't to offer access to an inbox to anonymous users
               "EnableAnonymousAccess": true,
+              "Title": "Trial - XYZ",
+              "IntroTextHtml": "<p>Welcome to this inbox.</p><p>First fill the form and once all fields are valid, upload your DICOM files.</p><p>Wait for the processing to complete.</p>",
               "CommitUrl": "plugins/inbox/commit",
               "FormValidationUrl": "plugins/inbox/validate-form",
+              "ProcessingMonitoringUrl": "plugins/inbox/monitor-processing",
               "FormFields": [{
-                "Type" : "text",
-                "Title": "Subject ID",
-                "Id": "SubjectId",
-                "Mandatory": true,
-                "Placeholder": "ex: SUB-253"
+                  "Type" : "Text",
+                  "Title": "Subject ID",
+                  "Id": "SubjectId",
+                  "Placeholder": "ex: SUB-253"
+                }, {
+                  "Type" : "Choice",
+                  "Title": "Visit ID",
+                  "Id": "VisitId",
+                  "Choices": ["T0", "T0 + 6 months", "T0 + 12 months", "T0 + 18 months", "T0 + 24 months"],
+                  "Placeholder": "Select a visit"
                 }
               ]
             }
@@ -94,7 +102,9 @@ services:
             "TokenHttpHeaders" : [ "api-key" ],
             "CheckedLevel": "studies",
             "ExtraPermissions": [
-              ["post", "^/plugins/inbox/commit$", "upload|all"]
+              ["post", "^/plugins/inbox/validate-form$", "upload|all"],
+              ["post", "^/plugins/inbox/commit$", "upload|all"],
+              ["post", "^/plugins/inbox/monitor-processing$", "upload|all"]
             ]
           },
           "PythonScript": "/scripts/inbox-plugin.py",
@@ -125,7 +135,7 @@ services:
 #      ENABLE_KEYCLOAK_API_KEYS: "true"
 #      # to enable the permissions edition UI in OE2, you need to provide a KEYCLOAK_CLIENT_SECRET
 #      KEYCLOAK_CLIENT_SECRET: "change-me-I-am-a-secret-you-get-in-keycloak-logs"
-      KEYCLOAK_CLIENT_SECRET: "MrfV6Oujc7LLAxjtNedgfFQMD4bY2Ma2"
+      KEYCLOAK_CLIENT_SECRET: "zJxSzc4zsQZ5UXpL5QNKWpb07BfiDrcG"
       PUBLIC_ORTHANC_ROOT: "http://localhost/orthanc/"
       PUBLIC_LANDING_ROOT: "http://localhost/orthanc/ui/app/token-landing.html"
       # to use OHIF-plugin:  make sure to use http://localhost/orthanc/ohif/
@@ -154,7 +164,7 @@ services:
 
 
   keycloak:
-    image: orthancteam/orthanc-keycloak:25.5.0
+    image: orthancteam/orthanc-keycloak:main
     depends_on: [keycloak-db]
     restart: unless-stopped
     environment:

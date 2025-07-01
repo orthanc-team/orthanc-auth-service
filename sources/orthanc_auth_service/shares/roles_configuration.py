@@ -38,6 +38,7 @@ class RolesConfiguration:
         self._anonymous_profile = UserProfileResponse(
             name="Anonymous",
             permissions=[],
+            groups=[],
             authorized_labels=[],
             validity=60)
 

@@ -4,9 +4,11 @@ SPDX-FileCopyrightText: 2022 - 2025 Orthanc Team SRL <info@orthanc.team>
 SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
+- The auth-service can now return `groups` in the User Profile if Keycloack provides the field.
 - New "ANONYMOUS_PROFILE_FILE_PATH" to define the anonymous profile (name & permissions).
 - Auth-service now returns a new field `resources` in the `/tokens/decode` route.
   This is required for the last changes of the authorization plugin (v 0.9.3)
+
 
 v 25.5.0
 ========

@@ -141,6 +141,7 @@ class UserProfileResponse(RolePermissions):
     # authorized_labels: List[str] = Field(alias="authorized-labels", default_factory=list)
     # permissions: List[UserPermissions] = Field(default_factory=list)
     validity: int
+    groups: Optional[List[str]] = None
 
     class Config:
         use_enum_values = True

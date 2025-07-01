@@ -7,5 +7,6 @@
     "permissions": [
         "upload"
     ],
+    "groups": [],
     "validity": 60
 }
