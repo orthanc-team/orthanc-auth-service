@@ -91,35 +91,40 @@ def on_post_validate_form(output, uri, **request):
 
     result = {}
 
-    subject_id = form_fields['SubjectId']
-    if not subject_id:
-        mark_invalid_field(result, 'SubjectId', "The Subject Id is mandatory")
-    elif not re.match('SUB\-[0-9]{3}', subject_id):
-        mark_invalid_field(result, 'SubjectId', "Invalid format, expecting something like 'SUB-253'")
-    else:
-        mark_valid_field(result, 'SubjectId')
+    if True:
+        subject_id = form_fields['SubjectId']
+        if not subject_id:
+            mark_invalid_field(result, 'SubjectId', "The Subject Id is mandatory")
+        elif not re.match('SUB\-[0-9]{3}', subject_id):
+            mark_invalid_field(result, 'SubjectId', "Invalid format, expecting something like 'SUB-253'")
+        else:
+            mark_valid_field(result, 'SubjectId')
 
-    visit_id = form_fields['VisitId']
-    if not visit_id:
-        mark_invalid_field(result, 'VisitId', "Select a visit")
+        visit_id = form_fields['VisitId']
+        if not visit_id:
+            mark_invalid_field(result, 'VisitId', "Select a visit")
+        else:
+            mark_valid_field(result, 'VisitId')
+
+        site_id = form_fields.get('SiteId')
+        if not site_id:
+            mark_invalid_field(result, 'SiteId', "Select a site ID")
+        else:
+            mark_valid_field(result, 'SiteId')
+
+        pdf_form = form_fields['PdfForm']
+        if not pdf_form:
+            mark_invalid_field(result, 'PdfForm', "Provide a PDF file")
+        else:
+            if pdf_form.startswith('data:application/pdf;base64,'):
+                mark_valid_field(result, 'PdfForm')
+            else:
+                mark_invalid_field(result, 'PdfForm', "Make sure to upload a PDF file")
     else:
         mark_valid_field(result, 'VisitId')
-
-    site_id = form_fields.get('SiteId')
-    if not site_id:
-        mark_invalid_field(result, 'SiteId', "Select a site ID")
-    else:
+        mark_valid_field(result, 'SubjectId')
         mark_valid_field(result, 'SiteId')
-
-    pdf_form = form_fields['PdfForm']
-    if not pdf_form:
-        mark_invalid_field(result, 'PdfForm', "Provide a PDF file")
-    else:
-        if pdf_form.startswith('data:application/pdf;base64,'):
-            mark_valid_field(result, 'PdfForm')
-        else:
-            mark_invalid_field(result, 'PdfForm', "Make sure to upload a PDF file")
-
+        mark_valid_field(result, 'PdfForm')
 
     output.AnswerBuffer(json.dumps(result), 'application/json')
 
@@ -260,28 +265,36 @@ def on_post_inbox_commit(output, uri, **request):
 
         # label the anonymized study
         if anonymized_study_id:
+            orthanc.LogInfo(f"INBOX: Labelling anonymized study {anonymized_study_id}")
             orthanc.RestApiPut(f"/studies/{anonymized_study_id}/labels/processed", "")
 
         # attach the PDF as a new DICOM series
-        # anonymized_study = json.loads(orthanc.RestApiGet(f"/studies/{anonymized_study_id}"))
-        # anonymized_study_tags = anonymized_study['MainDicomTags']
-        # anonymized_patient_tags = anonymized_study['PatientMainDicomTags']
-        orthanc.RestApiPost("/tools/create-dicom",
-                            json.dumps({
-                                'Parent': anonymized_study_id,
-                                'Tags': { 
-                                    'SOPClassUID': '1.2.840.10008.5.1.4.1.1.104.1',
-                                    'SeriesDescription': 'PDF Form'
-                                },
-                                'Content' : pdf_form
-                            }))
+        try:
+            orthanc.LogInfo(f"INBOX: Attaching PDF file {anonymized_study_id}")
+            orthanc.RestApiPost("/tools/create-dicom",
+                                json.dumps({
+                                    'Parent': anonymized_study_id,
+                                    'Tags': { 
+                                        'SOPClassUID': '1.2.840.10008.5.1.4.1.1.104.1',
+                                        'SeriesDescription': 'PDF Form'
+                                    },
+                                    'Content' : pdf_form
+                                }))
+        except Exception as e:
+            with store_lock:
+                orthanc.LogError(f"INBOX: failed to attach the PDF File: study {anonymized_study_id}")
+                commit_jobs[current_commit_id].has_failed = True
+                commit_jobs[current_commit_id].current_message = f"Failed to attach the PDF file.  Ref study: {anonymized_study_id}"
+        finally:
 
-        # delete the original study
-        orthanc.RestApiDelete(f"/studies/{study_id}")
+            orthanc.LogInfo(f"INBOX: deleting the original study {study_id}")
+            # delete the original study
+            orthanc.RestApiDelete(f"/studies/{study_id}")
 
     with store_lock:
         commit_jobs[current_commit_id].is_complete = True
-        commit_jobs[current_commit_id].current_message = "All studies have been uploaded and anonymized."
+        if not commit_jobs[current_commit_id].has_failed:
+            commit_jobs[current_commit_id].current_message = "All studies have been uploaded and anonymized."
 
 
 # Orthanc Rest API callback called to monitor processing after a commit
