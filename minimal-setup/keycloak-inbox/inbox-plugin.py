@@ -32,6 +32,28 @@ def get_first_day_of_year(date):
         return datetime.date(date.year, 1, 1)
     return None
 
+def get_user_id(request):
+    # decode the JWT keycloak token.  We don't verify the signature here because, it we get here,
+    # it means that it has passed the token verification in the auth-plugin and we can trust the token.
+    if 'headers' in request and 'token' in request['headers']:
+        
+        _, payload, __ = request['headers']['token'].split('.')
+        payload += '=' * (-len(payload) % 4) 
+        
+        decoded_keycloak_token = json.loads(base64.b64decode(payload).decode('utf-8'))
+        return decoded_keycloak_token['sub']
+
+    return None
+
+def record_audit_log(user_id, resource_type, resource_id, action, log_data):
+#   LOG(WARNING) << "AUDIT-LOG: " << profile.userId << " / " << action << " on " << resourceType << ":" << resourceId << ", " << customData.toStyledString();
+    orthanc.LogWarning(f"AUDIT-LOG: (python): {user_id} / {action} on {resource_type}, {resource_id} << {json.dumps(log_data)}")
+    
+    if log_data:
+        orthanc.AuditLog(user_id, resource_type, resource_id, action, json.dumps(log_data, separators=(',', ':')).encode("utf-8"))
+    else:
+        orthanc.AuditLog(user_id, resource_type, resource_id, action, None)
+
 
 # Orthanc "change" handlers
 def on_change(changeType, level, resource):
@@ -120,11 +142,14 @@ def on_post_validate_form(output, uri, **request):
                 mark_valid_field(result, 'PdfForm')
             else:
                 mark_invalid_field(result, 'PdfForm', "Make sure to upload a PDF file")
+
+        mark_valid_field(result, 'Comments')
     else:
         mark_valid_field(result, 'VisitId')
         mark_valid_field(result, 'SubjectId')
         mark_valid_field(result, 'SiteId')
         mark_valid_field(result, 'PdfForm')
+        mark_valid_field(result, 'Comments')
 
     output.AnswerBuffer(json.dumps(result), 'application/json')
 
@@ -184,6 +209,9 @@ def on_post_inbox_commit(output, uri, **request):
     global store_lock
     global commit_jobs
 
+    # user_id = get_user_id(request)
+    user_id = "inbox-script"
+
     if request['method'] != 'POST':
         output.SendMethodNotAllowed('POST')
 
@@ -192,6 +220,7 @@ def on_post_inbox_commit(output, uri, **request):
     form_fields = payload["FormFields"]
     subject_id = form_fields['SubjectId']
     pdf_form = form_fields['PdfForm']
+    comments = form_fields['Comments']
 
     orthanc.LogInfo(f"INBOX: committing upload for {subject_id}")
 
@@ -221,22 +250,28 @@ def on_post_inbox_commit(output, uri, **request):
 
         study_info = json.loads(orthanc.RestApiGet(f"/studies/{study_id}"))
 
-        # anonymize the study
-        job = json.loads(orthanc.RestApiPost(f"/studies/{study_id}/anonymize", json.dumps({
+        anonymize_payload = {
             "Replace": {
                 "PatientID": subject_id,
                 "PatientName": subject_id,
                 "StudyDescription": form_fields['VisitId'],
                 "PatientBirthDate": to_dicom_date(get_first_day_of_year(from_dicom_date(study_info['PatientMainDicomTags'].get('PatientBirthDate')))),
-                "PatientSex": study_info['PatientMainDicomTags'].get('PatientSex')
+                "PatientSex": study_info['PatientMainDicomTags'].get('PatientSex'),
+                "VisitComments": comments
             },
             "Keep": [
                 "StudyDate",
                 "StudyTime"
             ],
             "Force": True,  # because we set the PatientID
-            "Synchronous": False
-        })))
+            "Synchronous": False,
+            "UserData": { # this is for the audit-logs
+                "AuditLogsUserId": user_id
+            }
+        }
+
+        # anonymize the study
+        job = json.loads(orthanc.RestApiPostAfterPlugins(f"/studies/{study_id}/anonymize", json.dumps(anonymize_payload)))
 
         job_id = job['ID']
         orthanc.LogInfo(f"INBOX: Created anonymization job {job_id}")
@@ -266,6 +301,7 @@ def on_post_inbox_commit(output, uri, **request):
         # label the anonymized study
         if anonymized_study_id:
             orthanc.LogInfo(f"INBOX: Labelling anonymized study {anonymized_study_id}")
+            record_audit_log(user_id, orthanc.ResourceType.STUDY, anonymized_study_id, "put-label", "processed")
             orthanc.RestApiPut(f"/studies/{anonymized_study_id}/labels/processed", "")
 
         # attach the PDF as a new DICOM series
@@ -280,6 +316,8 @@ def on_post_inbox_commit(output, uri, **request):
                                     },
                                     'Content' : pdf_form
                                 }))
+            record_audit_log(user_id, orthanc.ResourceType.STUDY, anonymized_study_id, "attach-series", "None")
+
         except Exception as e:
             with store_lock:
                 orthanc.LogError(f"INBOX: failed to attach the PDF File: study {anonymized_study_id}")

@@ -31,6 +31,9 @@ class Keycloak:
 
         return ''
 
+    def get_id_from_decoded_token(self, decoded_token: Dict[str, Any]) -> str:
+        return decoded_token.get('sub')
+
     def get_roles_from_decoded_token(self, decoded_token: Dict[str, Any]) -> List[str]:
         '''
         Returns the roles extracted form the token.
@@ -93,6 +96,7 @@ class Keycloak:
             groups = decoded_token['groups']
         response = UserProfileResponse(
             name=self.get_name_from_decoded_token(decoded_token=decoded_token),
+            user_id=self.get_id_from_decoded_token(decoded_token=decoded_token),
             permissions=[],
             groups=groups,
             validity=60,

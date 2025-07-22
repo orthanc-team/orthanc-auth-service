@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: CC0-1.0
 {
     "name": "Anonymous",
+    "user-id": null,
     "authorized-labels": [
     ],
     "permissions": [

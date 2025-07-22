@@ -3,11 +3,13 @@ SPDX-FileCopyrightText: 2022 - 2025 Orthanc Team SRL <info@orthanc.team>
 
 SPDX-License-Identifier: GPL-3.0-or-later
 -->
+
 v 25.x.x
 ========
 - `orthanc-nginx-certbot` Docker image: upgrade base image (`jonasal/nginx-certbot`) from `5.4.1` to `6.0.0`.
   Behind the scene, this is an upgrade of Certbot from `2.11.0` to `4.1.1`.
 - The auth-service can now return `groups` in the User Profile if Keycloack provides the field.
+- The auth-service now returns `user-id` in the User Profile.
 
 
 v 25.6.0

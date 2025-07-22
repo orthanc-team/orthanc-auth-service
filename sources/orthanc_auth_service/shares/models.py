@@ -138,6 +138,7 @@ class RolePermissions(BaseModel):
 
 class UserProfileResponse(RolePermissions):
     name: str
+    user_id: Optional[str] = Field(alias="user-id", default=None)
     # authorized_labels: List[str] = Field(alias="authorized-labels", default_factory=list)
     # permissions: List[UserPermissions] = Field(default_factory=list)
     validity: int
