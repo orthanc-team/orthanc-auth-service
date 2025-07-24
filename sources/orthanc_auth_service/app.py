@@ -219,7 +219,7 @@ def get_user_profile(user_profile_request: UserProfileRequest):
     anonymous_profile = roles_configuration.get_anonymous_profile()
     
     try:
-        if not user_profile_request.token_value:
+        if not user_profile_request.token_value and user_profile_request.user_id is None :
             logging.warning("No token provided, returning anonymous profile")
             return anonymous_profile
         
@@ -235,6 +235,8 @@ def get_user_profile(user_profile_request: UserProfileRequest):
                 if token.startswith("Bearer "):
                     token = token.replace("Bearer ", "")
                 response = keycloak_std_client.get_user_profile_from_token(token)
+        elif user_profile_request.user_id is not None and keycloak_admin_client is not None:
+            response = keycloak_admin_client.get_user_profile_from_user_id(user_id=user_profile_request.user_id)
         else:
             return anonymous_profile
 

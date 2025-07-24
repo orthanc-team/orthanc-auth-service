@@ -106,6 +106,7 @@ class TokenDecoderResponse(BaseModel):
 class UserProfileRequest(BaseModel):
     token_key: Optional[str] = Field(alias="token-key", default=None)
     token_value: Optional[str] = Field(alias="token-value", default=None)
+    user_id: Optional[str] = Field(alias="user-id", default=None)
     server_id: Optional[str] = Field(alias="server-id", default=None)
 
 

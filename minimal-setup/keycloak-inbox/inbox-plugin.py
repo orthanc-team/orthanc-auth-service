@@ -64,12 +64,12 @@ def on_change(changeType, level, resource):
         # Orthanc has been killed during an upload -> we must delete all these studies
 
         untagged_studies_ids = json.loads(orthanc.RestApiPost("/tools/find", json.dumps({
-        "Level": "Study",
-        "Query": {},
-        "Labels": ["processed"],
-        "LabelsConstraint": "None",
-        "Expand": False
-        })))
+            "Level": "Study",
+            "Query": {},
+            "Labels": ["processed"],
+            "LabelsConstraint": "None",
+            "Expand": False
+            })))
 
         if len(untagged_studies_ids) > 0:
             orthanc.LogWarning(f"INBOX: deleting {len(untagged_studies_ids)} un-processed studies at Orthanc startup")
@@ -113,11 +113,11 @@ def on_post_validate_form(output, uri, **request):
 
     result = {}
 
-    if True:
+    if False:
         subject_id = form_fields['SubjectId']
         if not subject_id:
             mark_invalid_field(result, 'SubjectId', "The Subject Id is mandatory")
-        elif not re.match('SUB\-[0-9]{3}', subject_id):
+        elif not re.match('^SUB\-[0-9]{3}$', subject_id):
             mark_invalid_field(result, 'SubjectId', "Invalid format, expecting something like 'SUB-253'")
         else:
             mark_valid_field(result, 'SubjectId')
@@ -316,7 +316,7 @@ def on_post_inbox_commit(output, uri, **request):
                                     },
                                     'Content' : pdf_form
                                 }))
-            record_audit_log(user_id, orthanc.ResourceType.STUDY, anonymized_study_id, "attach-series", "None")
+            record_audit_log(user_id, orthanc.ResourceType.STUDY, anonymized_study_id, "attach-series", None)
 
         except Exception as e:
             with store_lock:
@@ -328,6 +328,7 @@ def on_post_inbox_commit(output, uri, **request):
             orthanc.LogInfo(f"INBOX: deleting the original study {study_id}")
             # delete the original study
             orthanc.RestApiDelete(f"/studies/{study_id}")
+            record_audit_log(user_id, orthanc.ResourceType.STUDY, study_id, "deleted-study", None)
 
     with store_lock:
         commit_jobs[current_commit_id].is_complete = True

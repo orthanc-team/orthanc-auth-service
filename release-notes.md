@@ -10,6 +10,7 @@ v 25.x.x
   Behind the scene, this is an upgrade of Certbot from `2.11.0` to `4.1.1`.
 - The auth-service can now return `groups` in the User Profile if Keycloack provides the field.
 - The auth-service now returns `user-id` in the User Profile.
+- The `/user/get-profile` route can now return a basic User Profile with mainly the `name` when requested against a `user-id`.
 
 
 v 25.6.0

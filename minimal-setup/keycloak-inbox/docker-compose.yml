@@ -5,7 +5,7 @@
 services:
 
   nginx:
-    image: orthancteam/orthanc-nginx:25.5.0
+    image: orthancteam/orthanc-nginx:inbox
     depends_on: [orthanc, orthanc-auth-service, keycloak]
     restart: unless-stopped
     ports: ["80:80"]
@@ -45,6 +45,7 @@ services:
             "IsDefaultUI": true,
             "UiOptions": {
               "EnableShares": true,
+              "EnableAuditLogs": true,
               "DefaultShareDuration": 0,
               "ShareDurations": [0, 7, 15, 30, 90, 365],
               "EnableOpenInOhifViewer3": true,
@@ -65,7 +66,7 @@ services:
             "Inbox": {
               "Enable": true,
               // set the following option to false if you don't wan't to offer access to an inbox to anonymous users
-              "EnableAnonymousAccess": true,
+              "EnableAnonymousAccess": false,
               "Title": "Trial - XYZ",
               "IntroTextHtml": "<p>Welcome to this inbox.</p><p>First fill the form and once all fields are valid, upload your DICOM files.</p><p>Wait for the processing to complete.</p>",
               "CommitUrl": "plugins/inbox/commit",
@@ -76,13 +77,21 @@ services:
                   "Title": "Subject ID",
                   "Id": "SubjectId",
                   "Placeholder": "ex: SUB-253"
-                }, {
+                }, 
+                {
                   "Type" : "Choice",
                   "Title": "Visit ID",
                   "Id": "VisitId",
                   "Choices": ["T0", "T0 + 6 months", "T0 + 12 months", "T0 + 18 months", "T0 + 24 months"],
                   "Placeholder": "Select a visit"
-                }, {
+                },
+                {
+                  "Type" : "MultilineText",
+                  "Title": "Comments",
+                  "Id": "Comments",
+                  "Placeholder": "Any comments ?"
+                },
+                {
                   "Type" : "PdfFile",
                   "Title": "PDF form",
                   "Id": "PdfForm"
@@ -108,7 +117,8 @@ services:
               ["post", "^/plugins/inbox/validate-form$", "upload|all"],
               ["post", "^/plugins/inbox/commit$", "upload|all"],
               ["post", "^/plugins/inbox/monitor-processing$", "upload|all"]
-            ]
+            ],
+            "EnableAuditLogs": true
           },
           "PythonScript": "/scripts/inbox-plugin.py",
           "DicomWeb": {
@@ -168,7 +178,7 @@ services:
 
 
   keycloak:
-    image: orthancteam/orthanc-keycloak:main
+    image: orthancteam/orthanc-keycloak:inbox
     depends_on: [keycloak-db]
     restart: unless-stopped
     environment:
