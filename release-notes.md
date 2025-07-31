@@ -3,10 +3,11 @@ SPDX-FileCopyrightText: 2022 - 2025 Orthanc Team SRL <info@orthanc.team>
 
 SPDX-License-Identifier: GPL-3.0-or-later
 -->
-v 25.x.x
+v 25.7.0
 ========
 - `orthanc-nginx-certbot` Docker image: upgrade base image (`jonasal/nginx-certbot`) from `5.4.1` to `6.0.0`.
   Behind the scene, this is an upgrade of Certbot from `2.11.0` to `4.1.1`.
+- upgraded OHIF from v3.9.2 to v3.10.4
 
 
 v 25.6.0
