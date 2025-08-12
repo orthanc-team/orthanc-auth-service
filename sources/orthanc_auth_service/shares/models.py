@@ -124,6 +124,7 @@ class UserPermissions(str, Enum):
     API_VIEW = 'api-view'
     EDIT_LABELS = 'edit-labels'
     ADMIN_PERMISSIONS = 'admin-permissions'
+    AUDIT_LOGS = 'audit-logs'
 
     SHARE = 'share'
 

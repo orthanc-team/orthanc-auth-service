@@ -50,9 +50,9 @@ def record_audit_log(user_id, resource_type, resource_id, action, log_data):
     orthanc.LogWarning(f"AUDIT-LOG: (python): {user_id} / {action} on {resource_type}, {resource_id} << {json.dumps(log_data)}")
     
     if log_data:
-        orthanc.AuditLog(user_id, resource_type, resource_id, action, json.dumps(log_data, separators=(',', ':')).encode("utf-8"))
+        orthanc.EmitAuditLog("inbox", user_id, resource_type, resource_id, action, json.dumps(log_data, separators=(',', ':')).encode("utf-8"))
     else:
-        orthanc.AuditLog(user_id, resource_type, resource_id, action, None)
+        orthanc.EmitAuditLog("inbox", user_id, resource_type, resource_id, action, None)
 
 
 # Orthanc "change" handlers
