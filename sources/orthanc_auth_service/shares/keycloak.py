@@ -31,6 +31,9 @@ class Keycloak:
 
         return ''
 
+    def get_id_from_decoded_token(self, decoded_token: Dict[str, Any]) -> str:
+        return decoded_token.get('sub')
+
     def get_roles_from_decoded_token(self, decoded_token: Dict[str, Any]) -> List[str]:
         '''
         Returns the roles extracted form the token.
@@ -88,9 +91,14 @@ class Keycloak:
 
     def get_user_profile_from_token(self, jwt_token: str) -> UserProfileResponse:
         decoded_token = self.decode_token(jwt_token=jwt_token)
+        groups = None
+        if 'groups' in decoded_token:  # this might have not been configured in Keycloak (see 'orthanc client' -> client scopes -> orthanc-dedicated mapper)
+            groups = decoded_token['groups']
         response = UserProfileResponse(
             name=self.get_name_from_decoded_token(decoded_token=decoded_token),
+            user_id=self.get_id_from_decoded_token(decoded_token=decoded_token),
             permissions=[],
+            groups=groups,
             validity=60,
             authorized_labels=[])
 

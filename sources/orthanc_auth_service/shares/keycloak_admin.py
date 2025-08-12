@@ -36,6 +36,26 @@ class KeycloakAdmin:
         access_token = response.json()['access_token']
         return access_token
 
+    def get_user_profile_from_user_id(self, user_id: str) -> Optional[UserProfileResponse]:
+        keycloak_users_url = urljoin(self._keycloak_admin_uri, f"users/{user_id}")
+        headers = {
+            'Authorization': 'Bearer ' + self._get_keycloak_access_token(),
+            'Content-Type': 'application/json'
+        }
+
+        keycloak_user_response = requests.get(keycloak_users_url, headers=headers)
+        if keycloak_user_response.status_code == 200:
+            user = keycloak_user_response.json()
+            return UserProfileResponse(
+                    name=user['username'],
+                    permissions=[],
+                    validity=60,
+                    authorized_labels=[]
+                )
+        else:
+            return None        
+
+
     def get_user_profile_from_api_key(self, api_key: str) -> Optional[UserProfileResponse]:
         query = {
             "q": f"api-key:{api_key}"

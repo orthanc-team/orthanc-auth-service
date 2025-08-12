@@ -106,6 +106,7 @@ class TokenDecoderResponse(BaseModel):
 class UserProfileRequest(BaseModel):
     token_key: Optional[str] = Field(alias="token-key", default=None)
     token_value: Optional[str] = Field(alias="token-value", default=None)
+    user_id: Optional[str] = Field(alias="user-id", default=None)
     server_id: Optional[str] = Field(alias="server-id", default=None)
 
 
@@ -123,6 +124,7 @@ class UserPermissions(str, Enum):
     API_VIEW = 'api-view'
     EDIT_LABELS = 'edit-labels'
     ADMIN_PERMISSIONS = 'admin-permissions'
+    AUDIT_LOGS = 'audit-logs'
 
     SHARE = 'share'
 
@@ -138,9 +140,11 @@ class RolePermissions(BaseModel):
 
 class UserProfileResponse(RolePermissions):
     name: str
+    user_id: Optional[str] = Field(alias="user-id", default=None)
     # authorized_labels: List[str] = Field(alias="authorized-labels", default_factory=list)
     # permissions: List[UserPermissions] = Field(default_factory=list)
     validity: int
+    groups: Optional[List[str]] = None
 
     class Config:
         use_enum_values = True

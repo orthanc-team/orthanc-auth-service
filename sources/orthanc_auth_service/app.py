@@ -26,7 +26,8 @@ keycloak_std_client = None
 keycloak_admin_client = None
 
 permissions_file_path = os.environ.get("PERMISSIONS_FILE_PATH", "/orthanc_auth_service/permissions.json")
-roles_configuration = RolesConfiguration(permissions_file_path=permissions_file_path)
+anonymous_profile_file_path = os.environ.get("ANONYMOUS_PROFILE_FILE_PATH", "/orthanc_auth_service/anonymous-profile.json")
+roles_configuration = RolesConfiguration(permissions_file_path=permissions_file_path, anonymous_profile_file_path=anonymous_profile_file_path)
 
 handle_users_with_keycloak = os.environ.get("ENABLE_KEYCLOAK", "false") == "true"
 
@@ -213,15 +214,15 @@ def decode_token(request: TokenDecoderRequest):
 
 @app.post("/user/get-profile", dependencies=basic_auth_dependencies)  # this is a POST and not a GET because we want to same kind of payload as for other routes
 def get_user_profile(user_profile_request: UserProfileRequest):
-    logging.info(f"get user profile from token '{user_profile_request.token_key}'")
+    logging.info(f"get user profile from token '{user_profile_request.token_key}', '{user_profile_request.token_value}'")
 
-    anonymous_profile = UserProfileResponse(
-                name="Anonymous",
-                permissions=[],
-                authorized_labels=[],
-                validity=60
-            )
+    anonymous_profile = roles_configuration.get_anonymous_profile()
+    
     try:
+        if not user_profile_request.token_value and user_profile_request.user_id is None :
+            logging.warning("No token provided, returning anonymous profile")
+            return anonymous_profile
+        
         if keycloak_std_client is None:
             logging.warning("Keycloak is not configured, all users are considered anonymous")
             return anonymous_profile
@@ -234,6 +235,8 @@ def get_user_profile(user_profile_request: UserProfileRequest):
                 if token.startswith("Bearer "):
                     token = token.replace("Bearer ", "")
                 response = keycloak_std_client.get_user_profile_from_token(token)
+        elif user_profile_request.user_id is not None and keycloak_admin_client is not None:
+            response = keycloak_admin_client.get_user_profile_from_user_id(user_id=user_profile_request.user_id)
         else:
             return anonymous_profile
 

@@ -3,6 +3,13 @@ SPDX-FileCopyrightText: 2022 - 2025 Orthanc Team SRL <info@orthanc.team>
 
 SPDX-License-Identifier: GPL-3.0-or-later
 -->
+
+
+- The auth-service can now return `groups` in the User Profile if Keycloack provides the field.
+- The auth-service now returns `user-id` in the User Profile.
+- The `/user/get-profile` route can now return a basic User Profile with mainly the `name` when requested against a `user-id`.
+
+
 v 25.7.0
 ========
 - `orthanc-nginx-certbot` Docker image: upgrade base image (`jonasal/nginx-certbot`) from `5.4.1` to `6.0.0`.
@@ -13,8 +20,10 @@ v 25.7.0
 v 25.6.0
 ========
 
+- New "ANONYMOUS_PROFILE_FILE_PATH" to define the anonymous profile (name & permissions).
 - Auth-service now returns a new field `resources` in the `/tokens/decode` route.
-  This is required for the last changes of the authorization plugin (v 0.9.2+)
+  This is required for the last changes of the authorization plugin (v 0.9.3)
+
 
 v 25.5.0
 ========
