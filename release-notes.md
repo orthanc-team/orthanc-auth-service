@@ -8,6 +8,7 @@ SPDX-License-Identifier: GPL-3.0-or-later
 - The auth-service can now return `groups` in the User Profile if Keycloack provides the field.
 - The auth-service now returns `user-id` in the User Profile.
 - The `/user/get-profile` route can now return a basic User Profile with mainly the `name` when requested against a `user-id`.
+- upgraded OHIF from v3.10.4 to v3.11.0
 
 
 v 25.7.0
