@@ -4,7 +4,8 @@ SPDX-FileCopyrightText: 2022 - 2025 Orthanc Team SRL <info@orthanc.team>
 SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
-
+v 25.8.0
+========
 - The auth-service can now return `groups` in the User Profile if Keycloack provides the field.
 - The auth-service now returns `user-id` in the User Profile.
 - The `/user/get-profile` route can now return a basic User Profile with mainly the `name` when requested against a `user-id`.
