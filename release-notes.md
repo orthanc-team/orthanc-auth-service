@@ -5,9 +5,14 @@ SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
 
+v 25.8.1
+========
+
 - The nginx reverse proxies now sets all `port`, `host` and `scheme` values in the `Forwarded` HTTP header and in the 
   `X-Forwarded-for/proto/host` headers.  Note that, for the orthanc reverse proxy, only the `Forwarded` header is set
   while for other reverse proxies, all `X-Forwarded-*` headers and the `Forwarded` header are set.
+- Updated the `default-app-config.js` in the ohif image since we don't need the `BulkDataURI` configuration anymore.
+
 
 v 25.8.0
 ========
