@@ -138,7 +138,7 @@ def on_post_validate_form(output, uri, **request):
         if not pdf_form:
             mark_invalid_field(result, 'PdfForm', "Provide a PDF file")
         else:
-            if pdf_form.startswith('data:application/pdf;base64,'):
+            if pdf_form.startswith('data:application/pdf;base64'):
                 mark_valid_field(result, 'PdfForm')
             else:
                 mark_invalid_field(result, 'PdfForm', "Make sure to upload a PDF file")

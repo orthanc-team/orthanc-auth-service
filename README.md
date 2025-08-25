@@ -87,6 +87,7 @@ q-r-remote-modalities
 settings
 api-view
 share
+audit-logs
 ```
 
 These permissions are also configured in the Orthanc authorization plugin (in the `Authorization.Permissions` configuration).

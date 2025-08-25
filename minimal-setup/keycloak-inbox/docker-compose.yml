@@ -5,7 +5,7 @@
 services:
 
   nginx:
-    image: orthancteam/orthanc-nginx:inbox
+    image: orthancteam/orthanc-nginx:main
     depends_on: [orthanc, orthanc-auth-service, keycloak]
     restart: unless-stopped
     ports: ["80:80"]
@@ -23,7 +23,7 @@ services:
       ENABLE_OHIF: "true"
 
   orthanc:
-    image: orthancteam/orthanc-pre-release:sql-opti-unstable
+    image: orthancteam/orthanc-pre-release:master-unstable
     volumes:
       - orthanc-storage:/var/lib/orthanc/db
       - ./inbox-plugin.py:/scripts/inbox-plugin.py
@@ -92,7 +92,7 @@ services:
                   "Placeholder": "Any comments ?"
                 },
                 {
-                  "Type" : "PdfFile",
+                  "Type" : "File",
                   "Title": "PDF form",
                   "Id": "PdfForm"
                 }
@@ -133,7 +133,7 @@ services:
         }
 
   orthanc-auth-service:
-    image: orthancteam/orthanc-auth-service:inbox
+    image: orthancteam/orthanc-auth-service:main
     # always disable this port mapping in production !!!
     ports: ["8000:8000"]
     # permissions can be customized in the permissions.json file
@@ -148,7 +148,7 @@ services:
 #      ENABLE_KEYCLOAK_API_KEYS: "true"
 #      # to enable the permissions edition UI in OE2, you need to provide a KEYCLOAK_CLIENT_SECRET
 #      KEYCLOAK_CLIENT_SECRET: "change-me-I-am-a-secret-you-get-in-keycloak-logs"
-      KEYCLOAK_CLIENT_SECRET: "zJxSzc4zsQZ5UXpL5QNKWpb07BfiDrcG"
+      KEYCLOAK_CLIENT_SECRET: "m1FL0Y4GN9DsBK39NSwTWSjAQTnsPzGA"
       PUBLIC_ORTHANC_ROOT: "http://localhost/orthanc/"
       PUBLIC_LANDING_ROOT: "http://localhost/orthanc/ui/app/token-landing.html"
       # to use OHIF-plugin:  make sure to use http://localhost/orthanc/ohif/
@@ -170,7 +170,7 @@ services:
 
 # to use OHIF-plugin: you don't need this container
   ohif:
-    image: orthancteam/ohif-v3:25.5.0
+    image: orthancteam/ohif-v3:main
 #  uncomment if you want to customize ohif configuration
 #    volumes:
 #      - ./ohif-app-config.js:/usr/share/nginx/html/app-config.js
@@ -178,7 +178,7 @@ services:
 
 
   keycloak:
-    image: orthancteam/orthanc-keycloak:inbox
+    image: orthancteam/orthanc-keycloak:main
     depends_on: [keycloak-db]
     restart: unless-stopped
     environment:
