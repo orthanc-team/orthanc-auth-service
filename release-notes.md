@@ -4,6 +4,11 @@ SPDX-FileCopyrightText: 2022 - 2025 Orthanc Team SRL <info@orthanc.team>
 SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
+
+- The nginx reverse proxies now sets all `port`, `host` and `scheme` values in the `Forwarded` HTTP header and in the 
+  `X-Forwarded-for/proto/host` headers.  Note that, for the orthanc reverse proxy, only the `Forwarded` header is set
+  while for other reverse proxies, all `X-Forwarded-*` headers and the `Forwarded` header are set.
+
 v 25.8.0
 ========
 - The auth-service can now return `groups` in the User Profile if Keycloack provides the field.
