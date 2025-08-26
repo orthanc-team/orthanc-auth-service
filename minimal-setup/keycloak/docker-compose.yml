@@ -6,7 +6,7 @@ version: "3"
 services:
 
   nginx:
-    image: orthancteam/orthanc-nginx:25.6.0
+    image: orthancteam/orthanc-nginx:25.8.1
     depends_on: [orthanc, orthanc-auth-service, keycloak]
     restart: unless-stopped
     ports: ["80:80"]
@@ -24,10 +24,9 @@ services:
       ENABLE_OHIF: "true"
 
   orthanc:
-    image: orthancteam/orthanc:25.6.4
+    image: orthancteam/orthanc:25.8.2
     volumes:
       - orthanc-storage:/var/lib/orthanc/db
-      - ./download-as-jpeg.py:/scripts/plugin.py
     depends_on: [orthanc-db]
     restart: unless-stopped
     environment:
@@ -109,14 +108,13 @@ services:
           "DicomWeb": {
             "Enable": true,
             "PublicRoot": "/orthanc/dicom-web/"
-          },
-          "PythonScript": "/scripts/plugin.py"
+          }
         }
 
   orthanc-auth-service:
-    image: orthancteam/orthanc-auth-service:2025.05.27
+    image: orthancteam/orthanc-auth-service:25.8.1
     # always disable this port mapping in production !!!
-    ports: ["8000:8000"]
+    # ports: ["8000:8000"]
     # permissions can be customized in the permissions.json file
     volumes:
       - ./permissions.jsonc:/orthanc_auth_service/permissions.json
@@ -148,7 +146,7 @@ services:
 
 # to use OHIF-plugin: you don't need this container
   ohif:
-    image: orthancteam/ohif-v3:25.5.0
+    image: orthancteam/ohif-v3:25.8.1
 #  uncomment if you want to customize ohif configuration
 #    volumes:
 #      - ./ohif-app-config.js:/usr/share/nginx/html/app-config.js
@@ -156,7 +154,7 @@ services:
 
 
   keycloak:
-    image: orthancteam/orthanc-keycloak:25.5.0
+    image: orthancteam/orthanc-keycloak:25.8.1
     depends_on: [keycloak-db]
     restart: unless-stopped
     environment:
