@@ -4,6 +4,10 @@ SPDX-FileCopyrightText: 2022 - 2025 Orthanc Team SRL <info@orthanc.team>
 SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
+v 25.x.x
+========
+- Update cache cleaner values for the Meddream viewer (according to Softneta recommendations)
+
 
 v 25.8.1
 ========
