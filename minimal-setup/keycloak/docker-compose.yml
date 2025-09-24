@@ -32,6 +32,7 @@ services:
     environment:
       STONE_WEB_VIEWER_PLUGIN_ENABLED: "true"
       DICOM_WEB_PLUGIN_ENABLED: "true"
+      STL_PLUGIN_ENABLED: "true"
       # to use OHIF-plugin:  make sure to have a "OHIF" config and use "dicom-web" source
 #      OHIF_PLUGIN_ENABLED: "true"
       ORTHANC__POSTGRESQL__HOST: "orthanc-db"
@@ -100,7 +101,8 @@ services:
               "osimis-web-viewer",
               "stone-webviewer",
               "orthanc-explorer-2",
-              "ohif"
+              "ohif",
+              "stl"
             ],
             "TokenHttpHeaders" : [ "api-key" ],
             "CheckedLevel": "studies"
