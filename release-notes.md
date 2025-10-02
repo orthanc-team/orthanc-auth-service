@@ -4,6 +4,9 @@ SPDX-FileCopyrightText: 2022 - 2025 Orthanc Team SRL <info@orthanc.team>
 SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
+
+- In `orhtanc-nginx`: fixed the default value of ENABLE_ORTHANC that is now set to `true`.
+
 v 25.9.0
 ========
 - Update cache cleaner values for the Meddream viewer (according to Softneta recommendations)

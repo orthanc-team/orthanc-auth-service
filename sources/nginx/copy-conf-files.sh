@@ -19,7 +19,7 @@ else
   https=false
 fi
 
-enableOrthanc="${ENABLE_ORTHANC:-false}"
+enableOrthanc="${ENABLE_ORTHANC:-true}"
 enableOrthancForApi="${ENABLE_ORTHANC_FOR_API:-false}"
 enableOrthancForShares="${ENABLE_ORTHANC_FOR_SHARES:-false}"
 enableKeycloak="${ENABLE_KEYCLOAK:-false}"
