@@ -6,7 +6,7 @@ version: "3"
 services:
 
   nginx:
-    image: orthancteam/orthanc-nginx:25.8.1
+    image: orthancteam/orthanc-nginx:25.9.0
     depends_on: [orthanc, orthanc-auth-service, keycloak]
     restart: unless-stopped
     ports: ["80:80"]
@@ -15,6 +15,9 @@ services:
 #    volumes:
 #      - /.../crt.pem:/etc/nginx/tls/crt.pem
 #      - /.../key.pem:/etc/nginx/tls/key.pem
+# if using orthancteam/orthanc-nginx-certbot image, map the volume
+#    volumes:
+#      - tls:/etc/letsencrypt
     environment:
       ENABLE_ORTHANC: "true"
       ENABLE_KEYCLOAK: "true"
@@ -24,7 +27,7 @@ services:
       ENABLE_OHIF: "true"
 
   orthanc:
-    image: orthancteam/orthanc:25.8.2
+    image: orthancteam/orthanc:25.10.5
     volumes:
       - orthanc-storage:/var/lib/orthanc/db
     depends_on: [orthanc-db]
@@ -114,7 +117,7 @@ services:
         }
 
   orthanc-auth-service:
-    image: orthancteam/orthanc-auth-service:25.8.1
+    image: orthancteam/orthanc-auth-service:25.9.0
     # always disable this port mapping in production !!!
     # ports: ["8000:8000"]
     # permissions can be customized in the permissions.json file
@@ -142,13 +145,15 @@ services:
   orthanc-db:
     image: postgres:14
     restart: unless-stopped
+    # always disable this port mapping in production !!!
+    # ports: ["5432:5432"]
     volumes: ["orthanc-db:/var/lib/postgresql/data"]
     environment:
       POSTGRES_HOST_AUTH_METHOD: "trust"
 
 # to use OHIF-plugin: you don't need this container
   ohif:
-    image: orthancteam/ohif-v3:25.8.1
+    image: orthancteam/ohif-v3:25.9.0
 #  uncomment if you want to customize ohif configuration
 #    volumes:
 #      - ./ohif-app-config.js:/usr/share/nginx/html/app-config.js
@@ -156,7 +161,7 @@ services:
 
 
   keycloak:
-    image: orthancteam/orthanc-keycloak:25.8.1
+    image: orthancteam/orthanc-keycloak:25.9.0
     depends_on: [keycloak-db]
     restart: unless-stopped
     environment:
@@ -185,3 +190,4 @@ volumes:
   orthanc-storage:
   orthanc-db:
   keycloak-db:
+  # tls:
