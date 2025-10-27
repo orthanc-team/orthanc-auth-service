@@ -5,7 +5,8 @@ SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
 
-- In `orhtanc-nginx`: fixed the default value of ENABLE_ORTHANC that is now set to `true`.
+- In `orthanc-nginx`: fixed the default value of ENABLE_ORTHANC that is now set to `true`.
+- Modified Nginx docker images to avoid the buffering of requests body (removed rewrite directive).
 
 v 25.9.0
 ========
