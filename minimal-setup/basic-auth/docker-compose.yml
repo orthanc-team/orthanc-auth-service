@@ -59,6 +59,9 @@ services:
             "WebServiceUsername": "share-user",
             "WebServicePassword": "change-me"
             //"CheckedLevel": "studies"
+          },
+          "DicomWeb": {
+            "PublicRoot": "/orthanc/dicom-web"
           }
         
         }
