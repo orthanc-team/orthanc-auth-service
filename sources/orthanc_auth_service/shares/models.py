@@ -125,7 +125,7 @@ class UserPermissions(str, Enum):
     EDIT_LABELS = 'edit-labels'
     ADMIN_PERMISSIONS = 'admin-permissions'
     AUDIT_LOGS = 'audit-logs'
-
+    WORKLISTS = 'worklists'
     SHARE = 'share'
 
 

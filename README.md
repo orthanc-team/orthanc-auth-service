@@ -88,6 +88,7 @@ settings
 api-view
 share
 audit-logs
+worklists
 ```
 
 These permissions are also configured in the Orthanc authorization plugin (in the `Authorization.Permissions` configuration).
