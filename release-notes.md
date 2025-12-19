@@ -4,9 +4,11 @@ SPDX-FileCopyrightText: 2022 - 2025 Orthanc Team SRL <info@orthanc.team>
 SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
-
+v 25.12.0
+========
 - In `orthanc-nginx`: fixed the default value of ENABLE_ORTHANC that is now set to `true`.
 - Modified Nginx docker images to avoid the buffering of requests body (removed rewrite directive).
+- Added `worklists` in the `UserPermissions` model
 
 v 25.9.0
 ========
