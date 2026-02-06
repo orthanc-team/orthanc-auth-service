@@ -4,11 +4,18 @@ SPDX-FileCopyrightText: 2022 - 2025 Orthanc Team SRL <info@orthanc.team>
 SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
+v 26.2.0
+========
+- Upgraded `Meddream` Docker base image from `8.4.0` to `8.8.0`
+- Upgraded `Nginx` Docker base image from `1.27.4` to `1.29.5`
+
+
 v 25.12.0
 ========
 - In `orthanc-nginx`: fixed the default value of ENABLE_ORTHANC that is now set to `true`.
 - Modified Nginx docker images to avoid the buffering of requests body (removed rewrite directive).
 - Added `worklists` in the `UserPermissions` model
+
 
 v 25.9.0
 ========
