@@ -4,6 +4,16 @@ SPDX-FileCopyrightText: 2022 - 2025 Orthanc Team SRL <info@orthanc.team>
 SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
+Pending changes
+===============
+
+- In `orthanc-auth-service`: 
+  - Added new routes to send emails and provide email templates
+  - Updated python to 3.14 and updated all python modules
+- The minimal keycloak setup now features a mock STMP server.
+
+
+
 v 25.12.0
 ========
 - In `orthanc-nginx`: fixed the default value of ENABLE_ORTHANC that is now set to `true`.

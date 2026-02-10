@@ -27,5 +27,15 @@ in authorization headers that will be checked by the [Authorization plugin](http
 |                             |                                              |                                                                                                                                                                     |
 | MEDDREAM_TOKEN_SERVICE_URL  | -                                            | The URL to the MedDream token service. e.g `http://meddream-token-service:8088/v3/generate`                                                                         |
 | PUBLIC_MEDDREAM_ROOT        | -                                            | The public root URL to access the MedDream viewer. e.g `http://localhost/meddream/`                                                                                 |
+| ENABLE_EMAILS               | false                                        | Enables the Email support |
+| EMAILS_TEMPLATES_ROOT       | /email-templates/                            | The path where email templates are stored (They must be stored as self contained HTML files with the `.html` extension)                                                            |
+| EMAILS_SMTP_SERVER_HOSTNAME | -  | The hostname of the SMTP Server |
+| EMAILS_SMTP_SERVER_PORT     | -  | The port of the SMTP Server |
+| EMAILS_SMTP_SERVER_USES_TLS | true  | Weither SMTP Server requires TLS |
+| EMAILS_SMTP_SERVER_USER_NAME | -  | The username used to connect to the SMTP Server |
+| EMAILS_SMTP_SERVER_PWD | -  | The password used to connect to the SMTP Server |
+| EMAILS_SENDER_ADDRESS | -  | The email address that is used to send the email from |
+| EMAILS_REPLY_TO | -  | The email address that is used as the reply to |
+
 
 3 demo setups are available [here](https://github.com/orthanc-team/orthanc-auth-service/tree/main/minimal-setup).

@@ -4,20 +4,29 @@
 
 from fastapi import FastAPI, Request, status, Header, HTTPException, Depends, Query
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
+from fastapi.responses import HTMLResponse
 import logging
 import json
 import secrets
 import os
+import glob
 from datetime import timedelta
 import requests
 import jwt
 import pytz
+import re
 from shares.models import *
+from shares.models_emails import *
 from shares.orthanc_token_service_factory import create_token_service_from_secrets
 from shares.keycloak import create_keycloak_from_secrets
 from shares.roles_configuration import RolesConfiguration
 from shares.keycloak_admin import KeycloakAdmin
 from shares.utils.utils import get_secret_or_die, is_secret_defined
+
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -71,6 +80,28 @@ else:
     security = None
     logging.error(f"USERS env var is not defined, can not start without it")
     exit(-1)
+
+
+enable_emails = os.environ.get("ENABLE_EMAILS", "false") == "true"
+if enable_emails:
+    logging.warning("EMAIL support is enabled")
+
+    email_templates_root = os.environ.get("EMAILS_TEMPLATES_ROOT", "/email-templates/")
+    email_sender = get_secret_or_die("EMAILS_SENDER_ADDRESS")
+    if is_secret_defined("EMAILS_REPLY_TO"):
+        email_reply_to = get_secret_or_die("EMAILS_REPLY_TO")
+    else:
+        email_reply_to = email_sender
+    smtp_login = get_secret_or_die("EMAILS_SMTP_SERVER_USER_NAME")
+    smtp_password = get_secret_or_die("EMAILS_SMTP_SERVER_PWD")
+    smtp_hostname = get_secret_or_die("EMAILS_SMTP_SERVER_HOSTNAME")
+    smtp_port = int(get_secret_or_die("EMAILS_SMTP_SERVER_PORT"))
+    smtp_enable_ssl = get_secret_or_die("EMAILS_SMTP_SERVER_USES_TLS") != 'false'
+
+else:
+    logging.warning("EMAIL support is disabled")
+
+
 
 def ingest_keycloak_roles(roles_config: RolesConfigurationModel):
     # add the keycloak roles that are not yet listed in the roles_config
@@ -268,3 +299,61 @@ def set_settings_roles(roles_config_request: RolesConfigurationModel):
 
     ingest_keycloak_roles(roles_config_request)
     roles_configuration.update_configured_roles(roles_config_request)
+
+
+@app.get("/emails/templates", dependencies=basic_auth_dependencies)
+def list_email_templates():
+    templates = []
+
+    for t in glob.glob(os.path.join(email_templates_root, "*.html")):
+        templates.append(os.path.basename(os.path.splitext(t)[0]))
+    return templates
+
+
+def get_template(template_name: str) -> str:
+    with open(os.path.join(email_templates_root, f"{template_name}.html"), "rt") as f:
+        return f.read()
+
+
+@app.get("/emails/templates/{template_name}", dependencies=basic_auth_dependencies, response_class=HTMLResponse)
+def get_email_template(template_name: str):
+    return HTMLResponse(content=get_template(template_name=template_name), status_code=200)
+
+
+def split_emails(email_string):
+    emails = re.split(r'[;,\s]+', email_string)
+    # Remove any empty strings that might result from splitting + strip each address
+    emails = [email.strip() for email in emails if email]
+    return emails
+
+@app.post("/emails/send", dependencies=basic_auth_dependencies)
+def send_email(request: SendEmailRequest):
+
+    # Include the email content in the layout
+    email_content = request.email_content
+    if request.layout_template:
+        template_content = get_template(template_name=request.layout_template)
+        email_content = template_content.replace("{email-content}", email_content)
+
+    # Create the email
+    message = MIMEMultipart()
+    message["From"] = email_sender
+    message["To"] = request.destination_email
+    message["Reply-To"] = email_reply_to
+    message["Subject"] = request.email_title
+    message.attach(MIMEText(email_content, "html"))
+
+    # Send the email
+    try:
+        with smtplib.SMTP(smtp_hostname, smtp_port) as server:
+            if smtp_enable_ssl:
+                server.starttls()
+            server.login(smtp_login, smtp_password)
+            server.sendmail(email_sender, split_emails(request.destination_email), message.as_string())
+        print("Email sent successfully!")
+        response = SendEmailResponse(success=True, details=None)
+    except Exception as e:
+        print(f"Failed to send email: {str(e)}")
+        response = SendEmailResponse(success=False, details=str(e))
+
+    return response

@@ -2,14 +2,13 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
-pyjwt[crypto]==2.6.0
-fastapi==0.109.1
-jinja2==3.1.4
-pytz==2022.1
-python-dateutil==2.8.2
-uvicorn[standard]==0.18.2
+pyjwt[crypto]==2.11.0
+fastapi==0.128.6
+pytz==2025.2
+python-dateutil==2.9.0
+uvicorn[standard]==0.40.0
 pytest
-json-with-comments==1.2.1
+json-with-comments==1.2.10
 httpx
 # TODO: standardize usage of https or requests
 requests

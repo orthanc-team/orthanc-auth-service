@@ -6,7 +6,7 @@ version: "3"
 services:
 
   nginx:
-    image: orthancteam/orthanc-nginx:25.9.0
+    image: orthancteam/orthanc-nginx:25.12.0
     depends_on: [orthanc, orthanc-auth-service, keycloak]
     restart: unless-stopped
     ports: ["80:80"]
@@ -27,7 +27,7 @@ services:
       ENABLE_OHIF: "true"
 
   orthanc:
-    image: orthancteam/orthanc:25.10.5
+    image: orthancteam/orthanc-pre-release:master-unstable
     volumes:
       - orthanc-storage:/var/lib/orthanc/db
     depends_on: [orthanc-db]
@@ -45,12 +45,20 @@ services:
       ORTHANC_JSON: |
         {
           "Name": "Orthanc",
+          "Worklists": {
+            "Enable": true,
+            "SaveInOrthancDatabase": true
+          },
           "OrthancExplorer2": {
             "IsDefaultUI": true,
             "UiOptions": {
               "EnableShares": true,
-              "DefaultShareDuration": 0,
-              "ShareDurations": [0, 7, 15, 30, 90, 365],
+              "EnableSharesByEmail": true,
+              "ShareEmailContentTemplate": "share-study-content",
+              "ShareEmailLayoutTemplate": "share-study-layout",
+              "ShareEmailTitle": "My Hospital has shared a study with you",
+              "ShareDuration": 0,
+
               "EnableOpenInOhifViewer3": true,
               // to use OHIF-plugin:  use http://localhost/orthanc/ohif/
               //"OhifViewer3PublicRoot": "http://localhost/orthanc/ohif/"
@@ -73,6 +81,13 @@ services:
               "Url": "http://localhost/keycloak/",
               "Realm": "orthanc",
               "ClientId": "orthanc"
+            },
+            "Emails": {
+              "Server": {
+                "Url": "http://orthanc-auth-service:8000/emails/",
+                "Username" : "share-user",
+                "Password" : "change-me"
+              }
             }
           },
           "AuthenticationEnabled": false,     // because it is handled by the authorization plugin
@@ -98,13 +113,14 @@ services:
         }
 
   orthanc-auth-service:
-    image: orthancteam/orthanc-auth-service:25.9.0
+    image: orthancteam/orthanc-auth-service:main
     # always disable this port mapping in production !!!
-    # ports: ["8000:8000"]
+    ports: ["8000:8000"]
     # permissions can be customized in the permissions.json file
     volumes:
       - ./permissions.jsonc:/orthanc_auth_service/permissions.json
-    depends_on: [keycloak]
+      - ./email-templates/:/email-templates
+    depends_on: [keycloak, smtp-mock]
     restart: unless-stopped
     environment:
       SECRET_KEY: "change-me-I-am-a-secret-key"
@@ -112,7 +128,7 @@ services:
 #      ENABLE_KEYCLOAK_API_KEYS: "true"
 #      # to enable the permissions edition UI in OE2, you need to provide a KEYCLOAK_CLIENT_SECRET
 #      KEYCLOAK_CLIENT_SECRET: "change-me-I-am-a-secret-you-get-in-keycloak-logs"
-      KEYCLOAK_CLIENT_SECRET: "bJYl46jC2UaTzonbLbJTRV0kCo091Qte"
+      KEYCLOAK_CLIENT_SECRET: "hxt2EqqZpLSNy8nFLpYvCeBk3cODiXsg"
       PUBLIC_ORTHANC_ROOT: "http://localhost/orthanc/"
       PUBLIC_LANDING_ROOT: "http://localhost/orthanc/ui/app/token-landing.html"
       # to use OHIF-plugin:  make sure to use http://localhost/orthanc/ohif/
@@ -122,6 +138,16 @@ services:
         {
           "share-user": "change-me"
         }
+      ENABLE_EMAILS: "true"
+      EMAILS_TEMPLATES_ROOT: "/email-templates"
+      EMAILS_SMTP_SERVER_HOSTNAME: "smtp-mock"
+      EMAILS_SMTP_SERVER_USES_TLS: "false"
+      EMAILS_SMTP_SERVER_PORT: "1025"
+      EMAILS_SMTP_SERVER_USER_NAME: "smtp-user"
+      EMAILS_SMTP_SERVER_PWD: "change-me"
+      EMAILS_SENDER_ADDRESS: "My Hospital <info@example.com>"
+      EMAILS_REPLY_TO: "My Hospital <info@example.com>"
+
 
   orthanc-db:
     image: postgres:14
@@ -134,7 +160,7 @@ services:
 
 # to use OHIF-plugin: you don't need this container
   ohif:
-    image: orthancteam/ohif-v3:25.9.0
+    image: orthancteam/ohif-v3:25.12.0
 #  uncomment if you want to customize ohif configuration
 #    volumes:
 #      - ./ohif-app-config.js:/usr/share/nginx/html/app-config.js
@@ -142,7 +168,7 @@ services:
 
 
   keycloak:
-    image: orthancteam/orthanc-keycloak:25.9.0
+    image: orthancteam/orthanc-keycloak:25.12.0
     depends_on: [keycloak-db]
     restart: unless-stopped
     environment:
@@ -166,6 +192,16 @@ services:
       POSTGRES_PASSWORD: "keycloak"
       POSTGRES_USER: "keycloak"
       POSTGRES_DB: "keycloak"
+
+  # remove in production: this is only simulating an SMTP server
+  smtp-mock:
+    image: maildev/maildev:2.2.1
+    ports: ["1080:1080", "1025:1025"]
+    restart: unless-stopped
+    environment:
+      MAILDEV_INCOMING_USER: "smtp-user"
+      MAILDEV_INCOMING_PASS: "change-me"
+
 
 volumes:
   orthanc-storage:
