@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: CC0-1.0
 
-FROM meddream/token-service:2.1.6
+FROM meddream/token-service:2.1.17
 
 # optional env var
 # MEDDREAM_TOKEN_USER

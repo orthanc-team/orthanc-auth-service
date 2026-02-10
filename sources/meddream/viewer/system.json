@@ -8,6 +8,7 @@
 		"searchSettings": true,
 		"viewerSettings": true,
 		"reportSettings": true,
+        "panelToolbarSettings": true,
 		"hangingProtocolsSettings": true,
 		"export": true,
 		"archive": true,
@@ -15,7 +16,8 @@
 		"reports": true,
 		"remoteReports": false,
 		"liveShare": false,
-		"hangingProtocols": "V1",
+        "allowCopyMeasurementValue": true,
+        "hangingProtocols": "V2",
 		"openTabsTrackingMethod": "NONE",
 		"batchImageRequests": true,
 		"prepareInstances": false,
@@ -27,21 +29,34 @@
 			"NM"
 		],
 		"preloadSeries": "OFF",
+        "preloadAllFrames": false,
 		"boundingBoxAnnotations": true,
 		"viewToClipboard": "IMAGE",
 		"pngPSToClipboard": "NONE",
-		"showCalculatedFps": true,
 		"viewToDICOM": true,
 		"mistMpr3D": true,
 		"clearCache": false,
 		"measurementsPropagation": true,
-		"overlay":true,
+        "callCachedMetadata": true,
+        "overlay": true,
 		"digitalSubtraction": "NONE",
-		"returnMinMaxPerFrame":true,
-		"cad":true,
-		"summaryThumbnailsForSopClasses":[]
+        "returnMinMaxPerFrame": true,
+        "cad": true,
+        "checkKOPRPermissions": false,
+        "playVideoInVideoTag": false,
+        "browserExtensionIntegration": false,
+        "hangingProtocolsQuickSave": true,
+        "quadrantZoomEnabled": false,
+        "workspace": {
+            "allowWorkspaceSaving": true
+        },
+        "uploadDicomToPacs": false,
+        "autoAdjustImageRotation": true
 	},
-	"blackListedSopClasses": [],
+    "blackListedSopClasses": [
+        "1.2.840.10008.5.1.4.1.1.66",
+        "1.2.840.10008.5.1.4.1.1.4.2"
+    ],
 	"forwardPacs": [
 		{
 			"storeScpIp": "127.0.0.1",
@@ -51,13 +66,22 @@
 		}
 	],
 	"languages": [
-		"en"
+        "lt",
+        "en",
+        "ru",
+        "de",
+        "fr",
+        "es",
+        "it"
 	],
 	"dicomLibraryConfiguration": {
 		"dicomLibrarySender": "someone@mail.com",
 		"dicomLibrarySubject": "My special study",
-		"languages": null,
-		"language": null
+        "languages": [
+            "en",
+            "de"
+        ],
+        "language": "en"
 	},
 	"formatIntegrationLinkInViewer": false,
 	"textureInterpolationType": 1,
@@ -70,12 +94,18 @@
 	},
 	"workersConfig": {
 		"maxWorkers": "50%",
-		"maxSegmentationWorkers": "50%"
+        "maxSegmentationWorkers": "50%",
+        "maxMeasurementWorkers": "50%",
+        "maxJphWorkers": "0%"
 	},
 	"cacheSupervisorConfig": {
-		"enabled": false,
+        "enabled": true,
 		"runFrequencyInSec": 10
 	},
+    "structureListenerConfig": {
+        "enabled": false,
+        "runFrequencyInSec": 30
+    },
 	"scrollingConfig": {
 		"modality": [
 			"CT",
@@ -88,6 +118,17 @@
 		],
 		"sopClass": []
 	},
+    "notificationsConfiguration": {
+        "autoCloseAfterSec": 10
+    },
+    "personNameConfiguration": {
+        "formatIn": "",
+        "formatOut": null
+    },
+    "searchHistoryByPatientId": true,
+    "dontAutoOpenTheseAnnotations": [
+        "Lunit"
+    ],
 	"fusionConfig": {
 		"modality": [
 			"CT",
@@ -95,20 +136,19 @@
 			"PT"
 		],
 		"sopClass": [],
-		"ignoreMissingSliceThickness":false
+        "ignoreMissingSliceThickness": false
 	},
-	"notificationsConfig": {
-		"autoCloseAfterSec": 10
-	},
-	"personNameConfiguration": {
-		"formatIn": null,
-		"formatOut": null
-	},
-	"searchHistoryByPatientId": true,
-	"segmentationConfig": {
+    "segmentationConfig": {
 		"smartPaintPreloadOptions": "wait-for-toolbar",
 		"messagingLevel": "minimal"
 	},
+    "windowPosition": [
+        {
+            "name": "patient-history",
+            "width": 1245,
+            "height": 800
+        }
+    ],
     "instancesProgressivePreloadConfig": {
 		"preloadCount":10,
 		"supportedModalities": [
@@ -120,6 +160,16 @@
 		"supportedSOPClasses":[],
 		"enableSeriesManualPreload":true
 	},
-	"dontAutoOpenTheseAnnotations": [],
-	"windowPosition": []
+    "mistMprConfig": {
+        "modalities": [
+            "CT",
+            "MR",
+            "PT",
+            "NM"
+        ],
+        "sopClasses": []
+    },
+    "dentalConfig": {
+        "dentalAPIUrl": "lib/3rdparty/dental"
+    }
 }

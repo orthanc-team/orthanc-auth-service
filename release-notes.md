@@ -12,6 +12,10 @@ Pending changes
   - Updated python to 3.14 and updated all python modules
 - The minimal keycloak setup now features a mock STMP server.
 
+v 26.2.0
+========
+- Upgraded `Meddream` Docker base image from `8.4.0` to `8.8.0`
+- Upgraded `Nginx` Docker base image from `1.27.4` to `1.29.5`
 
 
 v 25.12.0
@@ -19,6 +23,7 @@ v 25.12.0
 - In `orthanc-nginx`: fixed the default value of ENABLE_ORTHANC that is now set to `true`.
 - Modified Nginx docker images to avoid the buffering of requests body (removed rewrite directive).
 - Added `worklists` in the `UserPermissions` model
+
 
 v 25.9.0
 ========
