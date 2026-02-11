@@ -8,3 +8,11 @@ Source: https://github.com/orthanc-team/orthanc-share
 # Files: src/*
 # Copyright: $YEAR $NAME <$CONTACT>
 # License: ...
+
+Files: minimal-setup/keycloak/email-templates/*.html
+Copyright: 2022 - 2026 Orthanc Team SRL <info@orthanc.team>
+License: CC0-1.0
+
+Files: minimal-setup/keycloak/permissions.jsonc
+Copyright: 2022 - 2026 Orthanc Team SRL <info@orthanc.team>
+License: CC0-1.0

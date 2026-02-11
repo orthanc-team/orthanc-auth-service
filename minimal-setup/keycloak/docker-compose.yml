@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2022 - 2025 Orthanc Team SRL <info@orthanc.team>
+# SPDX-FileCopyrightText: 2022 - 2026 Orthanc Team SRL <info@orthanc.team>
 #
 # SPDX-License-Identifier: CC0-1.0
 
@@ -200,7 +200,7 @@ services:
     restart: unless-stopped
     environment:
       MAILDEV_INCOMING_USER: "smtp-user"
-      MAILDEV_INCOMING_PASS: "change-me"
+      MAILDEV_INCOMING_PASS: "change-me2"
 
 
 volumes:
