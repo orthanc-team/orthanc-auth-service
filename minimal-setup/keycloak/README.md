@@ -43,8 +43,8 @@ Check for "OHIF-plugin" in the [docker-compose.yml](docker-compose.yml) to repla
 - Open the Orthanc UI at [http://localhost/orthanc/ui/app/](http://localhost/orthanc/ui/app/) (login/pwd: `admin`/`change-me`)
 - upload a few dicom studies in Orthanc
 - Add the `external` label to a few of the studies
-- On one of the uploaded studies, click on the `Share` button and then on `Share` in the dialog box and then on `Copy and close`
-- Keep the link in your clipboard.  You may share this link with an external user.
+- On one of the uploaded studies, click on the `Share` button and then on `Share` in the dialog box and send an email (the email will 
+  not be sent for real but will be available in the [Maildev UI](http://localhost:1080)
 - In the left panel, go to `Admin` -> `Logout`
 
 ## As a guest user
