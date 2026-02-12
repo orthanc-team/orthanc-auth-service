@@ -32,6 +32,7 @@ in authorization headers that will be checked by the [Authorization plugin](http
 | EMAILS_SMTP_SERVER_HOSTNAME | -  | The hostname of the SMTP Server |
 | EMAILS_SMTP_SERVER_PORT     | -  | The port of the SMTP Server |
 | EMAILS_SMTP_SERVER_USES_TLS | true  | Weither SMTP Server requires TLS |
+| EMAILS_SMTP_SERVER_TIMEOUT | 10 | The timeout, in seconds, to use to connect to the SMTP Server |
 | EMAILS_SMTP_SERVER_USER_NAME | -  | The username used to connect to the SMTP Server |
 | EMAILS_SMTP_SERVER_PWD | -  | The password used to connect to the SMTP Server |
 | EMAILS_SENDER_ADDRESS | -  | The email address that is used to send the email from |

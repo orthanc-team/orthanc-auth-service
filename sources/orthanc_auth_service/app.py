@@ -96,7 +96,8 @@ if enable_emails:
     smtp_password = get_secret_or_die("EMAILS_SMTP_SERVER_PWD")
     smtp_hostname = get_secret_or_die("EMAILS_SMTP_SERVER_HOSTNAME")
     smtp_port = int(get_secret_or_die("EMAILS_SMTP_SERVER_PORT"))
-    smtp_enable_ssl = get_secret_or_die("EMAILS_SMTP_SERVER_USES_TLS") != 'false'
+    smtp_enable_tls = get_secret_or_die("EMAILS_SMTP_SERVER_USES_TLS") != 'false'
+    smtp_timeout = float(os.environ.get("EMAILS_SMTP_SERVER_TIMEOUT", "10"))
 
 else:
     logging.warning("EMAIL support is disabled")
@@ -345,8 +346,8 @@ def send_email(request: SendEmailRequest):
 
     # Send the email
     try:
-        with smtplib.SMTP(smtp_hostname, smtp_port) as server:
-            if smtp_enable_ssl:
+        with smtplib.SMTP(smtp_hostname, smtp_port, timeout=smtp_timeout) as server:
+            if smtp_enable_tls:
                 server.starttls()
             server.login(smtp_login, smtp_password)
             server.sendmail(email_sender, split_emails(request.destination_email), message.as_string())
