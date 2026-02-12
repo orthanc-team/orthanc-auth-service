@@ -200,7 +200,7 @@ services:
     restart: unless-stopped
     environment:
       MAILDEV_INCOMING_USER: "smtp-user"
-      MAILDEV_INCOMING_PASS: "change-me2"
+      MAILDEV_INCOMING_PASS: "change-me"
 
 
 volumes:

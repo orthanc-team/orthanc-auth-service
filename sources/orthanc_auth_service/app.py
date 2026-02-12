@@ -354,6 +354,10 @@ def send_email(request: SendEmailRequest):
         response = SendEmailResponse(success=True, details=None)
     except Exception as e:
         print(f"Failed to send email: {str(e)}")
-        response = SendEmailResponse(success=False, details=str(e))
+        response_status = SendEmailResponse(success=False, details=str(e))
+        return JSONResponse(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            content=response_status.model_dump()
+        )
 
     return response
