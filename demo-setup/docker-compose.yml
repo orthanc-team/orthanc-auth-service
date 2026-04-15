@@ -55,9 +55,9 @@ services:
         }
       
   orthanc-db:
-    image: postgres:14
+    image: postgres:18
     restart: unless-stopped
-    volumes: ["orthanc-db:/var/lib/postgresql/data"]
+    volumes: ["orthanc-db:/var/lib/postgresql/18/docker"]
     environment:
       POSTGRES_HOST_AUTH_METHOD: "trust"
 
@@ -76,9 +76,9 @@ services:
       # KC_HOSTNAME_ADMIN_URL: "https://mydomain.com/keycloak"
     
   keycloak-db:
-    image: postgres:14
+    image: postgres:18
     restart: unless-stopped
-    volumes: ["keycloak-db:/var/lib/postgresql/data"]
+    volumes: ["keycloak-db:/var/lib/postgresql/18/docker"]
     environment:
       POSTGRES_PASSWORD: "keycloak"
       POSTGRES_USER: "keycloak"

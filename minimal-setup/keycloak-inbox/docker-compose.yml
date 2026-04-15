@@ -5,7 +5,7 @@
 services:
 
   nginx:
-    image: orthancteam/orthanc-nginx:25.8.1
+    image: orthancteam/orthanc-nginx:26.4.0
     depends_on: [orthanc, orthanc-auth-service, keycloak]
     restart: unless-stopped
     ports: ["80:80"]
@@ -23,7 +23,7 @@ services:
       ENABLE_OHIF: "true"
 
   orthanc:
-    image: orthancteam/orthanc:25.8.2
+    image: orthancteam/orthanc:26.4.0
     volumes:
       - orthanc-storage:/var/lib/orthanc/db
       - ./inbox-plugin.py:/scripts/inbox-plugin.py
@@ -133,7 +133,7 @@ services:
         }
 
   orthanc-auth-service:
-    image: orthancteam/orthanc-auth-service:25.8.1
+    image: orthancteam/orthanc-auth-service:26.4.0
     # always disable this port mapping in production !!!
     # ports: ["8000:8000"]
     # permissions can be customized in the permissions.json file
@@ -161,16 +161,16 @@ services:
         }
 
   orthanc-db:
-    image: postgres:14
+    image: postgres:18
     ports: ["5432:5432"]
     restart: unless-stopped
-    volumes: ["orthanc-db:/var/lib/postgresql/data"]
+    volumes: ["orthanc-db:/var/lib/postgresql/18/docker"]
     environment:
       POSTGRES_HOST_AUTH_METHOD: "trust"
 
 # to use OHIF-plugin: you don't need this container
   ohif:
-    image: orthancteam/ohif-v3:25.8.1
+    image: orthancteam/ohif-v3:26.4.0
 #  uncomment if you want to customize ohif configuration
 #    volumes:
 #      - ./ohif-app-config.js:/usr/share/nginx/html/app-config.js
@@ -178,7 +178,7 @@ services:
 
 
   keycloak:
-    image: orthancteam/orthanc-keycloak:25.8.1
+    image: orthancteam/orthanc-keycloak:26.4.0
     depends_on: [keycloak-db]
     restart: unless-stopped
     environment:
@@ -195,9 +195,9 @@ services:
     #   - /home/bc/tmp:/usr/tmp
 
   keycloak-db:
-    image: postgres:14
+    image: postgres:18
     restart: unless-stopped
-    volumes: ["keycloak-db:/var/lib/postgresql/data"]
+    volumes: ["keycloak-db:/var/lib/postgresql/18/docker"]
     environment:
       POSTGRES_PASSWORD: "keycloak"
       POSTGRES_USER: "keycloak"

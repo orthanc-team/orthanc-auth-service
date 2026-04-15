@@ -4,17 +4,18 @@ SPDX-FileCopyrightText: 2022 - 2026 Orthanc Team SRL <info@orthanc.team>
 SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
-Pending changes
-===============
+v 26.4.0
+========
 
 - In `orthanc-auth-service`: 
   - Added new routes to send emails and provide email templates
   - Updated python to 3.14 and updated all python modules
 - The minimal keycloak setup now features a mock STMP server.
 - OHIF images update to v3.12.0.  This adds support for the microscopy OHIF viewer.
-BREAKING CHANGE:
-- OHIF images, a custom configuration can be provided in `/usr/share/nginx/html/ohif/app-config.js` 
-  instead of `/usr/share/nginx/html/app-config.js`
+> [!CAUTION]
+> BREAKING CHANGE:
+> - OHIF images, a custom configuration can be provided in `/usr/share/nginx/html/ohif/app-config.js` 
+>   instead of `/usr/share/nginx/html/app-config.js`
 
 
 v 26.2.0
