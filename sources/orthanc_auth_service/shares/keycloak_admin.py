@@ -48,6 +48,7 @@ class KeycloakAdmin:
             user = keycloak_user_response.json()
             return UserProfileResponse(
                     name=user['username'],
+                    user_id=user['id'],
                     permissions=[],
                     validity=60,
                     authorized_labels=[]
@@ -102,6 +103,7 @@ class KeycloakAdmin:
 
                 return UserProfileResponse(
                     name=user['username'],
+                    user_id=user['id'],
                     permissions=profile_from_config.permissions,
                     validity=60,
                     authorized_labels=profile_from_config.authorized_labels
