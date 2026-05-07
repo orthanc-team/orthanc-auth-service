@@ -4,6 +4,11 @@ SPDX-FileCopyrightText: 2022 - 2026 Orthanc Team SRL <info@orthanc.team>
 SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
+Pending changes
+===============
+
+- Add `user_id` in UserProfileResponse when using API key ([reference](https://github.com/orthanc-team/orthanc-auth-service/pull/37))
+
 v 26.4.1
 ========
 - Upgraded `Nginx` Docker base image from `1.29.5` to `1.29.8`
