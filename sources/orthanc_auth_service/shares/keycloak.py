@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 import os
+import time
 import logging
 import requests
 import jwt
@@ -15,12 +16,29 @@ from .utils.utils import get_secret_or_die, is_secret_defined
 
 class Keycloak:
 
-    def __init__(self, public_key, roles_configuration: RolesConfiguration):
+    def __init__(self, public_key, roles_configuration: RolesConfiguration, jwt_leeway_seconds: int = 0):
         self.public_key = public_key
         self.roles_configuration = roles_configuration
+        self.jwt_leeway_seconds = jwt_leeway_seconds
 
     def decode_token(self, jwt_token: str) -> Dict[str, Any]:
-        return jwt.decode(jwt=jwt_token, key=self.public_key, audience="account", algorithms=["RS256"])
+        try:
+            return jwt.decode(jwt=jwt_token, key=self.public_key, audience="account", algorithms=["RS256"],
+                               leeway=self.jwt_leeway_seconds)
+        except jwt.ImmatureSignatureError as ex:
+            # verification failed before we could log the claims -> decode again without
+            # verifying so we can see exactly what the token contains (and compare against
+            # this server's clock, since this error is usually caused by clock skew between
+            # Keycloak and this host)
+            unverified_claims = jwt.decode(jwt=jwt_token, options={"verify_signature": False})
+            logging.error(
+                f"PyJWT rejected token as not yet valid: {ex}. "
+                f"This server's current time (utc epoch)={int(time.time())}, "
+                f"token iat={unverified_claims.get('iat')}, exp={unverified_claims.get('exp')}, "
+                f"auth_time={unverified_claims.get('auth_time')}. "
+                f"Full unverified claims: {unverified_claims}"
+            )
+            raise
 
     def get_name_from_decoded_token(self, decoded_token: Dict[str, Any]) -> str:
         if decoded_token.get('name'):
@@ -130,7 +148,7 @@ def _get_keycloak_public_key(keycloak_uri: str) -> str:
 
 
 
-def create_keycloak_from_secrets(keycloak_uri: str, roles_configuration: RolesConfiguration):
+def create_keycloak_from_secrets(keycloak_uri: str, roles_configuration: RolesConfiguration, jwt_leeway_seconds: int = 0):
 
     try:
         public_key = _get_keycloak_public_key(keycloak_uri)
@@ -141,4 +159,4 @@ def create_keycloak_from_secrets(keycloak_uri: str, roles_configuration: RolesCo
         logging.error(f"Unable to reach keycloak (be patient, Keycloak may need more than 1 min to start), exiting...")
         exit(-1)
 
-    return Keycloak(public_key=public_key, roles_configuration=roles_configuration)
+    return Keycloak(public_key=public_key, roles_configuration=roles_configuration, jwt_leeway_seconds=jwt_leeway_seconds)

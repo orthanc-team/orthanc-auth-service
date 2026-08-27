@@ -45,8 +45,10 @@ if not handle_users_with_keycloak:
 else:
     logging.warning("ENABLE_KEYCLOAK is set, using keycloak to handle users")
     keycloak_uri = os.environ.get("KEYCLOAK_URI", "http://keycloak:8080/realms/orthanc/")
+    keycloak_jwt_leeway_seconds = int(os.environ.get("KEYCLOAK_JWT_LEEWAY_SECONDS", "10"))
     keycloak_std_client = create_keycloak_from_secrets(keycloak_uri=keycloak_uri,
-                                                       roles_configuration=roles_configuration)
+                                                       roles_configuration=roles_configuration,
+                                                       jwt_leeway_seconds=keycloak_jwt_leeway_seconds)
 
     enable_api_keys = os.environ.get("ENABLE_KEYCLOAK_API_KEYS", "false") == "true"
     needKeycloakAdmin = False
