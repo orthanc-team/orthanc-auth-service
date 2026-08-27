@@ -8,7 +8,7 @@ import logging
 import requests
 import jwt
 import jsonc
-from typing import Dict, Any, List, Tuple
+from typing import Dict, Any, List, Tuple, Optional
 from .models import *
 from .roles_configuration import RolesConfiguration
 from .utils.utils import get_secret_or_die, is_secret_defined
@@ -21,23 +21,42 @@ class Keycloak:
         self.roles_configuration = roles_configuration
         self.jwt_leeway_seconds = jwt_leeway_seconds
 
+    def _get_unverified_claims(self, jwt_token: str) -> Optional[Dict[str, Any]]:
+        '''
+        Returns the token claims without performing any verification, or None if the token
+        is too malformed to be parsed at all.
+        Note: verify_signature:False turns off all kinds of claim verifications, not just the 
+        cryptographic signature, see https://github.com/jpadilla/pyjwt/blob/2.13.0/jwt/api_jwt.py#L79-L87
+        '''
+        try:
+            return jwt.decode(jwt=jwt_token, options={"verify_signature": False})
+        except jwt.PyJWTError:
+            return None
+
     def decode_token(self, jwt_token: str) -> Dict[str, Any]:
         try:
             return jwt.decode(jwt=jwt_token, key=self.public_key, audience="account", algorithms=["RS256"],
                                leeway=self.jwt_leeway_seconds)
-        except jwt.ImmatureSignatureError as ex:
+        except jwt.PyJWTError as ex:
             # verification failed before we could log the claims -> decode again without
-            # verifying so we can see exactly what the token contains (and compare against
-            # this server's clock, since this error is usually caused by clock skew between
-            # Keycloak and this host)
-            unverified_claims = jwt.decode(jwt=jwt_token, options={"verify_signature": False})
-            logging.error(
-                f"PyJWT rejected token as not yet valid: {ex}. "
-                f"This server's current time (utc epoch)={int(time.time())}, "
-                f"token iat={unverified_claims.get('iat')}, exp={unverified_claims.get('exp')}, "
-                f"auth_time={unverified_claims.get('auth_time')}. "
-                f"Full unverified claims: {unverified_claims}"
-            )
+            # verifying so we can see exactly what the token contains. (and compare against
+            # this server's clock, since some errors, e.g. ImmatureSignatureError or
+            # ExpiredSignatureError, are caused by clock skew between Keycloak and this host)
+            unverified_claims = self._get_unverified_claims(jwt_token)
+
+            if unverified_claims is None:
+                logging.error(
+                    f"PyJWT rejected token ({type(ex).__name__}): {ex}. "
+                    f"The token is malformed, its claims cannot be read."
+                )
+            else:
+                logging.error(
+                    f"PyJWT rejected token ({type(ex).__name__}): {ex}. "
+                    f"This server's current time (utc epoch)={int(time.time())}, "
+                    f"token iat={unverified_claims.get('iat')}, exp={unverified_claims.get('exp')}, "
+                    f"auth_time={unverified_claims.get('auth_time')}. "
+                    f"Full unverified claims: {unverified_claims}"
+                )
             raise
 
     def get_name_from_decoded_token(self, decoded_token: Dict[str, Any]) -> str:
