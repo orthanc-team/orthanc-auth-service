@@ -109,6 +109,7 @@ class Keycloak:
 
     def get_user_profile_from_token(self, jwt_token: str) -> UserProfileResponse:
         decoded_token = self.decode_token(jwt_token=jwt_token)
+        logging.debug(f"decoded_token: {decoded_token}")
         groups = None
         if 'groups' in decoded_token:  # this might have not been configured in Keycloak (see 'orthanc client' -> client scopes -> orthanc-dedicated mapper)
             groups = decoded_token['groups']
@@ -121,10 +122,15 @@ class Keycloak:
             authorized_labels=[])
 
         roles = self.get_roles_from_decoded_token(decoded_token=decoded_token)
+        logging.debug(f"roles: {roles}")
 
         role_config = self.roles_configuration.get_role_configuration(roles)
+        logging.debug(f"role_config: {role_config}")
+
         response.permissions = role_config.permissions
         response.authorized_labels = role_config.authorized_labels
+
+        logging.debug(f"response (UserProfileResponse object): {response}")
 
         return response
 
