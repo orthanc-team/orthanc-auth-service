@@ -229,7 +229,7 @@ class OrthancTokenService:
                 token=token
             )
         )
-        logging.info("created token: " + response.json())
+        logging.info("created token [redacted: token, url]: " + response.model_dump_json(exclude={"token", "url"}))
         return response
 
     def decode_token(self, token: str) -> TokenDecoderResponse:
@@ -237,7 +237,7 @@ class OrthancTokenService:
             if token.startswith("Bearer "):
                 token = token.replace("Bearer ", "")
 
-            logging.info("Decode token: " + token)
+            logging.info("Decode token")
 
             response = TokenDecoderResponse(resources=[])
 
@@ -279,7 +279,7 @@ class OrthancTokenService:
 
     def redirect_to_viewer(self, token: str = None) -> str:
 
-        logging.warning("redirecting to viewer: " + token)
+        logging.warning("redirecting to viewer")
 
         # extract the initial share request from the token
         request = self.tokens_manager_.get_request_from_token(token=token)

@@ -133,7 +133,9 @@ from fastapi.responses import JSONResponse
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
 	exc_str = f'{exc}'.replace('\n', ' ').replace('   ', ' ')
-	logging.error(f"{request}: {exc_str}")
+	# do not log exc_str: it embeds the raw request body, which may contain a token
+	errors = [{"loc": e["loc"], "msg": e["msg"]} for e in exc.errors()]
+	logging.error(f"{request}: {errors}")
 	content = {'status_code': 10422, 'message': exc_str, 'data': None}
 	return JSONResponse(content=content, status_code=status.HTTP_422_UNPROCESSABLE_ENTITY)
 
@@ -179,7 +181,7 @@ def create_token(token_type: str, request: TokenCreationRequest):
 
         token = token_service.create_token(request=request)
 
-        logging.info("created token: " + token.json())
+        logging.info("created token [redacted: token, url]: " + token.model_dump_json(exclude={"token", "url"}))
         return token
 
     except ValueError as ex:
@@ -194,7 +196,7 @@ def create_token(token_type: str, request: TokenCreationRequest):
 def validate_authorization(request: TokenValidationRequest, token=Header(default=None)):
 
     try:
-        logging.info("validating token: " + request.json())
+        logging.info("validating token [redacted: token_value]: " + request.model_dump_json(exclude={"token_value"}))
 
         if request.token_value and not token:
             token = request.token_value
@@ -231,12 +233,12 @@ def validate_authorization(request: TokenValidationRequest, token=Header(default
 def decode_token(request: TokenDecoderRequest):
 
     try:
-        logging.info("decoding token: " + request.json())
+        logging.info("decoding token [redacted: token_value]: " + request.model_dump_json(exclude={"token_value"}))
 
         response = token_service.decode_token(
             token=request.token_value)
 
-        logging.info("decoded token: " + response.json())
+        logging.info("decoded token [redacted: redirect_url]: " + response.model_dump_json(exclude={"redirect_url"}))
         return response
 
     except ValueError as ex:
@@ -248,7 +250,7 @@ def decode_token(request: TokenDecoderRequest):
 
 @app.post("/user/get-profile", dependencies=basic_auth_dependencies)  # this is a POST and not a GET because we want to same kind of payload as for other routes
 def get_user_profile(user_profile_request: UserProfileRequest):
-    logging.info(f"get user profile from token '{user_profile_request.token_key}', '{user_profile_request.token_value}'")
+    logging.info(f"get user profile from token '{user_profile_request.token_key}', token provided: {user_profile_request.token_value is not None}")
 
     anonymous_profile = roles_configuration.get_anonymous_profile()
     
