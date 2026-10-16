@@ -24,6 +24,10 @@ COPY keycloak/entrypoint.sh /opt/keycloak/bin/
 
 ENV KC_HOSTNAME=http://localhost/keycloak
 ENV KC_CACHE=local
+ENV KC_DB_URL=jdbc:postgresql://keycloak-db:5432/postgres
+ENV KC_DB_USERNAME=postgres
+ENV KC_DB_PASSWORD=postgres
+ENV KC_BOOTSTRAP_ADMIN_USERNAME=admin
 
 #ENTRYPOINT ["/opt/keycloak/bin/kc.sh"]
 #CMD ["start", "--optimized", "--import-realm", "--http-enabled", "true", "--proxy-headers", "xforwarded"]
