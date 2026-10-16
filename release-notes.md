@@ -8,6 +8,7 @@ Pending changes
 ===============
 
 - new env vars `IGNORE_ROLES` and `ALLOW_MULTIPLE_ROLES` in `orthanc-auth-service` 
+- Stopped logging the JWT tokens.
 
 v 26.8.1
 ========
