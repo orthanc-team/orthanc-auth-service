@@ -36,7 +36,10 @@ keycloak_admin_client = None
 
 permissions_file_path = os.environ.get("PERMISSIONS_FILE_PATH", "/orthanc_auth_service/permissions.json")
 anonymous_profile_file_path = os.environ.get("ANONYMOUS_PROFILE_FILE_PATH", "/orthanc_auth_service/anonymous-profile.json")
-roles_configuration = RolesConfiguration(permissions_file_path=permissions_file_path, anonymous_profile_file_path=anonymous_profile_file_path)
+allow_multiple_roles = os.environ.get("ALLOW_MULTIPLE_ROLES", "false") == "true"
+ignore_roles_str = os.environ.get("IGNORE_ROLES", "interhosp-role")
+ignore_roles = [r.strip() for r in ignore_roles_str.split(",")]
+roles_configuration = RolesConfiguration(permissions_file_path=permissions_file_path, anonymous_profile_file_path=anonymous_profile_file_path, ignore_roles=ignore_roles)
 
 handle_users_with_keycloak = os.environ.get("ENABLE_KEYCLOAK", "false") == "true"
 
@@ -106,14 +109,14 @@ else:
 
 
 
-def ingest_keycloak_roles(roles_config: RolesConfigurationModel):
+def ingest_keycloak_roles(roles_config: RolesConfigurationModel, ignore_roles: List[str]):
     # add the keycloak roles that are not yet listed in the roles_config
 
     if keycloak_admin_client:
         all_keycloak_roles = keycloak_admin_client.get_all_roles()
 
         for keycloak_role in all_keycloak_roles:
-            if keycloak_role not in roles_config.roles:
+            if keycloak_role not in roles_config.roles and not keycloak_role in ignore_roles:
                 roles_configuration.get_configured_roles().roles[keycloak_role] = RolePermissions()
 
         # keep only the roles that are defined in Keycloak:
@@ -316,7 +319,7 @@ def get_settings_roles():
     logging.info("get settings roles ")
 
     roles_config = roles_configuration.get_configured_roles()
-    ingest_keycloak_roles(roles_config)
+    ingest_keycloak_roles(roles_config, ignore_roles)
     return roles_config
 
 
@@ -324,7 +327,7 @@ def get_settings_roles():
 def set_settings_roles(roles_config_request: RolesConfigurationModel):
     logging.info("set settings roles ")
 
-    ingest_keycloak_roles(roles_config_request)
+    ingest_keycloak_roles(roles_config_request, ignore_roles)
     roles_configuration.update_configured_roles(roles_config_request)
 
 

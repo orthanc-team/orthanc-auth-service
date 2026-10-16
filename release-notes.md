@@ -4,6 +4,11 @@ SPDX-FileCopyrightText: 2022 - 2026 Orthanc Team SRL <info@orthanc.team>
 SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
+Pending changes
+===============
+
+- new env vars `IGNORE_ROLES` and `ALLOW_MULTIPLE_ROLES` in `orthanc-auth-service` 
+
 v 26.8.1
 ========
 

@@ -6,20 +6,25 @@ import logging
 import jsonc
 import os
 from .models import *
+from .exceptions import *
 from typing import Dict, Any, List, Tuple
 
 
 
 class RolesConfiguration:
 
+    _ignore_roles: List[str] = []
     _configured_roles: RolesConfigurationModel = None
     _anonymous_profile: UserProfileResponse = None
     _permissions_file_path: str = None
     _anonymous_permissions_file_path: str = None
+    _allow_multiple_roles: bool = False
 
-    def __init__(self, permissions_file_path: str, anonymous_profile_file_path: Optional[str]):
+    def __init__(self, permissions_file_path: str, anonymous_profile_file_path: Optional[str], ignore_roles: List[str]=[], allow_multiple_roles: bool = False):
         self._permissions_file_path = permissions_file_path
         self._anonymous_profile_file_path = anonymous_profile_file_path
+        self._ignore_roles = ignore_roles
+        self._allow_multiple_roles = allow_multiple_roles
         self._load_roles_configuration_from_file()
 
     def _load_roles_configuration_from_file(self):
@@ -28,6 +33,10 @@ class RolesConfiguration:
                 data = jsonc.load(f)
 
             self._configured_roles = RolesConfigurationModel.model_validate(data)
+
+            for ignore_role in self._ignore_roles:
+                self._configured_roles.ignore_role(ignore_role)
+            
             logging.info(f"Got the roles and permissions from configuration file")
 
         except Exception as ex:
@@ -74,13 +83,18 @@ class RolesConfiguration:
 
     def get_role_configuration(self, user_roles: List[str]) -> RolePermissions:
         configured_user_roles = []
+        user_roles_names = []
 
         # discard some of the default roles provided by Keycloak for which we do not have any configurations
         for r in user_roles:
-            if r in self._configured_roles.roles:
+            if r in self._configured_roles.roles and not r in self._ignore_roles:
                 configured_user_roles.append(self._configured_roles.roles[r])
+                user_roles_names.append(r)
 
         output = RolePermissions()
+
+        if len(configured_user_roles) > 1 and not self._allow_multiple_roles:
+            raise MultipleRolesException(user_roles_names)
 
         for configured_role in configured_user_roles:
             for perm in configured_role.permissions:

@@ -153,3 +153,6 @@ class UserProfileResponse(RolePermissions):
 class RolesConfigurationModel(BaseModel):
     roles: Dict[str, RolePermissions]                                                # role/permissions mapping
     available_labels: List[str] = Field(alias="available-labels", default_factory=list)  # if empty, everyone can create additionnal labels, if not, they can only add/remove the listed labels
+
+    def ignore_role(self, role):
+        self.roles.pop(role, None)

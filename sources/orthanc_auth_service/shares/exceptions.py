@@ -2,6 +2,8 @@
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
+from typing import List
+
 class SharesException(Exception):
 
     def __init__(self, msg="Unknown Shares exception"):
@@ -15,3 +17,9 @@ class InvalidTokenException(SharesException):
 
     def __init__(self):
         super().__init__(msg="Invalid token")
+
+
+class MultipleRolesException(SharesException):
+
+    def __init__(self, user_roles = List[str]):
+        super().__init__(msg="Multiple roles are not supported: " + ", ".join(user_roles))
