@@ -265,10 +265,10 @@ def get_user_profile(user_profile_request: UserProfileRequest):
         # first check if this is an inbox-link token and not a KeyCloak token
         try:
             if isinstance(user_profile_request.token_value, str) and user_profile_request.token_value.count('.') == 2:
-                payload = jwt.decode(user_profile_request.token_value, options={"verify_signature": False})
+                payload = jwt.decode(user_profile_request.token_value, options={"verify_signature": False}) # no need to verify the signature at this point (we just need to extract the 'type').  Signature is verified later in decode_token
                 if "type" in payload and payload["type"] == TokenType.INBOX_LINK:
                     decoded_token = token_service.decode_token(token=user_profile_request.token_value)
-                    if decoded_token.token_type == TokenType.INBOX_LINK:
+                    if decoded_token.token_type == TokenType.INBOX_LINK:  # re-check the type now that we have checked the signature
                         user_name = decoded_token.username if decoded_token.username else 'Anonymous'
                         return UserProfileResponse(
                             name=user_name,
