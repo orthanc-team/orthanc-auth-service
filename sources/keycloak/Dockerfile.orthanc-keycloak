@@ -27,6 +27,7 @@ ENV KC_CACHE=local
 ENV KC_DB_URL=jdbc:postgresql://keycloak-db:5432/postgres
 ENV KC_DB_USERNAME=postgres
 ENV KC_DB_PASSWORD=postgres
+ENV KC_DB=postgres
 ENV KC_BOOTSTRAP_ADMIN_USERNAME=admin
 
 #ENTRYPOINT ["/opt/keycloak/bin/kc.sh"]
@@ -50,5 +51,4 @@ ENTRYPOINT ["/opt/keycloak/bin/entrypoint.sh"]
 # - then keycloak will start, export the realm and exit. From that moment, your realm
 #   (including users, roles, clients,...) will be available in the /usr/tmp/realm-export.json
 # - don't forget to restore compose and current file
-
-
+# Note: "manage-clients", "manage-users" permissions have to be granted to the admin-cli account before the export; 'keycloak-client-secret-change-me' has to be used as a value for the client secret (admin-cli)
