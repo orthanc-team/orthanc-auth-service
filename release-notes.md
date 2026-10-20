@@ -4,12 +4,13 @@ SPDX-FileCopyrightText: 2022 - 2026 Orthanc Team SRL <info@orthanc.team>
 SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
-Pending changes
-===============
+v 26.10.0
+========
 
 - new env vars `IGNORE_ROLES` and `ALLOW_MULTIPLE_ROLES` in `othancteam/orthanc-auth-service` 
 - new default values for env vars `KC_DB_URL`, `KC_DB_USERNAME`, `KC_DB_PASSWORD` and `KC_BOOTSTRAP_ADMIN_USERNAME` in `othancteam/orthanc-keycloak` 
 - Stopped logging the JWT tokens.
+- new `interhosp-role` by default for `admin` user in `Keyclaok` Docker image.
 
 v 26.8.1
 ========
