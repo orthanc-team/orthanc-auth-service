@@ -97,8 +97,10 @@ if enable_emails:
         email_reply_to = get_secret_or_die("EMAILS_REPLY_TO")
     else:
         email_reply_to = email_sender
-    smtp_login = get_secret_or_die("EMAILS_SMTP_SERVER_USER_NAME")
-    smtp_password = get_secret_or_die("EMAILS_SMTP_SERVER_PWD")
+    smtp_enable_auth = get_secret_or_die("EMAILS_SMTP_SERVER_USES_AUTH") != 'false'
+    if not smtp_enable_auth:
+        smtp_login = get_secret_or_die("EMAILS_SMTP_SERVER_USER_NAME")
+        smtp_password = get_secret_or_die("EMAILS_SMTP_SERVER_PWD")
     smtp_hostname = get_secret_or_die("EMAILS_SMTP_SERVER_HOSTNAME")
     smtp_port = int(get_secret_or_die("EMAILS_SMTP_SERVER_PORT"))
     smtp_enable_tls = get_secret_or_die("EMAILS_SMTP_SERVER_USES_TLS") != 'false'
@@ -380,7 +382,8 @@ def send_email(request: SendEmailRequest):
         with smtplib.SMTP(smtp_hostname, smtp_port, timeout=smtp_timeout) as server:
             if smtp_enable_tls:
                 server.starttls()
-            server.login(smtp_login, smtp_password)
+            if smtp_enable_auth:
+                server.login(smtp_login, smtp_password)
             server.sendmail(email_sender, split_emails(request.destination_email), message.as_string())
         print("Email sent successfully!")
         response = SendEmailResponse(success=True, details=None)
