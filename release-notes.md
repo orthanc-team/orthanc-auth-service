@@ -5,7 +5,7 @@ SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
 
-v 26.10.1
+v 26.10.2
 ========
 
 - new env var `EMAILS_SMTP_SERVER_USES_AUTH` in `othancteam/orthanc-auth-service` to allow the use of an SMTP server which requiers no AUTH

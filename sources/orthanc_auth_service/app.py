@@ -98,7 +98,7 @@ if enable_emails:
     else:
         email_reply_to = email_sender
     smtp_enable_auth = get_secret_or_die("EMAILS_SMTP_SERVER_USES_AUTH") != 'false'
-    if not smtp_enable_auth:
+    if smtp_enable_auth:
         smtp_login = get_secret_or_die("EMAILS_SMTP_SERVER_USER_NAME")
         smtp_password = get_secret_or_die("EMAILS_SMTP_SERVER_PWD")
     smtp_hostname = get_secret_or_die("EMAILS_SMTP_SERVER_HOSTNAME")
