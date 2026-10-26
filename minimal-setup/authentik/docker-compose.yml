@@ -1,0 +1,147 @@
+# SPDX-FileCopyrightText: 2022 - 2026 Orthanc Team SRL <info@orthanc.team>
+#
+# SPDX-License-Identifier: CC0-1.0
+
+services:
+
+  nginx:
+    image: orthancteam/orthanc-nginx:26.8.1
+    depends_on: [orthanc, orthanc-auth-service]
+    restart: unless-stopped
+    ports: ["80:80"]
+# if setting ENABLE_HTTPS: "true" env var, uncomment the following 4 lines and comment the line with 'ports: ["80:80"]'
+#    ports: ["443:443"]
+#    volumes:
+#      - /.../crt.pem:/etc/nginx/tls/crt.pem
+#      - /.../key.pem:/etc/nginx/tls/key.pem
+# if using orthancteam/orthanc-nginx-certbot image, map the volume
+#    volumes:
+#      - tls:/etc/letsencrypt
+    environment:
+      ENABLE_ORTHANC: "true"
+      ENABLE_ORTHANC_TOKEN_SERVICE: "false"
+      ENABLE_HTTPS: "false"
+
+  orthanc:
+    # needs the OE2 release containing "Keycloak.OidcProvider" (<next OE2 release>)
+    image: orthancteam/orthanc:26.9.1
+    volumes:
+      - orthanc-storage:/var/lib/orthanc/db
+    depends_on: [orthanc-db]
+    restart: unless-stopped
+    environment:
+      STONE_WEB_VIEWER_PLUGIN_ENABLED: "true"
+      DICOM_WEB_PLUGIN_ENABLED: "true"
+      STL_PLUGIN_ENABLED: "true"
+      ORTHANC__POSTGRESQL__HOST: "orthanc-db"
+      ORTHANC__POSTGRESQL__TRANSACTION_MODE: "ReadCommitted"
+      VERBOSE_ENABLED: "true"
+      VERBOSE_STARTUP: "true"
+      ORTHANC_JSON: |
+        {
+          "Name": "Orthanc",
+          "Worklists": {
+            "Enable": true,
+            "SaveInOrthancDatabase": true
+          },
+          "OrthancExplorer2": {
+            "IsDefaultUI": true,
+            "Keycloak" : {
+              "Enable": true,
+              // public issuer of the Authentik provider (must be reachable from the browser)
+              "OidcProvider": "http://localhost:9000/application/o/orthanc/",
+              "ClientId": "orthanc"
+            }
+          },
+          "AuthenticationEnabled": false,     // because it is handled by the authorization plugin
+          "Authorization": {
+            "WebServiceRootUrl": "http://orthanc-auth-service:8000/",
+            "WebServiceUsername": "share-user",
+            "WebServicePassword": "change-me",
+            "StandardConfigurations" : [
+              "osimis-web-viewer",
+              "stone-webviewer",
+              "orthanc-explorer-2",
+              "stl"
+            ],
+            "CheckedLevel": "studies"
+          },
+          "DicomWeb": {
+            "Enable": true,
+            "PublicRoot": "/orthanc/dicom-web/"
+          }
+        }
+
+  orthanc-auth-service:
+    image: orthancteam/orthanc-auth-service:26.8.1
+    # always disable this port mapping in production !!!
+    # ports: ["8000:8000"]
+    # permissions can be customized in the permissions.json file
+    volumes:
+      - ./permissions.jsonc:/orthanc_auth_service/permissions.json
+    depends_on: [authentik-server]
+    restart: unless-stopped
+    environment:
+      SECRET_KEY: "change-me-I-am-a-secret-key"
+      OIDC_CONFIGURATION_URL: "http://authentik-server:9000/application/o/orthanc/.well-known/openid-configuration"
+      OIDC_AUDIENCE: "orthanc"
+      # Authentik builds the issuer from the request host: tokens carry the public one
+      OIDC_ISSUER: "http://localhost:9000/application/o/orthanc/"
+      PUBLIC_ORTHANC_ROOT: "http://localhost/orthanc/"
+      PUBLIC_LANDING_ROOT: "http://localhost/orthanc/ui/app/token-landing.html"
+      USERS: |
+        {
+          "share-user": "change-me"
+        }
+
+  orthanc-db:
+    image: postgres:18
+    restart: unless-stopped
+    volumes: ["orthanc-db:/var/lib/postgresql/18/docker"]
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: "trust"
+
+  authentik-db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    volumes: ["authentik-db:/var/lib/postgresql/data"]
+    environment:
+      POSTGRES_DB: "authentik"
+      POSTGRES_USER: "authentik"
+      POSTGRES_PASSWORD: "change-me"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -d authentik -U authentik"]
+      interval: 10s
+      retries: 5
+      start_period: 20s
+
+  authentik-server:
+    image: ghcr.io/goauthentik/server:2026.8.5
+    command: server
+    depends_on:
+      authentik-db: { condition: service_healthy }
+    restart: unless-stopped
+    ports: ["9000:9000"]
+    volumes:
+      - ./blueprints:/blueprints/custom
+    environment: &authentik-env
+      AUTHENTIK_POSTGRESQL__HOST: "authentik-db"
+      AUTHENTIK_POSTGRESQL__NAME: "authentik"
+      AUTHENTIK_POSTGRESQL__USER: "authentik"
+      AUTHENTIK_POSTGRESQL__PASSWORD: "change-me"
+      AUTHENTIK_SECRET_KEY: "change-me-I-am-a-long-random-secret-key"
+
+  authentik-worker:
+    image: ghcr.io/goauthentik/server:2026.8.5
+    command: worker
+    depends_on:
+      authentik-db: { condition: service_healthy }
+    restart: unless-stopped
+    volumes:
+      - ./blueprints:/blueprints/custom
+    environment: *authentik-env
+
+volumes:
+  orthanc-storage:
+  orthanc-db:
+  authentik-db:

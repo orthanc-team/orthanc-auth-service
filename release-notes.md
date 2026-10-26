@@ -5,6 +5,11 @@ SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
 
+Pending changes
+========
+
+- new generic OIDC provider support (e.g. Authentik) in `orthancteam/orthanc-auth-service`: new env vars `OIDC_CONFIGURATION_URL`, `OIDC_AUDIENCE`, `OIDC_JWT_LEEWAY_SECONDS`, `OIDC_ISSUER`
+
 v 26.10.2
 ========
 

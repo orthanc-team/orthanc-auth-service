@@ -33,10 +33,13 @@ class Keycloak:
         except jwt.PyJWTError:
             return None
 
+    def _verify_token(self, jwt_token: str) -> Dict[str, Any]:
+        return jwt.decode(jwt=jwt_token, key=self.public_key, audience="account", algorithms=["RS256"],
+                           leeway=self.jwt_leeway_seconds)
+
     def decode_token(self, jwt_token: str) -> Dict[str, Any]:
         try:
-            return jwt.decode(jwt=jwt_token, key=self.public_key, audience="account", algorithms=["RS256"],
-                               leeway=self.jwt_leeway_seconds)
+            return self._verify_token(jwt_token)
         except jwt.PyJWTError as ex:
             # verification failed before we could log the claims -> decode again without
             # verifying so we can see exactly what the token contains. (and compare against

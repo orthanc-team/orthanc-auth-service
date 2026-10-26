@@ -19,6 +19,7 @@ from shares.models import *
 from shares.models_emails import *
 from shares.orthanc_token_service_factory import create_token_service_from_secrets
 from shares.keycloak import create_keycloak_from_secrets
+from shares.oidc import create_oidc_from_secrets
 from shares.roles_configuration import RolesConfiguration
 from shares.keycloak_admin import KeycloakAdmin
 from shares.utils.utils import get_secret_or_die, is_secret_defined
@@ -42,8 +43,20 @@ ignore_roles = [r.strip() for r in ignore_roles_str.split(",")]
 roles_configuration = RolesConfiguration(permissions_file_path=permissions_file_path, anonymous_profile_file_path=anonymous_profile_file_path, ignore_roles=ignore_roles)
 
 handle_users_with_keycloak = os.environ.get("ENABLE_KEYCLOAK", "false") == "true"
+handle_users_with_oidc = bool(os.environ.get("OIDC_CONFIGURATION_URL"))
 
-if not handle_users_with_keycloak:
+if handle_users_with_keycloak and handle_users_with_oidc:
+    logging.error("ENABLE_KEYCLOAK and OIDC_CONFIGURATION_URL can not be used together, exiting...")
+    exit(-1)
+
+if handle_users_with_oidc:
+    logging.warning("OIDC_CONFIGURATION_URL is set, using generic OIDC provider to handle users (no api-keys, no admin API)")
+    keycloak_std_client = create_oidc_from_secrets(configuration_url=os.environ["OIDC_CONFIGURATION_URL"],
+                                                   audience=get_secret_or_die("OIDC_AUDIENCE"),
+                                                   issuer=os.environ.get("OIDC_ISSUER"),
+                                                   roles_configuration=roles_configuration,
+                                                   jwt_leeway_seconds=int(os.environ.get("OIDC_JWT_LEEWAY_SECONDS", "10")))
+elif not handle_users_with_keycloak:
     logging.warning("ENABLE_KEYCLOAK is not set, won't use keycloak and will not handle users")
 else:
     logging.warning("ENABLE_KEYCLOAK is set, using keycloak to handle users")
@@ -112,8 +125,11 @@ else:
 
 
 def ingest_keycloak_roles(roles_config: RolesConfigurationModel, ignore_roles: List[str]):
-    # add the keycloak roles that are not yet listed in the roles_config
+    # generic OIDC: roles only come from permissions.json (no admin API)
+    if handle_users_with_oidc:
+        return
 
+    # add the keycloak roles that are not yet listed in the roles_config
     if keycloak_admin_client:
         all_keycloak_roles = keycloak_admin_client.get_all_roles()
 
