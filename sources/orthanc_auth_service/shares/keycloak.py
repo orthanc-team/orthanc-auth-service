@@ -14,10 +14,15 @@ from .roles_configuration import RolesConfiguration
 from .utils.utils import get_secret_or_die, is_secret_defined
 
 
+# only asymmetric algorithms: HS* and 'none' must never be accepted from an external identity provider
+ASYMMETRIC_ALGORITHMS = ["RS256", "RS384", "RS512", "PS256", "PS384", "PS512", "ES256", "ES384", "ES512", "EdDSA"]
+
 class Keycloak:
 
-    def __init__(self, public_key, roles_configuration: RolesConfiguration, jwt_leeway_seconds: int = 0):
-        self.public_key = public_key
+    def __init__(self, jwks_client: jwt.jwks_client.PyJWKClient, issuer: str, audience: str, roles_configuration: RolesConfiguration, jwt_leeway_seconds: int = 0):
+        self.jwks_client = jwks_client
+        self.issuer = issuer
+        self.audience = audience
         self.roles_configuration = roles_configuration
         self.jwt_leeway_seconds = jwt_leeway_seconds
 
@@ -35,7 +40,8 @@ class Keycloak:
 
     def decode_token(self, jwt_token: str) -> Dict[str, Any]:
         try:
-            return jwt.decode(jwt=jwt_token, key=self.public_key, audience="account", algorithms=["RS256"],
+            signing_key = self.jwks_client.get_signing_key_from_jwt(jwt_token)
+            return jwt.decode(jwt=jwt_token, key=signing_key.key, audience=self.audience, issuer=self.issuer, algorithms=ASYMMETRIC_ALGORITHMS,
                                leeway=self.jwt_leeway_seconds)
         except jwt.PyJWTError as ex:
             # verification failed before we could log the claims -> decode again without
@@ -154,34 +160,20 @@ class Keycloak:
         return response
 
 
-
-
-def _get_keycloak_public_key(keycloak_uri: str) -> str:
-    '''
-    - get public key from keycloak server
-    - add "-----BEGIN PUBLIC KEY-----" (and same for the end)
-    - return it as a bytes string
-    '''
-
-    public_key = requests.get(keycloak_uri).json().get("public_key")
-
-    begin_public_key = "-----BEGIN PUBLIC KEY-----\n"
-    end_public_key = "\n-----END PUBLIC KEY-----"
-
-    return ''.join([begin_public_key, public_key, end_public_key]).encode()
-
-
-
-
-def create_keycloak_from_secrets(keycloak_uri: str, roles_configuration: RolesConfiguration, jwt_leeway_seconds: int = 0):
+def create_keycloak_from_secrets(keycloak_uri: str, audience: str, issuer: Optional[str], roles_configuration: RolesConfiguration, jwt_leeway_seconds: int = 0):
 
     try:
-        public_key = _get_keycloak_public_key(keycloak_uri)
-        logging.info(f"Got the public key from Keycloak.")
+        configuration_url = keycloak_uri + "/.well-known/openid-configuration"
+        response = requests.get(configuration_url, timeout=10)
+        response.raise_for_status()
+        configuration = response.json()
+        issuer = issuer or configuration["issuer"]
+        jwks_client = jwt.PyJWKClient(configuration["jwks_uri"])
+        logging.info(f"Got the OIDC configuration for Keycloak, issuer = {issuer}.")
 
     except Exception as ex:
         logging.exception(ex)
-        logging.error(f"Unable to reach keycloak (be patient, Keycloak may need more than 1 min to start), exiting...")
+        logging.error(f"Unable to reach the Keycloak - OIDC provider at {configuration_url}, (be patient, Keycloak may need more than 1 min to start), exiting...")
         exit(-1)
 
-    return Keycloak(public_key=public_key, roles_configuration=roles_configuration, jwt_leeway_seconds=jwt_leeway_seconds)
+    return Keycloak(jwks_client=jwks_client, issuer=issuer, audience=audience, roles_configuration=roles_configuration, jwt_leeway_seconds=jwt_leeway_seconds)

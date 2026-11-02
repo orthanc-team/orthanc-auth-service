@@ -22,6 +22,7 @@ from shares.keycloak import create_keycloak_from_secrets
 from shares.roles_configuration import RolesConfiguration
 from shares.keycloak_admin import KeycloakAdmin
 from shares.utils.utils import get_secret_or_die, is_secret_defined
+from urllib.parse import urljoin, urlencode
 
 import smtplib
 from email.mime.text import MIMEText
@@ -51,6 +52,8 @@ else:
     keycloak_jwt_leeway_seconds = int(os.environ.get("KEYCLOAK_JWT_LEEWAY_SECONDS", "10"))
     keycloak_std_client = create_keycloak_from_secrets(keycloak_uri=keycloak_uri,
                                                        roles_configuration=roles_configuration,
+                                                       issuer=None,
+                                                       audience="account",
                                                        jwt_leeway_seconds=keycloak_jwt_leeway_seconds)
 
     enable_api_keys = os.environ.get("ENABLE_KEYCLOAK_API_KEYS", "false") == "true"
