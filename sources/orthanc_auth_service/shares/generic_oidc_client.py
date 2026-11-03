@@ -165,16 +165,17 @@ class GenericOidcClient:
 def create_oidc_client_from_secrets(oidc_configuration_url: str, roles_path_in_token: str, audience: str, issuer: Optional[str], roles_configuration: RolesConfiguration, jwt_leeway_seconds: int = 0):
 
     try:
+        logging.info(f"Getting OIDC configuration from {oidc_configuration_url}")
         response = requests.get(oidc_configuration_url, timeout=10)
         response.raise_for_status()
         configuration = response.json()
         issuer = issuer or configuration["issuer"]
         jwks_client = jwt.PyJWKClient(configuration["jwks_uri"])
-        logging.info(f"Got the OIDC configuration for Keycloak, issuer = {issuer}.")
+        logging.info(f"Got the OIDC configuration, issuer = {issuer}; jwks_uri = {configuration['jwks_uri']}.")
 
     except Exception as ex:
         logging.exception(ex)
-        logging.error(f"Unable to reach the Keycloak - OIDC provider at {oidc_configuration_url}, (be patient, Keycloak may need more than 1 min to start), exiting...")
+        logging.error(f"Unable to reach the OIDC provider (or Keycloak) at {oidc_configuration_url}, (be patient, it may need more than 1 min to start), exiting...")
         exit(-1)
 
     return GenericOidcClient(jwks_client=jwks_client, roles_path_in_token=roles_path_in_token, issuer=issuer, audience=audience, roles_configuration=roles_configuration, jwt_leeway_seconds=jwt_leeway_seconds)
