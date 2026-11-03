@@ -31,6 +31,15 @@ def is_secret_defined(name: str) -> bool:
     return os.environ.get(name) is not None
 
 
+def get_json_entry_from_path(data, path, default=None):
+    for part in path.split("."):
+        if isinstance(data, dict) and part in data:
+            data = data[part]
+        else:
+            return default
+    return data
+
+
 class DateTimeJSONEncoder(JSONEncoder):
     # Override the default method
     def default(self, obj):

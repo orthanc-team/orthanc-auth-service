@@ -11,19 +11,20 @@ import jsonc
 from typing import Dict, Any, List, Tuple, Optional
 from .models import *
 from .roles_configuration import RolesConfiguration
-from .utils.utils import get_secret_or_die, is_secret_defined
+from .utils.utils import get_secret_or_die, is_secret_defined, get_json_entry_from_path
 
 
 # only asymmetric algorithms: HS* and 'none' must never be accepted from an external identity provider
 ASYMMETRIC_ALGORITHMS = ["RS256", "RS384", "RS512", "PS256", "PS384", "PS512", "ES256", "ES384", "ES512", "EdDSA"]
 
-class Keycloak:
+class GenericOidcClient:
 
-    def __init__(self, jwks_client: jwt.jwks_client.PyJWKClient, issuer: str, audience: str, roles_configuration: RolesConfiguration, jwt_leeway_seconds: int = 0):
+    def __init__(self, jwks_client: jwt.jwks_client.PyJWKClient, roles_path_in_token: str, issuer: str, audience: str, roles_configuration: RolesConfiguration, jwt_leeway_seconds: int = 0):
         self.jwks_client = jwks_client
         self.issuer = issuer
         self.audience = audience
         self.roles_configuration = roles_configuration
+        self.roles_path_in_token = roles_path_in_token
         self.jwt_leeway_seconds = jwt_leeway_seconds
 
     def _get_unverified_claims(self, jwt_token: str) -> Optional[Dict[str, Any]]:
@@ -80,7 +81,7 @@ class Keycloak:
     def get_roles_from_decoded_token(self, decoded_token: Dict[str, Any]) -> List[str]:
         '''
         Returns the roles extracted form the token.
-        Here is token sample:
+        Here is a Keyclock token sample:
 
             {
             "exp": 1676637999,
@@ -125,19 +126,20 @@ class Keycloak:
             }
 
         '''
-        realm_access = decoded_token.get('realm_access')
-        if realm_access is not None:
-            roles = realm_access.get('roles')
-            if roles is not None:
-                return roles
-        return []
+        roles = get_json_entry_from_path(decoded_token, self.roles_path_in_token, None)
+        return roles or []
 
     def get_user_profile_from_token(self, jwt_token: str) -> UserProfileResponse:
         decoded_token = self.decode_token(jwt_token=jwt_token)
         logging.debug(f"decoded_token: {decoded_token}")
+
+        # note: - Keycloak does not fill 'groups' by default unless you have defined a mapping in 'orthanc client' -> client scopes -> orthanc-dedicated mapper.
+        #       - Authentic tokens always have 'groups'.  There are equivalent to the realm_access.roles in Keycloak.
+        #       - As of Nov 2026, profile->groups are only used in OE2 inbox (FormFields -> UserGroupsChoice)
         groups = None
-        if 'groups' in decoded_token:  # this might have not been configured in Keycloak (see 'orthanc client' -> client scopes -> orthanc-dedicated mapper)
+        if 'groups' in decoded_token:
             groups = decoded_token['groups']
+
         response = UserProfileResponse(
             name=self.get_name_from_decoded_token(decoded_token=decoded_token),
             user_id=self.get_id_from_decoded_token(decoded_token=decoded_token),
@@ -160,11 +162,10 @@ class Keycloak:
         return response
 
 
-def create_keycloak_from_secrets(keycloak_uri: str, audience: str, issuer: Optional[str], roles_configuration: RolesConfiguration, jwt_leeway_seconds: int = 0):
+def create_oidc_client_from_secrets(oidc_configuration_url: str, roles_path_in_token: str, audience: str, issuer: Optional[str], roles_configuration: RolesConfiguration, jwt_leeway_seconds: int = 0):
 
     try:
-        configuration_url = keycloak_uri + "/.well-known/openid-configuration"
-        response = requests.get(configuration_url, timeout=10)
+        response = requests.get(oidc_configuration_url, timeout=10)
         response.raise_for_status()
         configuration = response.json()
         issuer = issuer or configuration["issuer"]
@@ -173,7 +174,7 @@ def create_keycloak_from_secrets(keycloak_uri: str, audience: str, issuer: Optio
 
     except Exception as ex:
         logging.exception(ex)
-        logging.error(f"Unable to reach the Keycloak - OIDC provider at {configuration_url}, (be patient, Keycloak may need more than 1 min to start), exiting...")
+        logging.error(f"Unable to reach the Keycloak - OIDC provider at {oidc_configuration_url}, (be patient, Keycloak may need more than 1 min to start), exiting...")
         exit(-1)
 
-    return Keycloak(jwks_client=jwks_client, issuer=issuer, audience=audience, roles_configuration=roles_configuration, jwt_leeway_seconds=jwt_leeway_seconds)
+    return GenericOidcClient(jwks_client=jwks_client, roles_path_in_token=roles_path_in_token, issuer=issuer, audience=audience, roles_configuration=roles_configuration, jwt_leeway_seconds=jwt_leeway_seconds)

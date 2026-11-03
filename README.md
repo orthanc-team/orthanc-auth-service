@@ -26,6 +26,7 @@ Features:
 - 3 Boilerplates `docker-compose` setups to bootstrap a setup:
   - One with [basic authentication](minimal-setup/basic-auth) only to demonstrate study sharing.
   - One with [Keycloak integration](minimal-setup/keycloak) to demonstrate user management and study sharing
+  - One with [Authentik integration](minimal-setup/authentik) to demonstrate login with a generic OIDC provider
   - One full setup with [Keycloak, MedDream and Orthanc for API](minimal-setup/keycloak) to demonstrate user management, study sharing, MedDream usage and an extra orthanc accessible e.g by DicomWebClient.
 - provides a set of companion docker images to ease deployment:
   - [orthancteam/orthanc-aut-service](https://hub.docker.com/r/orthancteam/orthanc-auth-service) is the webservice generating and validating tokens.  The web service is also providing user permissions from Keycloak defined roles.
@@ -57,6 +58,26 @@ The current setup comes with 2 pre-defined users:
 And 2 pre-defined roles:
 - `admin`: this role is assigned to the `orthanc` user
 - `doctor`: this role is assigned to the `doctor` user
+
+# Use a generic OIDC provider (e.g. Authentik)
+
+Instead of Keycloak, the `orthancteam/orthanc-auth-service` can validate the tokens issued by any OIDC provider.  Authentik is the reference provider.
+The generic mode is enabled by setting `OIDC_CONFIGURATION_URL` (it can not be used together with `ENABLE_KEYCLOAK=true`).
+
+| Environment variable      | Default value           | Description                                                                                                                              |
+| ------------------------- | :---------------------- | :--------------------------------------------------------------------------------------------------------------------------------------- |
+| OIDC_CONFIGURATION_URL    | -                       | Full `.../.well-known/openid-configuration` URL of the provider.  Setting it enables the generic mode.                                   |
+| OIDC_AUDIENCE             | -                       | Required.  Expected `aud` claim of the tokens.  For Authentik: the client id.                                                            |
+| OIDC_JWT_LEEWAY_SECONDS   | 10                      | The maximum allowed offset between the provider and auth-service clocks.                                                                 |
+| OIDC_ISSUER               | `issuer` from discovery | Expected `iss` claim.  Set it when auth-service reaches the provider through an internal hostname.  The comparison is strict: a trailing slash matters (Authentik issuers end with `/`). |
+
+- Signature keys are read from the `jwks_uri` of the provider.  Only asymmetric algorithms are accepted (RS*, PS*, ES*, EdDSA).  In Authentik, a signing key (certificate) **must** be selected on the OAuth2 provider, otherwise Authentik signs with HS256 and the tokens are rejected.
+- The roles found in the top-level `groups` claim of the token are matched against `permissions.json` exactly like Keycloak roles (`IGNORE_ROLES`, ... apply).
+- Not available in this mode: API keys, user profile by `user_id`, roles from the provider in the roles editor (`/settings/roles` only lists the roles of `permissions.json`).
+- On the Orthanc Explorer 2 side (requires an Orthanc Explorer 2 version supporting `Keycloak.OidcProvider`), configure in the `Keycloak` section of the OE2 configuration:
+  - `OidcProvider`: the issuer URL of the provider, **without** `/.well-known/openid-configuration`.  When set, `Url`, `Realm` and `CheckLoginIframe` are ignored.
+  - OE2 requests the `openid profile` scopes (`profile` is needed for the `groups` claim with Authentik) and does not request `offline_access`: Authentik's refresh tokens are opaque and keycloak-js cannot handle them.  There is no token refresh: the OE2 session lasts as long as the access token is valid, then reloading the page logs in again silently.
+
 
 ## Manage permissions in the configuration file
 

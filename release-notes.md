@@ -4,6 +4,12 @@ SPDX-FileCopyrightText: 2022 - 2026 Orthanc Team SRL <info@orthanc.team>
 SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
+Pending changes
+========
+
+- new generic OIDC provider support (e.g. Authentik) in `orthancteam/orthanc-auth-service`: new env vars `OIDC_CONFIGURATION_URL`, `OIDC_AUDIENCE`, `OIDC_JWT_LEEWAY_SECONDS`, `OIDC_ISSUER`.  
+- The Keycloak client is now also using the generic OIDC client but advanced features like Api keys and role management still requires a `KEYCLOAK_CLIENT_SECRET`.
+
 
 v 26.10.2
 ========
@@ -190,7 +196,7 @@ v 24.7.2
 ========
 
 - added `PROXY_READ_TIMEOUT` env var for nginx
-- fix: read KEYCLOAK_CLIENT_SECRET from secrets or environment variable
+- fix: read `KEYCLOAK_CLIENT_SECRET` from secrets or environment variable
 
 
 v 24.7.1

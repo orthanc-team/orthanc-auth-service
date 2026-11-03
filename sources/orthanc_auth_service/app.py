@@ -18,9 +18,9 @@ import re
 from shares.models import *
 from shares.models_emails import *
 from shares.orthanc_token_service_factory import create_token_service_from_secrets
-from shares.keycloak import create_keycloak_from_secrets
+from shares.generic_oidc_client import create_oidc_client_from_secrets
 from shares.roles_configuration import RolesConfiguration
-from shares.keycloak_admin import KeycloakAdmin
+from shares.keycloak_admin_client import KeycloakAdmin
 from shares.utils.utils import get_secret_or_die, is_secret_defined
 from urllib.parse import urljoin, urlencode
 
@@ -32,7 +32,7 @@ from email.mime.multipart import MIMEMultipart
 logging.basicConfig(level=logging.DEBUG)
 
 token_service = create_token_service_from_secrets()
-keycloak_std_client = None
+oidc_client = None
 keycloak_admin_client = None
 
 permissions_file_path = os.environ.get("PERMISSIONS_FILE_PATH", "/orthanc_auth_service/permissions.json")
@@ -42,20 +42,34 @@ ignore_roles_str = os.environ.get("IGNORE_ROLES", "interhosp-role")
 ignore_roles = [r.strip() for r in ignore_roles_str.split(",")]
 roles_configuration = RolesConfiguration(permissions_file_path=permissions_file_path, anonymous_profile_file_path=anonymous_profile_file_path, ignore_roles=ignore_roles)
 
-handle_users_with_keycloak = os.environ.get("ENABLE_KEYCLOAK", "false") == "true"
+enable_keycloak = os.environ.get("ENABLE_KEYCLOAK", "false") == "true"
+enable_generic_oidc = bool(os.environ.get("OIDC_CONFIGURATION_URL"))
 
-if not handle_users_with_keycloak:
-    logging.warning("ENABLE_KEYCLOAK is not set, won't use keycloak and will not handle users")
-else:
+if enable_keycloak:
     logging.warning("ENABLE_KEYCLOAK is set, using keycloak to handle users")
-    keycloak_uri = os.environ.get("KEYCLOAK_URI", "http://keycloak:8080/realms/orthanc/")
-    keycloak_jwt_leeway_seconds = int(os.environ.get("KEYCLOAK_JWT_LEEWAY_SECONDS", "10"))
-    keycloak_std_client = create_keycloak_from_secrets(keycloak_uri=keycloak_uri,
-                                                       roles_configuration=roles_configuration,
-                                                       issuer=None,
-                                                       audience="account",
-                                                       jwt_leeway_seconds=keycloak_jwt_leeway_seconds)
+    keycloak_uri = os.environ.get("KEYCLOAK_URI", "http://keycloak:8080/realms/orthanc/")    
+    oidc_configuration_url = urljoin(keycloak_uri, ".well-known/openid-configuration")
+    oidc_audience = os.environ.get("OIDC_AUDIENCE", "account")
+    oidc_issuer = None
+    roles_path_in_token="realm_access.roles"
+elif enable_generic_oidc:
+    logging.warning("OIDC_CONFIGURATION_URL is set, using generic OIDC provider to handle users (no api-keys, no admin API)")
+    oidc_configuration_url = get_secret_or_die("OIDC_CONFIGURATION_URL")
+    oidc_audience = get_secret_or_die("OIDC_AUDIENCE")
+    oidc_issuer = os.environ.get("OIDC_ISSUER")
+    roles_path_in_token="groups"
 
+jwt_leeway_seconds = int(os.environ.get("OIDC_JWT_LEEWAY_SECONDS", os.environ.get("KEYCLOAK_JWT_LEEWAY_SECONDS", "10")))
+
+oidc_client = create_oidc_client_from_secrets(oidc_configuration_url=oidc_configuration_url,
+                                              roles_configuration=roles_configuration,
+                                              issuer=None,
+                                              audience=oidc_audience,
+                                              roles_path_in_token=roles_path_in_token,
+                                              jwt_leeway_seconds=jwt_leeway_seconds)
+
+if enable_keycloak:
+    # when using keycloak, there is a possibility to add "advanced features" like API-KEY but you need a KEYCLOAK_CLIENT_SECRET
     enable_api_keys = os.environ.get("ENABLE_KEYCLOAK_API_KEYS", "false") == "true"
     needKeycloakAdmin = False
     if not enable_api_keys:
@@ -286,22 +300,19 @@ def get_user_profile(user_profile_request: UserProfileRequest):
         except (jwt.DecodeError, jwt.InvalidTokenError):
             pass # this is not an inbox-link
 
-        if keycloak_std_client is None:
-            logging.warning("Keycloak is not configured, all users are considered anonymous")
+        if oidc_client is None:
+            logging.warning("OIDC client is not configured, all users are considered anonymous")
             return anonymous_profile
 
         elif user_profile_request.token_key is not None:
             if user_profile_request.token_key == "api-key" and keycloak_admin_client is not None:
-                logging.debug(f"calling keycloak_admin_client.get_user_profile_from_api_key")
                 response = keycloak_admin_client.get_user_profile_from_api_key(api_key=user_profile_request.token_value)
             else:
                 token = user_profile_request.token_value
                 if token.startswith("Bearer "):
                     token = token.replace("Bearer ", "")
-                logging.debug(f"calling keycloak_std_client.get_user_profile_from_token")
-                response = keycloak_std_client.get_user_profile_from_token(token)
+                response = oidc_client.get_user_profile_from_token(token)
         elif user_profile_request.user_id is not None and keycloak_admin_client is not None:
-            logging.debug(f"calling keycloak_admin_client.get_user_profile_from_user_id")
             response = keycloak_admin_client.get_user_profile_from_user_id(user_id=user_profile_request.user_id)
         else:
             logging.debug(f"returning anonymous_profile")
