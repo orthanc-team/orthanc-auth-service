@@ -63,7 +63,7 @@ jwt_leeway_seconds = int(os.environ.get("OIDC_JWT_LEEWAY_SECONDS", os.environ.ge
 
 oidc_client = create_oidc_client_from_secrets(oidc_configuration_url=oidc_configuration_url,
                                               roles_configuration=roles_configuration,
-                                              issuer=None,
+                                              issuer=oidc_issuer,
                                               audience=oidc_audience,
                                               roles_path_in_token=roles_path_in_token,
                                               jwt_leeway_seconds=jwt_leeway_seconds)
