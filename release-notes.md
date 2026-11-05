@@ -9,6 +9,7 @@ Pending changes
 
 - new generic OIDC provider support (e.g. Authentik) in `orthancteam/orthanc-auth-service`: new env vars `OIDC_CONFIGURATION_URL`, `OIDC_AUDIENCE`, `OIDC_JWT_LEEWAY_SECONDS`, `OIDC_ISSUER`, `OIDC_ROLES_CLAIM`.  
 - The Keycloak client is now also using the generic OIDC client but advanced features like Api keys and role management still requires a `KEYCLOAK_CLIENT_SECRET`.
+- new `view-jobs` permission
 
 
 v 26.10.2

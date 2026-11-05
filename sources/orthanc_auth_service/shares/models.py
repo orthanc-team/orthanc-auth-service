@@ -127,6 +127,7 @@ class UserPermissions(str, Enum):
     WORKLISTS = 'worklists'
     SHARE = 'share'
     CREATE_INBOX_LINKS = 'create-inbox-links'
+    VIEW_JOBS = 'view-jobs'
 
 
 class RolePermissions(BaseModel):
