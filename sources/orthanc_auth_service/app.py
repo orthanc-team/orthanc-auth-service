@@ -52,12 +52,17 @@ if enable_keycloak:
     oidc_audience = os.environ.get("OIDC_AUDIENCE", "account")
     oidc_issuer = None
     roles_path_in_token= os.environ.get("OIDC_ROLES_CLAIM", "realm_access.roles")
+    
 elif enable_generic_oidc:
     logging.warning("OIDC_CONFIGURATION_URL is set, using generic OIDC provider to handle users (no api-keys, no admin API)")
     oidc_configuration_url = get_secret_or_die("OIDC_CONFIGURATION_URL")
     oidc_audience = get_secret_or_die("OIDC_AUDIENCE")
     oidc_issuer = os.environ.get("OIDC_ISSUER")
     roles_path_in_token= os.environ.get("OIDC_ROLES_CLAIM", "groups")
+
+else:
+    logging.error("You must define at least ENABLE_KEYCLOAK or OIDC_CONFIGURATION_URL")
+    exit(-1)
 
 jwt_leeway_seconds = int(os.environ.get("OIDC_JWT_LEEWAY_SECONDS", os.environ.get("KEYCLOAK_JWT_LEEWAY_SECONDS", "10")))
 
