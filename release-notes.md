@@ -4,6 +4,12 @@ SPDX-FileCopyrightText: 2022 - 2026 Orthanc Team SRL <info@orthanc.team>
 SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
+
+v 26.11.1
+========
+
+- Upgraded `Nginx` Docker base image from `1.31.3` to `1.31.9` (including `Nginx-Certbot`)
+
 v 26.11.0
 ========
 
