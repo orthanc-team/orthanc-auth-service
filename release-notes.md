@@ -4,6 +4,12 @@ SPDX-FileCopyrightText: 2022 - 2026 Orthanc Team SRL <info@orthanc.team>
 SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
+v 26.11.2
+========
+
+- Upgraded `Meddream` Docker base image from `8.9.0` to `8.9.1`
+- Upgraded `Keycloak` Docker base image from `26.7.2` to `26.8.2`
+- Upgraded `OHIF` from `3.12.0` to `3.13.15`
 
 v 26.11.1
 ========
