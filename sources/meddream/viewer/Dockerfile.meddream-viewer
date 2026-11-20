@@ -2,7 +2,7 @@
 #
 # SPDX-License-Identifier: CC0-1.0
 
-FROM meddream/dicom-viewer:8.9.0
+FROM meddream/dicom-viewer:8.9.1
 
 # you must define these environment variables:
 # TOKEN_SERVICE_ADDRESS
