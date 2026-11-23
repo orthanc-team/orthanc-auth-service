@@ -34,6 +34,7 @@ logging.basicConfig(level=logging.DEBUG)
 token_service = create_token_service_from_secrets()
 oidc_client = None
 keycloak_admin_client = None
+enable_api_keys = False
 
 permissions_file_path = os.environ.get("PERMISSIONS_FILE_PATH", "/orthanc_auth_service/permissions.json")
 anonymous_profile_file_path = os.environ.get("ANONYMOUS_PROFILE_FILE_PATH", "/orthanc_auth_service/anonymous-profile.json")
@@ -310,7 +311,9 @@ def get_user_profile(user_profile_request: UserProfileRequest):
             return anonymous_profile
 
         elif user_profile_request.token_key is not None:
-            if user_profile_request.token_key == "api-key" and keycloak_admin_client is not None:
+            if user_profile_request.token_key == "api-key":
+                if not enable_api_keys or keycloak_admin_client is None:
+                    return anonymous_profile
                 response = keycloak_admin_client.get_user_profile_from_api_key(api_key=user_profile_request.token_value)
             else:
                 token = user_profile_request.token_value

@@ -14,6 +14,7 @@ from .utils.utils import get_secret_or_die, is_secret_defined
 from .roles_configuration import RolesConfiguration
 import requests
 from urllib.parse import urljoin, urlencode
+import hmac
 
 class KeycloakAdmin:
 
@@ -58,8 +59,14 @@ class KeycloakAdmin:
 
 
     def get_user_profile_from_api_key(self, api_key: str) -> Optional[UserProfileResponse]:
+        # reject suspicious characters
+        if (not isinstance(api_key, str) or not api_key
+                or any(c.isspace() or c in '"\\' for c in api_key)):
+            return None
+
         query = {
-            "q": f"api-key:{api_key}"
+            "q": f"api-key:{api_key}",
+            "exact": "true"
         }
         keycloak_users_url = urljoin(self._keycloak_admin_uri, f"users?{urlencode(query)}")
         headers = {
@@ -85,6 +92,15 @@ class KeycloakAdmin:
                     logging.error("User is not yet valid")
                     return None
 
+                # make sure the users really has one key with this value
+                stored_keys = user.get('attributes', {}).get('api-key', [])
+                if not isinstance(stored_keys, list):
+                    return None
+                if not any(isinstance(stored_key, str) and
+                           hmac.compare_digest(api_key.encode('utf-8'), stored_key.encode('utf-8'))  #we use hmac to have a constant computation time
+                           for stored_key in stored_keys):
+                    return None
+                                               
                 # retrieve the roles for this user
                 keycloak_role_url = urljoin(self._keycloak_admin_uri, f"users/{user['id']}/role-mappings/realm/composite")
                 keycloak_role_response = requests.get(keycloak_role_url, headers=headers)
