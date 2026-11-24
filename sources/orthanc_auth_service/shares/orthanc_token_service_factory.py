@@ -13,7 +13,8 @@ def create_token_service_from_secrets():
 
     secret_key = get_secret_or_die("SECRET_KEY")
     if len(secret_key) < 32:
-        logging.warning("SECRET_KEY should be at least 32 chars long.  However, keep in mind that updating the secret-key might break existing share links")
+        logging.error("SECRET_KEY should be at least 32 chars long.  However, keep in mind that updating the secret-key will break existing share links")
+        exit(-10)
 
     token_service = OrthancTokenService(secret_key=secret_key)
 
