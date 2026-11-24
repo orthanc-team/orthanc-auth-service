@@ -290,18 +290,25 @@ def get_user_profile(user_profile_request: UserProfileRequest):
         # first check if this is an inbox-link token and not a KeyCloak token
         try:
             if isinstance(user_profile_request.token_value, str) and user_profile_request.token_value.count('.') == 2:
-                payload = jwt.decode(user_profile_request.token_value, options={"verify_signature": False}) # no need to verify the signature at this point (we just need to extract the 'type').  Signature is verified later in decode_token
-                if "type" in payload and payload["type"] == TokenType.INBOX_LINK:
-                    decoded_token = token_service.decode_token(token=user_profile_request.token_value)
-                    if decoded_token.token_type == TokenType.INBOX_LINK:  # re-check the type now that we have checked the signature
-                        user_name = decoded_token.username if decoded_token.username else 'Anonymous'
-                        return UserProfileResponse(
-                            name=user_name,
-                            user_id=None,
-                            permissions=['upload'],
-                            groups=[],
-                            authorized_labels=[],
-                            validity=60)
+                token = user_profile_request.token_value
+                if token.startswith("Bearer "):
+                    token = token.replace("Bearer ", "")
+
+                payload = jwt.decode(token, options={"verify_signature": False}) # no need to verify the signature at this point (we just need to extract the 'type').  Signature is verified later in decode_token
+                if "type" in payload:
+                    if payload["type"] == TokenType.INBOX_LINK:
+                        decoded_token = token_service.decode_token(token=token)
+                        if decoded_token.token_type == TokenType.INBOX_LINK:  # re-check the type now that we have checked the signature
+                            user_name = decoded_token.username if decoded_token.username else 'Anonymous'
+                            return UserProfileResponse(
+                                name=user_name,
+                                user_id=None,
+                                permissions=['upload'],
+                                groups=[],
+                                authorized_labels=[],
+                                validity=60)
+                    elif TokenType.is_resource_token(payload["type"]):
+                        return anonymous_profile    
 
         except (jwt.DecodeError, jwt.InvalidTokenError):
             pass # this is not an inbox-link
@@ -314,11 +321,8 @@ def get_user_profile(user_profile_request: UserProfileRequest):
             if user_profile_request.token_key == "api-key":
                 if not enable_api_keys or keycloak_admin_client is None:
                     return anonymous_profile
-                response = keycloak_admin_client.get_user_profile_from_api_key(api_key=user_profile_request.token_value)
+                response = keycloak_admin_client.get_user_profile_from_api_key(api_key=token)
             else:
-                token = user_profile_request.token_value
-                if token.startswith("Bearer "):
-                    token = token.replace("Bearer ", "")
                 response = oidc_client.get_user_profile_from_token(token)
         elif user_profile_request.user_id is not None and keycloak_admin_client is not None:
             response = keycloak_admin_client.get_user_profile_from_user_id(user_id=user_profile_request.user_id)

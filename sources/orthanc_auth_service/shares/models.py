@@ -46,6 +46,19 @@ class TokenType(str, Enum):
 
     INVALID = 'invalid'
 
+
+    def is_resource_token(type: 'TokenType') -> bool:
+        return type in [
+            TokenType.OSIMIS_VIEWER_PUBLICATION,
+            TokenType.MEDDREAM_VIEWER_PUBLICATION,
+            TokenType.STONE_VIEWER_PUBLICATION,
+            TokenType.OHIF_VIEWER_PUBLICATION,
+            TokenType.VOLVIEW_VIEWER_PUBLICATION,
+            TokenType.MEDDREAM_INSTANT_LINK,
+            TokenType.VIEWER_INSTANT_LINK,
+            TokenType.DOWNLOAD_INSTANT_LINK
+        ]
+
 class OrthancResource(BaseModel):
     dicom_uid: Optional[str] = Field(alias="dicom-uid", default=None)
     orthanc_id: Optional[str] = Field(alias="orthanc-id", default=None)

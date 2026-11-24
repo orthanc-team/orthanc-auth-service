@@ -4,6 +4,11 @@ SPDX-FileCopyrightText: 2022 - 2026 Orthanc Team SRL <info@orthanc.team>
 SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
+v 26.11.4
+========
+
+- Cleanup spurious warnings and errors from logs.
+
 v 26.11.3
 ========
 

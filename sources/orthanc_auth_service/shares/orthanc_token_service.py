@@ -284,7 +284,7 @@ class OrthancTokenService:
         # extract the initial share request from the token
         request = self.tokens_manager_.get_request_from_token(token=token)
 
-        if request.type in [TokenType.OSIMIS_VIEWER_PUBLICATION, TokenType.STONE_VIEWER_PUBLICATION, TokenType.OHIF_VIEWER_PUBLICATION, TokenType.VOLVIEW_VIEWER_PUBLICATION]:
+        if request.type in [TokenType.OSIMIS_VIEWER_PUBLICATION, TokenType.STONE_VIEWER_PUBLICATION, TokenType.OHIF_VIEWER_PUBLICATION, TokenType.VOLVIEW_VIEWER_PUBLICATION, TokenType.VIEWER_INSTANT_LINK]:
 
             # check it is valid (this actually only checks the expiration date since we get the ids from the request itself !)
             if not self.is_expired(request):
