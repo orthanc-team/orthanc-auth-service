@@ -113,7 +113,7 @@ services:
     image: orthancteam/orthanc-auth-service:26.8.0
     restart: unless-stopped
     environment:
-      SECRET_KEY: "change-me-I-am-a-secret-key"
+      SECRET_KEY: "change-me-I-am-a-secret-key-and-I-should-be-at-least-32-chars-long"
       #PERMISSIONS_FILE_PATH: "path_to_the file"
       PUBLIC_ORTHANC_ROOT: "http://localhost/shares/"
       PUBLIC_LANDING_ROOT: "http://localhost/shares/ui/app/token-landing.html"

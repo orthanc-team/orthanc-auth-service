@@ -82,7 +82,7 @@ services:
     depends_on: [authentik-server]
     restart: unless-stopped
     environment:
-      SECRET_KEY: "change-me-I-am-a-secret-key"
+      SECRET_KEY: "change-me-I-am-a-secret-key-and-I-should-be-at-least-32-chars-long"
       OIDC_CONFIGURATION_URL: "http://authentik-server:9000/application/o/orthanc/.well-known/openid-configuration"
       OIDC_AUDIENCE: "orthanc"
       # Authentik builds the issuer from the request host: tokens carry the public one

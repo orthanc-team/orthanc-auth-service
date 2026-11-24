@@ -83,7 +83,7 @@ services:
       - ./permissions.jsonc:/orthanc_auth_service/permissions.json
     restart: unless-stopped
     environment:
-      SECRET_KEY: "change-me-I-am-a-secret-key"
+      SECRET_KEY: "change-me-I-am-a-secret-key-and-I-should-be-at-least-32-chars-long"
       ENABLE_KEYCLOAK: "true"
 #      # to enable the permissions edition UI in OE2, you need to provide a KEYCLOAK_CLIENT_SECRET
 #      KEYCLOAK_CLIENT_SECRET: "change-me-I-am-a-secret-you-get-in-keycloak-logs"

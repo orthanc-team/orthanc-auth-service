@@ -143,7 +143,7 @@ services:
     depends_on: [keycloak]
     restart: unless-stopped
     environment:
-      SECRET_KEY: "change-me-I-am-a-secret-key"
+      SECRET_KEY: "change-me-I-am-a-secret-key-and-I-should-be-at-least-32-chars-long"
       ENABLE_KEYCLOAK: "true"
 #      ENABLE_KEYCLOAK_API_KEYS: "true"
 #      # to enable the permissions edition UI in OE2, you need to provide a KEYCLOAK_CLIENT_SECRET

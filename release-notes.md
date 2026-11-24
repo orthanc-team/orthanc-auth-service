@@ -4,16 +4,22 @@ SPDX-FileCopyrightText: 2022 - 2026 Orthanc Team SRL <info@orthanc.team>
 SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
-v 26.11.4
+v 26.11.5
 ========
 
-- Cleanup spurious warnings and errors from logs.
+> [!CAUTION]
+> BREAKING CHANGE:
+> The `auth-service` will now refuse to start if your SECRET_KEY is shorter than 32 characters.
+
+- `auth-service`: 
+  - Cleanup spurious warnings and errors from logs.
+  - Updated all python dependencies
+
 
 v 26.11.3
 ========
 
 - Make `api-key` comparisons more robust.
-
 
 v 26.11.2
 ========

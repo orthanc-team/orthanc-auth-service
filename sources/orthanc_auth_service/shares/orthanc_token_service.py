@@ -5,8 +5,8 @@
 from .tokens_manager import Hs256TokensManager, TokensManager
 from .models import *
 import urllib
-import httpx
 import logging
+import requests
 from typing import Optional
 from .exceptions import *
 
@@ -208,7 +208,7 @@ class OrthancTokenService:
                         }
                     })
 
-            token = httpx.post(self.meddream_token_service_url_, json={
+            token = requests.post(self.meddream_token_service_url_, json={
                 "items": items
             }).text
 
