@@ -205,7 +205,7 @@ def create_token(token_type: str, request: TokenCreationRequest):
 
         # transform the validity_duration into an expiration_date
         if request.expiration_date is None and request.validity_duration is not None:
-            request.expiration_date = (pytz.UTC.localize(datetime.now()) + timedelta(seconds=request.validity_duration)).isoformat()
+            request.expiration_date = pytz.UTC.localize(datetime.now()) + timedelta(seconds=request.validity_duration)
 
         token = token_service.create_token(request=request)
 
