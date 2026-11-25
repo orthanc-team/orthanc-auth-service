@@ -45,6 +45,7 @@ roles_configuration = RolesConfiguration(permissions_file_path=permissions_file_
 
 enable_keycloak = os.environ.get("ENABLE_KEYCLOAK", "false") == "true"
 enable_generic_oidc = bool(os.environ.get("OIDC_CONFIGURATION_URL"))
+oidc_configuration_url = None
 
 if enable_keycloak:
     logging.warning("ENABLE_KEYCLOAK is set, using keycloak to handle users")
@@ -62,17 +63,18 @@ elif enable_generic_oidc:
     roles_path_in_token= os.environ.get("OIDC_ROLES_CLAIM", "groups")
 
 else:
-    logging.error("You must define at least ENABLE_KEYCLOAK or OIDC_CONFIGURATION_URL")
-    exit(-1)
+    logging.error("Neither ENABLE_KEYCLOAK nor OIDC_CONFIGURATION_URL are defined -> using basic auth")
 
-jwt_leeway_seconds = int(os.environ.get("OIDC_JWT_LEEWAY_SECONDS", os.environ.get("KEYCLOAK_JWT_LEEWAY_SECONDS", "10")))
 
-oidc_client = create_oidc_client_from_secrets(oidc_configuration_url=oidc_configuration_url,
-                                              roles_configuration=roles_configuration,
-                                              issuer=oidc_issuer,
-                                              audience=oidc_audience,
-                                              roles_path_in_token=roles_path_in_token,
-                                              jwt_leeway_seconds=jwt_leeway_seconds)
+if oidc_configuration_url:
+    jwt_leeway_seconds = int(os.environ.get("OIDC_JWT_LEEWAY_SECONDS", os.environ.get("KEYCLOAK_JWT_LEEWAY_SECONDS", "10")))
+
+    oidc_client = create_oidc_client_from_secrets(oidc_configuration_url=oidc_configuration_url,
+                                                roles_configuration=roles_configuration,
+                                                issuer=oidc_issuer,
+                                                audience=oidc_audience,
+                                                roles_path_in_token=roles_path_in_token,
+                                                jwt_leeway_seconds=jwt_leeway_seconds)
 
 if enable_keycloak:
     # when using keycloak, there is a possibility to add "advanced features" like API-KEY but you need a KEYCLOAK_CLIENT_SECRET

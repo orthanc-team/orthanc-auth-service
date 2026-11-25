@@ -4,6 +4,12 @@ SPDX-FileCopyrightText: 2022 - 2026 Orthanc Team SRL <info@orthanc.team>
 SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
+
+v 26.11.6
+========
+
+- `auth-service`: fixed the basic-auth mode.
+
 v 26.11.5
 ========
 
@@ -14,7 +20,6 @@ v 26.11.5
 - `auth-service`: 
   - Cleanup spurious warnings and errors from logs.
   - Updated all python dependencies
-
 
 v 26.11.3
 ========
