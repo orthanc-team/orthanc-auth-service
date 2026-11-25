@@ -4,6 +4,10 @@ SPDX-FileCopyrightText: 2022 - 2026 Orthanc Team SRL <info@orthanc.team>
 SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
+v 26.11.7
+========
+
+- `auth-service`: fixed api-key handling.
 
 v 26.11.6
 ========

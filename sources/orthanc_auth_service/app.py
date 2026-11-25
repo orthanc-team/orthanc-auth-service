@@ -291,10 +291,11 @@ def get_user_profile(user_profile_request: UserProfileRequest):
 
         # first check if this is an inbox-link token and not a KeyCloak token
         try:
+            token = user_profile_request.token_value
+            if token.startswith("Bearer "):
+                token = token.replace("Bearer ", "")
+            
             if isinstance(user_profile_request.token_value, str) and user_profile_request.token_value.count('.') == 2:
-                token = user_profile_request.token_value
-                if token.startswith("Bearer "):
-                    token = token.replace("Bearer ", "")
 
                 payload = jwt.decode(token, options={"verify_signature": False}) # no need to verify the signature at this point (we just need to extract the 'type').  Signature is verified later in decode_token
                 if "type" in payload:
